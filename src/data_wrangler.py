@@ -173,5 +173,6 @@ def create_metadata_and_signals(base_path=DATA_DIR):
 
 if __name__ == "__main__":
     raw_meta_df, raw_signals_df = create_metadata_and_signals()
+    
     raw_meta_df.to_csv("raw_metadata.csv", index=False)
     raw_signals_df.to_csv("raw_signals.csv")
