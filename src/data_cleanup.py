@@ -5,8 +5,8 @@ from scipy.signal import butter, filtfilt
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.join(SCRIPT_DIR, "..")
-RAW_META_PATH = os.path.join(PROJECT_DIR, "raw_metadata.csv")
-RAW_SIGNALS_PATH = os.path.join(PROJECT_DIR, "raw_signals.csv")
+RAW_META_PATH = os.path.join(PROJECT_DIR, "results/raw_metadata.csv")
+RAW_SIGNALS_PATH = os.path.join(PROJECT_DIR, "results/raw_signals.csv")
 
 def butter_filter(data, fs=100, f_low=None, f_high=None, filter_type="lowpass", order=2):
     """
@@ -145,5 +145,5 @@ def create_clean_datasets(apply_filter=True):
 if __name__ == "__main__":
     clean_metadata, clean_signals = create_clean_datasets(apply_filter=True)
 
-    clean_metadata.to_csv("clean_metadata.csv", index=False)
-    clean_signals.to_csv("clean_signals.csv", index=False)
+    clean_metadata.to_csv("results/clean_metadata.csv", index=False)
+    clean_signals.to_csv("results/clean_signals.csv", index=False)

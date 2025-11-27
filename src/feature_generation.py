@@ -4,7 +4,7 @@ import numpy as np
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.join(SCRIPT_DIR, "..")
-RAW_SIGNALS_PATH = os.path.join(PROJECT_DIR, "clean_signals.csv")
+RAW_SIGNALS_PATH = os.path.join(PROJECT_DIR, "results/clean_signals.csv")
 
 def roll_pitch_from_acc(acc_x, acc_y, acc_z):
     """
