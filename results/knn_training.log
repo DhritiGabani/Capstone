@@ -1,0 +1,145 @@
+============================================================
+Improved KNN Exercise Classifier - Training Pipeline
+============================================================
+
+Loading data...
+Loaded 2958 segmented samples
+Loaded 1175017 full data samples
+
+Subject splits:
+Train (21): [9, 14, 10, 22, 1, 12, 17, 18, 13, 25, 2, 5, 6, 3, 16, 23, 4, 26, 24, 19, 27]
+Val (3): [21, 8, 11]
+Test (3): [15, 20, 7]
+
+============================================================
+Preparing Training Data (Segmented)
+============================================================
+Processing 2324 segments...
+Training set: (2324, 48)
+Class distribution:
+Ankle Rotation    1158
+Calf Raises        652
+Heel Walk          514
+dtype: int64
+
+============================================================
+Preparing Validation Data (Segmented)
+============================================================
+Processing 308 segments...
+Validation set: (308, 48)
+Class distribution:
+Ankle Rotation    166
+Calf Raises        78
+Heel Walk          64
+dtype: int64
+
+============================================================
+Training Improved KNN Model
+============================================================
+Training with 2324 samples...
+
+============================================================
+Feature Selection
+============================================================
+Selecting top 24 features out of 48
+Selected features: [ 0  1  2  3  6  8  9 11 12 14 15 18 25 31 32 33 35 36 38 39 42 44 45 47]
+Feature scores (top 10): [0.6607414895849282, 0.6594002017650316, 0.6551524876041939, 0.5906719582694602, 0.5787759284465137, 0.48840315063749085, 0.4651393477508232, 0.4593505442682866, 0.45852429071947687, 0.4282853734129608]
+
+============================================================
+Hyperparameter Tuning (on preprocessed features)
+============================================================
+Fitting 5 folds for each of 32 candidates, totalling 160 fits
+
+Best parameters: {'metric': 'manhattan', 'n_neighbors': 3, 'weights': 'uniform'}
+Best CV score: 0.9961
+Validation score: 0.9935
+Training complete. Classes: ['Ankle Rotation' 'Calf Raises' 'Heel Walk']
+
+============================================================
+Training Set Performance
+============================================================
+
+============================================================
+Training Set Results
+============================================================
+Accuracy: 1.0000
+
+Classification Report:
+                precision    recall  f1-score   support
+
+Ankle Rotation       1.00      1.00      1.00      1158
+   Calf Raises       1.00      1.00      1.00       652
+     Heel Walk       1.00      1.00      1.00       514
+
+      accuracy                           1.00      2324
+     macro avg       1.00      1.00      1.00      2324
+  weighted avg       1.00      1.00      1.00      2324
+
+Saved confusion matrix to results/knn_model_improved/confusion_matrix_train.png
+
+============================================================
+Validation Set Results
+============================================================
+Accuracy: 0.9935
+
+Classification Report:
+                precision    recall  f1-score   support
+
+Ankle Rotation       1.00      1.00      1.00       166
+   Calf Raises       0.97      1.00      0.99        78
+     Heel Walk       1.00      0.97      0.98        64
+
+      accuracy                           0.99       308
+     macro avg       0.99      0.99      0.99       308
+  weighted avg       0.99      0.99      0.99       308
+
+Saved confusion matrix to results/knn_model_improved/confusion_matrix_val.png
+
+============================================================
+Preparing Test Data (Full Unsegmented Files)
+============================================================
+
+Preparing unsegmented test data for subjects: [15, 20, 7]
+Window size: 100, Overlap: 50
+Created 1506 test windows from unsegmented data
+Test set: (1506, 48)
+Class distribution:
+Ankle Rotation    838
+Calf Raises       398
+Heel Walk         270
+dtype: int64
+
+============================================================
+Test (Unsegmented) Set Results
+============================================================
+Accuracy: 0.8539
+
+Classification Report:
+                precision    recall  f1-score   support
+
+Ankle Rotation       0.98      0.87      0.92       838
+   Calf Raises       0.84      0.87      0.86       398
+     Heel Walk       0.60      0.77      0.67       270
+
+      accuracy                           0.85      1506
+     macro avg       0.81      0.84      0.82      1506
+  weighted avg       0.88      0.85      0.86      1506
+
+Saved confusion matrix to results/knn_model_improved/confusion_matrix_test.png
+Model saved to results/knn_model_improved/knn_classifier_improved.pkl
+Traceback (most recent call last):
+  File "/Users/dhritigabani/Capstone/models/knn_classifier_improved.py", line 521, in <module>
+    main()
+  File "/Users/dhritigabani/Capstone/models/knn_classifier_improved.py", line 479, in main
+    json.dump(results_summary, f, indent=2)
+  File "/Users/dhritigabani/miniconda3/lib/python3.10/json/__init__.py", line 179, in dump
+    for chunk in iterable:
+  File "/Users/dhritigabani/miniconda3/lib/python3.10/json/encoder.py", line 431, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/Users/dhritigabani/miniconda3/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/Users/dhritigabani/miniconda3/lib/python3.10/json/encoder.py", line 438, in _iterencode
+    o = _default(o)
+  File "/Users/dhritigabani/miniconda3/lib/python3.10/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type int64 is not JSON serializable

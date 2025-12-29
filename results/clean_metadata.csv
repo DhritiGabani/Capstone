@@ -1,0 +1,515 @@
+subject_id,date,exercise,set,sensor_location,file_path
+4,10_30_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+4,10_30_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+4,10_30_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+4,10_30_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+4,10_30_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+4,10_30_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+4,10_30_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+4,10_30_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+4,10_30_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+4,10_30_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+4,10_30_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+4,10_30_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+4,10_30_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+4,10_30_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+4,10_30_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+4,10_30_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+4,10_30_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+4,10_30_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+4,10_30_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+4,10_30_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_004_Rohan/10_30_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+13,11_04_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+13,11_04_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+13,11_04_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+13,11_04_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+13,11_04_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+13,11_04_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+13,11_04_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+13,11_04_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+13,11_04_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+13,11_04_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+13,11_04_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+13,11_04_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+13,11_04_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+13,11_04_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+13,11_04_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+13,11_04_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+13,11_04_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+13,11_04_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+13,11_04_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+13,11_04_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_013_Emily/11_04_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+1,10_28_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Ankle Rotation/MT_012002CC-003-000_00B4737C.txt
+1,10_28_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Ankle Rotation/MT_012002CC-001-000_00B472EC.txt
+1,10_28_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Ankle Rotation/MT_012002CC-002-000_00B4737C.txt
+1,10_28_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Ankle Rotation/MT_012002CC-002-000_00B472EC.txt
+1,10_28_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Ankle Rotation/MT_012002CC-001-000_00B4737C.txt
+1,10_28_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Ankle Rotation/MT_012002CC-003-000_00B472EC.txt
+1,10_28_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Ankle Rotation/MT_012002CC-000-000_00B4737C.txt
+1,10_28_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Calf Raises/MT_012002CC-000-000_00B472EC.txt
+1,10_28_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Calf Raises/MT_012002CC-001-000_00B472EC.txt
+1,10_28_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Calf Raises/MT_012002CC-001-000_00B4737C.txt
+1,10_28_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Calf Raises/MT_012002CC-000-000_00B4737C.txt
+1,10_28_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+1,10_28_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+1,10_28_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Heel Walking/MT_012002CC-000-000_00B472EC.txt
+1,10_28_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Heel Walking/MT_012002CC-001-000_00B472EC.txt
+1,10_28_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Heel Walking/MT_012002CC-001-000_00B4737C.txt
+1,10_28_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Heel Walking/MT_012002CC-000-000_00B4737C.txt
+1,10_28_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Knee to Wall/MT_012002CC-000-000_00B472EC.txt
+1,10_28_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_001_Dhriti/10_28_25/Knee to Wall/MT_012002CC-000-000_00B4737C.txt
+3,10_30_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+3,10_30_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+3,10_30_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+3,10_30_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+3,10_30_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+3,10_30_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+3,10_30_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+3,10_30_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+3,10_30_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+3,10_30_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+3,10_30_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+3,10_30_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+3,10_30_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+3,10_30_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+3,10_30_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+3,10_30_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+3,10_30_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+3,10_30_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+3,10_30_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_003_Mika/10_30_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+27,11_11_2025,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B4737B.txt
+27,11_11_2025,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+27,11_11_2025,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B4737B.txt
+27,11_11_2025,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+27,11_11_2025,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B472EE.txt
+27,11_11_2025,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+27,11_11_2025,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B472EE.txt
+27,11_11_2025,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+27,11_11_2025,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Calf Raises/MT_012002CC_001-000_00B472EE.txt
+27,11_11_2025,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Calf Raises/MT_012002CC_000-000_00B472EE.txt
+27,11_11_2025,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Calf Raises/MT_012002CC_000-000_00B4737B.txt
+27,11_11_2025,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Calf Raises/MT_012002CC_001-000_00B4737B.txt
+27,11_11_2025,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Calibration/MT_012002CC_000-000_00B472EC.txt
+27,11_11_2025,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Calibration/MT_012002CC_000-000_00B4737C.txt
+27,11_11_2025,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Heel Walking/MT_012002CC_001-000_00B472EE.txt
+27,11_11_2025,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Heel Walking/MT_012002CC_000-000_00B472EE.txt
+27,11_11_2025,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Heel Walking/MT_012002CC_000-000_00B4737B.txt
+27,11_11_2025,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Heel Walking/MT_012002CC_001-000_00B4737B.txt
+27,11_11_2025,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B472EE.txt
+27,11_11_2025,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_027_Austin/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B4737B.txt
+21,11_07_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+21,11_07_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+21,11_07_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+21,11_07_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+21,11_07_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+21,11_07_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+21,11_07_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+21,11_07_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+21,11_07_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+21,11_07_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+21,11_07_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+21,11_07_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+21,11_07_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+21,11_07_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+21,11_07_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+21,11_07_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+21,11_07_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+21,11_07_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+21,11_07_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+21,11_07_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_021_Vanessa/11_07_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+6,10_31_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+6,10_31_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+6,10_31_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+6,10_31_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+6,10_31_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+6,10_31_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+6,10_31_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+6,10_31_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+6,10_31_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+6,10_31_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+6,10_31_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+6,10_31_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+6,10_31_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+6,10_31_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+6,10_31_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+6,10_31_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_006_Clara/10_31_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+16,04_11_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Ankle Rotation/MT_012002CC_001-000_00B472EF.txt
+16,04_11_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Ankle Rotation/MT_012002CC_001-000_00B472E6.txt
+16,04_11_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Ankle Rotation/MT_012002CC_000-000_00B472EF.txt
+16,04_11_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Ankle Rotation/MT_012002CC_000-000_00B472E6.txt
+16,04_11_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Ankle Rotation/MT_012002CC_003-000_00B472EF.txt
+16,04_11_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Ankle Rotation/MT_012002CC_003-000_00B472E6.txt
+16,04_11_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Ankle Rotation/MT_012002CC_002-000_00B472EF.txt
+16,04_11_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Ankle Rotation/MT_012002CC_002-000_00B472E6.txt
+16,04_11_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Calf Raises/MT_012002CC_001-000_00B472EF.txt
+16,04_11_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Calf Raises/MT_012002CC_001-000_00B472E6.txt
+16,04_11_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Calf Raises/MT_012002CC_000-000_00B472EF.txt
+16,04_11_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Calf Raises/MT_012002CC_000-000_00B472E6.txt
+16,04_11_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Calibration/MT_012002CC_000-000_00B472EF.txt
+16,04_11_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Calibration/MT_012002CC_000-000_00B472E6.txt
+16,04_11_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Heel Walking/MT_012002CC_001-000_00B472EF.txt
+16,04_11_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Heel Walking/MT_012002CC_001-000_00B472E6.txt
+16,04_11_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Heel Walking/MT_012002CC_000-000_00B472EF.txt
+16,04_11_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Heel Walking/MT_012002CC_000-000_00B472E6.txt
+16,04_11_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Knee to Wall/MT_012002CC_000-000_00B472EF.txt
+16,04_11_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_016_Taran/04_11_25/Knee to Wall/MT_012002CC_000-000_00B472E6.txt
+14,11_04_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_014_Niveditha/11_04_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+14,11_04_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_014_Niveditha/11_04_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+14,11_04_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_014_Niveditha/11_04_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+14,11_04_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_014_Niveditha/11_04_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+14,11_04_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_014_Niveditha/11_04_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+14,11_04_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_014_Niveditha/11_04_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+14,11_04_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_014_Niveditha/11_04_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+14,11_04_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_014_Niveditha/11_04_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+14,11_04_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_014_Niveditha/11_04_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+14,11_04_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_014_Niveditha/11_04_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+20,11_07_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+20,11_07_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+20,11_07_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+20,11_07_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+20,11_07_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+20,11_07_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+20,11_07_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+20,11_07_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+20,11_07_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+20,11_07_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+20,11_07_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+20,11_07_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+20,11_07_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+20,11_07_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+20,11_07_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+20,11_07_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+20,11_07_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+20,11_07_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_020_Alexa/11_07_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+24,11_11_2025,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+24,11_11_2025,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+24,11_11_2025,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+24,11_11_2025,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+24,11_11_2025,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+24,11_11_2025,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+24,11_11_2025,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+24,11_11_2025,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+24,11_11_2025,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+24,11_11_2025,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+24,11_11_2025,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+24,11_11_2025,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+24,11_11_2025,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Calibration/MT_012002CC_000-000_00B472EC.txt
+24,11_11_2025,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Calibration/MT_012002CC_000-000_00B4737C.txt
+24,11_11_2025,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+24,11_11_2025,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+24,11_11_2025,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+24,11_11_2025,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+24,11_11_2025,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+24,11_11_2025,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_024_Simon/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+26,11_11_2025,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+26,11_11_2025,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+26,11_11_2025,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+26,11_11_2025,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+26,11_11_2025,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+26,11_11_2025,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+26,11_11_2025,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+26,11_11_2025,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+26,11_11_2025,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+26,11_11_2025,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+26,11_11_2025,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+26,11_11_2025,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+26,11_11_2025,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Calibration/MT_012002CC_000-000_00B472EC.txt
+26,11_11_2025,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Calibration/MT_012002CC_000-000_00B4737C.txt
+26,11_11_2025,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+26,11_11_2025,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+26,11_11_2025,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+26,11_11_2025,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+26,11_11_2025,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+26,11_11_2025,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_026_Ananya/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+12,11_04_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+12,11_04_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+12,11_04_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+12,11_04_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+12,11_04_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+12,11_04_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+12,11_04_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+12,11_04_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+12,11_04_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+12,11_04_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+12,11_04_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+12,11_04_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+12,11_04_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+12,11_04_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+12,11_04_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+12,11_04_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+12,11_04_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+12,11_04_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+12,11_04_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+12,11_04_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_012_Tiffany/11_04_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+18,11_07_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+18,11_07_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+18,11_07_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+18,11_07_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+18,11_07_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+18,11_07_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+18,11_07_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+18,11_07_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+18,11_07_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+18,11_07_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+18,11_07_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+18,11_07_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+18,11_07_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+18,11_07_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+18,11_07_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+18,11_07_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+18,11_07_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+18,11_07_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+18,11_07_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+18,11_07_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_018_Binal/11_07_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+9,10_31_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+9,10_31_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+9,10_31_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+9,10_31_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+9,10_31_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+9,10_31_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+9,10_31_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+9,10_31_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+9,10_31_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+9,10_31_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+9,10_31_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+9,10_31_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+9,10_31_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+9,10_31_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+9,10_31_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+9,10_31_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+9,10_31_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+9,10_31_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+9,10_31_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+9,10_31_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_009_Jenny/10_31_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+5,10_31_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+5,10_31_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+5,10_31_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+5,10_31_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+5,10_31_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+5,10_31_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+5,10_31_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+5,10_31_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+5,10_31_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+5,10_31_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+5,10_31_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+5,10_31_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+5,10_31_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+5,10_31_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+5,10_31_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+5,10_31_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+5,10_31_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+5,10_31_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+5,10_31_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+5,10_31_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_005_Ashley/10_31_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+10,11_04_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+10,11_04_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+10,11_04_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+10,11_04_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+10,11_04_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+10,11_04_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+10,11_04_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+10,11_04_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+10,11_04_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+10,11_04_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+10,11_04_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+10,11_04_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+10,11_04_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+10,11_04_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+10,11_04_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+10,11_04_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+10,11_04_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+10,11_04_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+10,11_04_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+10,11_04_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_010_Gloria/11_04_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+17,11_07_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+17,11_07_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+17,11_07_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+17,11_07_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+17,11_07_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+17,11_07_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+17,11_07_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+17,11_07_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+17,11_07_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+17,11_07_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+17,11_07_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+17,11_07_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+17,11_07_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+17,11_07_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+17,11_07_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+17,11_07_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+17,11_07_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+17,11_07_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+17,11_07_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+17,11_07_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_017_Ryan/11_07_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+11,11_04_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+11,11_04_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+11,11_04_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+11,11_04_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+11,11_04_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+11,11_04_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+11,11_04_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+11,11_04_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+11,11_04_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+11,11_04_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+11,11_04_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+11,11_04_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+11,11_04_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+11,11_04_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+11,11_04_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+11,11_04_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+11,11_04_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+11,11_04_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_011_Shirley/11_04_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+19,11_07_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+19,11_07_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+19,11_07_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+19,11_07_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+19,11_07_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+19,11_07_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+19,11_07_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+19,11_07_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+19,11_07_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+19,11_07_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+19,11_07_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+19,11_07_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+19,11_07_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+19,11_07_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+19,11_07_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+19,11_07_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+19,11_07_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+19,11_07_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_019_Chris/11_07_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+15,11_04_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Ankle Rotation/MT_012002CC_001-000_00B472EF.txt
+15,11_04_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Ankle Rotation/MT_012002CC_001-000_00B472E6.txt
+15,11_04_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Ankle Rotation/MT_012002CC_000-000_00B472EF.txt
+15,11_04_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Ankle Rotation/MT_012002CC_000-000_00B472E6.txt
+15,11_04_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Ankle Rotation/MT_012002CC_003-000_00B472EF.txt
+15,11_04_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Ankle Rotation/MT_012002CC_003-000_00B472E6.txt
+15,11_04_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Ankle Rotation/MT_012002CC_002-000_00B472EF.txt
+15,11_04_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Ankle Rotation/MT_012002CC_002-000_00B472E6.txt
+15,11_04_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Calf Raises/MT_012002CC_001-000_00B472EF.txt
+15,11_04_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Calf Raises/MT_012002CC_001-000_00B472E6.txt
+15,11_04_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Calf Raises/MT_012002CC_000-000_00B472EF.txt
+15,11_04_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Calf Raises/MT_012002CC_000-000_00B472E6.txt
+15,11_04_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Calibration/MT_012002CC_000-000_00B472EF.txt
+15,11_04_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Calibration/MT_012002CC_000-000_00B472E6.txt
+15,11_04_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Heel Walking/MT_012002CC_001-000_00B472EF.txt
+15,11_04_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Heel Walking/MT_012002CC_001-000_00B472E6.txt
+15,11_04_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Heel Walking/MT_012002CC_000-000_00B472EF.txt
+15,11_04_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Heel Walking/MT_012002CC_000-000_00B472E6.txt
+15,11_04_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Knee to Wall/MT_012002CC_000-000_00B472EF.txt
+15,11_04_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_015_Khushi/11_04_25/Knee to Wall/MT_012002CC_000-000_00B472E6.txt
+25,11_11_2025,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+25,11_11_2025,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+25,11_11_2025,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+25,11_11_2025,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+25,11_11_2025,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+25,11_11_2025,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+25,11_11_2025,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+25,11_11_2025,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+25,11_11_2025,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+25,11_11_2025,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+25,11_11_2025,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+25,11_11_2025,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+25,11_11_2025,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Calibration/MT_012002CC_000-000_00B472EC.txt
+25,11_11_2025,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Calibration/MT_012002CC_000-000_00B4737C.txt
+25,11_11_2025,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+25,11_11_2025,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+25,11_11_2025,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+25,11_11_2025,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+25,11_11_2025,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+25,11_11_2025,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_025_Sanah/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+23,11_11_2025,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+23,11_11_2025,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+23,11_11_2025,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+23,11_11_2025,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+23,11_11_2025,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+23,11_11_2025,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+23,11_11_2025,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+23,11_11_2025,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+23,11_11_2025,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+23,11_11_2025,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+23,11_11_2025,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+23,11_11_2025,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+23,11_11_2025,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Calibration/MT_012002CC_000-000_00B472EC.txt
+23,11_11_2025,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Calibration/MT_012002CC_000-000_00B4737C.txt
+23,11_11_2025,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+23,11_11_2025,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+23,11_11_2025,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+23,11_11_2025,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+23,11_11_2025,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+23,11_11_2025,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_023_Kevin/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+22,11_11_2025,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B4737B.txt
+22,11_11_2025,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B472EF.txt
+22,11_11_2025,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B472EF.txt
+22,11_11_2025,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B4737B.txt
+22,11_11_2025,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Ankle Rotation/MT_012002CC_003-000_00B472EF.txt
+22,11_11_2025,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Ankle Rotation/MT_012002CC_000-000_00B4737B.txt
+22,11_11_2025,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Ankle Rotation/MT_012002CC_001-000_00B4737B.txt
+22,11_11_2025,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Ankle Rotation/MT_012002CC_002-000_00B472EF.txt
+22,11_11_2025,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Calf Raises/MT_012002CC_001-000_00B472EF.txt
+22,11_11_2025,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Calf Raises/MT_012002CC_000-000_00B472EF.txt
+22,11_11_2025,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Calf Raises/MT_012002CC_000-000_00B4737B.txt
+22,11_11_2025,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Calf Raises/MT_012002CC_001-000_00B4737B.txt
+22,11_11_2025,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Calibration/MT_012002CC_000-000_00B472EF.txt
+22,11_11_2025,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Calibration/MT_012002CC_000-000_00B4737B.txt
+22,11_11_2025,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Heel Walking/MT_012002CC_001-000_00B472EF.txt
+22,11_11_2025,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Heel Walking/MT_012002CC_000-000_00B472EF.txt
+22,11_11_2025,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Heel Walking/MT_012002CC_000-000_00B4737B.txt
+22,11_11_2025,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Heel Walking/MT_012002CC_001-000_00B4737B.txt
+22,11_11_2025,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B472EF.txt
+22,11_11_2025,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_022_Andrew/11_11_2025/Knee to Wall/MT_012002CC_000-000_00B4737B.txt
+2,10_30_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+2,10_30_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+2,10_30_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+2,10_30_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+2,10_30_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+2,10_30_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+2,10_30_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+2,10_30_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+2,10_30_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+2,10_30_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+2,10_30_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+2,10_30_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+2,10_30_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+2,10_30_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+2,10_30_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+2,10_30_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_002_Sophia/10_30_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+7,10_31_25,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+7,10_31_25,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+7,10_31_25,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+7,10_31_25,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+7,10_31_25,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+7,10_31_25,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+7,10_31_25,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+7,10_31_25,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+7,10_31_25,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+7,10_31_25,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+7,10_31_25,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+7,10_31_25,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+7,10_31_25,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Calibration/MT_012002CC_000-000_00B472EC.txt
+7,10_31_25,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Calibration/MT_012002CC_000-000_00B4737C.txt
+7,10_31_25,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+7,10_31_25,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+7,10_31_25,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+7,10_31_25,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+7,10_31_25,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+7,10_31_25,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_007_Rylin/10_31_25/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
+8,10_31_2025,Ankle Rotation,10_slow_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Ankle Rotation/MT_012002CC_002-000_00B4737C.txt
+8,10_31_2025,Ankle Rotation,10_fast_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Ankle Rotation/MT_012002CC_001-000_00B472EC.txt
+8,10_31_2025,Ankle Rotation,10_fast_CCW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Ankle Rotation/MT_012002CC_003-000_00B4737C.txt
+8,10_31_2025,Ankle Rotation,10_slow_CW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Ankle Rotation/MT_012002CC_000-000_00B472EC.txt
+8,10_31_2025,Ankle Rotation,10_slow_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Ankle Rotation/MT_012002CC_000-000_00B4737C.txt
+8,10_31_2025,Ankle Rotation,10_fast_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Ankle Rotation/MT_012002CC_003-000_00B472EC.txt
+8,10_31_2025,Ankle Rotation,10_fast_CW,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Ankle Rotation/MT_012002CC_001-000_00B4737C.txt
+8,10_31_2025,Ankle Rotation,10_slow_CCW,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Ankle Rotation/MT_012002CC_002-000_00B472EC.txt
+8,10_31_2025,Calf Raises,10_fast,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Calf Raises/MT_012002CC_001-000_00B472EC.txt
+8,10_31_2025,Calf Raises,10_slow,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Calf Raises/MT_012002CC_000-000_00B472EC.txt
+8,10_31_2025,Calf Raises,10_slow,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Calf Raises/MT_012002CC_000-000_00B4737C.txt
+8,10_31_2025,Calf Raises,10_fast,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Calf Raises/MT_012002CC_001-000_00B4737C.txt
+8,10_31_2025,Calibration,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Calibration/MT_012002CC_000-000_00B472EC.txt
+8,10_31_2025,Calibration,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Calibration/MT_012002CC_000-000_00B4737C.txt
+8,10_31_2025,Heel Walk,toe_low,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Heel Walking/MT_012002CC_001-000_00B472EC.txt
+8,10_31_2025,Heel Walk,toe_high,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Heel Walking/MT_012002CC_000-000_00B472EC.txt
+8,10_31_2025,Heel Walk,toe_high,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Heel Walking/MT_012002CC_000-000_00B4737C.txt
+8,10_31_2025,Heel Walk,toe_low,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Heel Walking/MT_012002CC_001-000_00B4737C.txt
+8,10_31_2025,Knee to Wall,default,shank,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Knee to Wall/MT_012002CC_000-000_00B472EC.txt
+8,10_31_2025,Knee to Wall,default,foot,/Users/dhritigabani/Capstone/preprocessing/../dataset/Subject_008_Luke/10_31_2025/Knee to Wall/MT_012002CC_000-000_00B4737C.txt
