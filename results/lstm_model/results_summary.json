@@ -1,24 +1,26 @@
 {
+  "model_type": "LSTM trained on unsegmented data with combined sensors",
+  "training_data": "unsegmented (full exercise files)",
+  "sensors_combined": true,
   "model_architecture": {
     "lstm_units": [
       32
     ],
     "dropout_rate": 0.5,
     "l2_regularization": 0.01,
-    "max_sequence_length": 637,
-    "num_features": 6,
-    "improvements": "Stronger regularization to reduce overfitting"
+    "max_sequence_length": 5313,
+    "num_features": 12
   },
-  "train_accuracy": 0.9901032702237521,
-  "val_accuracy": 0.987012987012987,
-  "test_accuracy": 0.8293492695883135,
-  "train_samples": 2324,
-  "val_samples": 308,
-  "test_samples": 1506,
+  "train_accuracy": 0.7046979665756226,
+  "val_accuracy": 0.6875,
+  "test_accuracy": 0.7333333492279053,
+  "train_samples": 149,
+  "val_samples": 16,
+  "test_samples": 30,
   "classes": [
     "Ankle Rotation",
     "Calf Raises",
     "Heel Walk"
   ],
-  "epochs_trained": 56
+  "epochs_trained": 39
 }

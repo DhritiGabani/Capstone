@@ -1,17 +1,18 @@
 {
+  "model_type": "KNN with Combined Sensors (foot + shank)",
+  "sensors_combined": true,
   "best_params": {
-    "metric": "manhattan",
     "n_neighbors": 3,
     "weights": "uniform"
   },
-  "n_features_selected": 24,
-  "total_features": 48,
+  "n_features_selected": 10,
+  "total_features": 72,
   "train_accuracy": 1.0,
-  "val_accuracy": 0.9935,
-  "test_accuracy": 0.8539,
-  "train_samples": 2324,
-  "val_samples": 308,
-  "test_samples": 1506,
+  "val_accuracy": 1.0,
+  "test_accuracy": 0.9029411764705882,
+  "train_samples": 1162,
+  "val_samples": 107,
+  "test_samples": 1020,
   "classes": [
     "Ankle Rotation",
     "Calf Raises",

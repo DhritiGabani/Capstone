@@ -1,0 +1,71 @@
+{
+  "model_architecture": {
+    "cnn_filters": [
+      64,
+      128
+    ],
+    "kernel_size": 5,
+    "lstm_units": 64,
+    "dropout_rate": 0.3,
+    "l2_regularization": 0.001,
+    "max_sequence_length": 5313,
+    "num_features": 6,
+    "num_classes": 3
+  },
+  "normalization": {
+    "feature_mean": [
+      -2.284539990696964,
+      2.337899049791637,
+      8.046678043982826,
+      0.008566084623584732,
+      0.012143247148478515,
+      -0.009822841493251497,
+      -7.9178097655230895,
+      3.020043324256019,
+      -0.7951591700271586,
+      0.0013285438049475886,
+      0.006577598465048151,
+      -0.012716311236566477
+    ],
+    "feature_std": [
+      3.830675358144904,
+      1.6841788645430738,
+      1.8263654147249997,
+      0.4733618400438826,
+      0.8189256206368214,
+      0.6273974423153381,
+      2.0318177270914672,
+      4.166138453171374,
+      1.300063556823751,
+      0.21434363741678827,
+      0.0713557979909037,
+      0.2051595719150495
+    ],
+    "max_reps": 15.0
+  },
+  "training": {
+    "train_samples": 149,
+    "val_samples": 16,
+    "test_samples": 30,
+    "epochs_trained": 48,
+    "learning_rate": 0.0001,
+    "gradient_clipping": 1.0
+  },
+  "classification_results": {
+    "train_accuracy": 0.7986577181208053,
+    "val_accuracy": 1.0,
+    "test_accuracy": 0.8
+  },
+  "counting_results": {
+    "train_mae": 4.128641128540039,
+    "val_mae": 2.3373265266418457,
+    "test_mae": 4.878407001495361,
+    "test_mean_error": -4.666933059692383,
+    "test_std_error": 3.8954875469207764
+  },
+  "classes": [
+    "Ankle Rotation",
+    "Calf Raises",
+    "Heel Walk"
+  ]
+}
