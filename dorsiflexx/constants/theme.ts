@@ -10,6 +10,8 @@ const tintColorDark = "#fff";
 
 export const Colors = {
   light: {
+    white: "#fff",
+    orange: "#FF7A28",
     darkPurple: "#8d44bc",
     mediumPurple: "#dca5ff",
     lightPurple: "#faf3ff",
@@ -21,6 +23,8 @@ export const Colors = {
     tabIconSelected: tintColorLight,
   },
   dark: {
+    white: "#fff",
+    orange: "#FF7A28",
     darkPurple: "#8d44bc",
     mediumPurple: "#dca5ff",
     lightPurple: "#faf3ff",
