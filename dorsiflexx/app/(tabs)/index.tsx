@@ -1,98 +1,214 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import React from "react";
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+
+type Day = {
+  label: string;
+  // "check" = completed, "miss" = attempted but failed, "empty" = not done yet
+  state: "check" | "miss" | "empty";
+  isToday?: boolean;
+};
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const colorScheme = useColorScheme();
+  const theme = Colors[colorScheme ?? "light"];
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const name = "Jane";
+  const goalText = "2x per day";
+
+  const days: Day[] = [
+    { label: "Sun", state: "check" },
+    { label: "Mon", state: "miss" },
+    { label: "Tue", state: "check" },
+    { label: "Wed", state: "check" },
+    { label: "Thu", state: "empty", isToday: true },
+    { label: "Fri", state: "empty" },
+    { label: "Sat", state: "empty" },
+  ];
+
+  return (
+    <SafeAreaView style={styles.safe}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <Text style={[styles.welcome, { color: theme.text }]}>
+          Welcome back, {name}!
+        </Text>
+
+        <View style={styles.flameWrap}>
+          <IconSymbol name="flame.fill" size={120} color={theme.orange} />
+        </View>
+
+        <Text style={[styles.goal, { color: theme.text }]}>
+          <Text style={styles.goalBold}>GOAL:</Text> {goalText}
+        </Text>
+
+        <View style={styles.streakRow}>
+          {days.map((d) => (
+            <View key={d.label} style={styles.dayCol}>
+              <View
+                style={[
+                  styles.dayCircle,
+                  d.state === "check" && styles.circleCheck,
+                  d.state === "miss" && styles.circleMiss,
+                  d.state === "empty" && styles.circleEmpty,
+                  d.isToday && styles.circleTodayRing,
+                ]}
+              >
+                {d.state === "check" && (
+                  <IconSymbol name="checkmark" size={18} color="#FFFFFF" />
+                )}
+                {d.state === "miss" && (
+                  <IconSymbol name="xmark" size={18} color="#FFFFFF" />
+                )}
+              </View>
+              <Text style={[styles.dayLabel, { color: theme.text }]}>
+                {d.label}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        <View style={styles.buttons}>
+          <PillButton
+            title={"View most recent\nexercise session"}
+            onPress={() => {}}
+            backgroundColor={theme.darkPurple}
+            textColor={theme.white}
+          />
+          <PillButton
+            title={"Start new\nexercise session"}
+            onPress={() => {}}
+            backgroundColor={theme.darkPurple}
+            textColor={theme.white}
+          />
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
+function PillButton({
+  title,
+  onPress,
+  backgroundColor,
+  textColor,
+}: {
+  title: string;
+  onPress: () => void;
+  backgroundColor?: string;
+  textColor?: string;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.button,
+        backgroundColor && { backgroundColor },
+        pressed && styles.pressed,
+      ]}
+    >
+      <Text style={[styles.buttonText, textColor && { color: textColor }]}>
+        {title}
+      </Text>
+    </Pressable>
+  );
+}
+
+const PURPLE = "#8D44BC";
+const MEDPURPLE = "#DCA5FF";
+
+const GRAY = "#BFBFBF";
+
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  safe: {
+    flex: 1,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  container: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: 22,
+    paddingTop: 12,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  welcome: {
+    fontSize: 26,
+    fontWeight: "400",
+    marginTop: 10,
+    marginBottom: 40,
+  },
+  flameWrap: {
+    marginTop: 10,
+    marginBottom: 0,
+  },
+  goal: {
+    marginTop: 10,
+    marginBottom: 20,
+    fontSize: 20,
+  },
+  goalBold: {
+    fontWeight: "800",
+  },
+  streakRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingHorizontal: 4,
+    marginTop: 6,
+    marginBottom: 40,
+  },
+  dayCol: {
+    alignItems: "center",
+    width: 40,
+  },
+  dayCircle: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 6,
+  },
+  circleCheck: {
+    backgroundColor: PURPLE,
+  },
+  circleMiss: {
+    backgroundColor: MEDPURPLE,
+    opacity: 0.95,
+  },
+  circleEmpty: {
+    backgroundColor: GRAY,
+  },
+  circleTodayRing: {
+    borderWidth: 2,
+    borderColor: PURPLE,
+    backgroundColor: GRAY,
+  },
+  dayLabel: {
+    fontSize: 12,
+    color: "#11181C",
+  },
+
+  buttons: {
+    width: "80%",
+    gap: 14,
+    marginTop: 10,
+  },
+  button: {
+    borderRadius: 999,
+    paddingVertical: 16,
+    paddingHorizontal: 22,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pressed: {
+    opacity: 0.9,
+    transform: [{ scale: 0.99 }],
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: "700",
+    textAlign: "center",
+    lineHeight: 22,
   },
 });
