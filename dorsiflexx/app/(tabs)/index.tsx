@@ -233,12 +233,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
   pressed: {
     opacity: 0.9,
     transform: [{ scale: 0.99 }],
   },
-
   buttonText: {
     fontSize: 20,
     fontWeight: "700",
