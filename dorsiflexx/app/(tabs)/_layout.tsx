@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HapticTab } from "@/components/haptic-tab";
@@ -12,6 +12,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const insets = useSafeAreaInsets();
+  const [bluetoothOn, setBluetoothOn] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -26,11 +27,19 @@ export default function TabLayout() {
           <Text style={[styles.title, { color: theme.text }]}>DorsiFlexx™</Text>
 
           <View style={styles.rightIcon}>
-            <IconSymbol
-              name="antenna.radiowaves.left.and.right"
-              size={20}
-              color={theme.icon}
-            />
+            <Pressable
+              onPress={() => setBluetoothOn((prev) => !prev)}
+              style={[
+                styles.bluetoothButton,
+                bluetoothOn && { backgroundColor: theme.darkPurple },
+              ]}
+            >
+              <IconSymbol
+                name="antenna.radiowaves.left.and.right"
+                size={18}
+                color={bluetoothOn ? theme.white : theme.icon}
+              />
+            </Pressable>
           </View>
         </View>
       </View>
@@ -41,7 +50,7 @@ export default function TabLayout() {
           screenOptions={{
             tabBarActiveTintColor: theme.tint,
             tabBarStyle: {
-              backgroundColor: theme.background, // or any color you want
+              backgroundColor: theme.background,
             },
             headerShown: false,
             tabBarButton: HapticTab,
@@ -122,6 +131,13 @@ const styles = StyleSheet.create({
     right: 16,
     top: 0,
     bottom: 0,
+    justifyContent: "center",
+  },
+  bluetoothButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
     justifyContent: "center",
   },
 
