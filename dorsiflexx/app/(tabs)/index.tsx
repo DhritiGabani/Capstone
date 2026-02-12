@@ -1,9 +1,6 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import React from "react";
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
-
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { Pressable, SafeAreaView, Text, View } from "react-native";
 
 type Day = {
   label: string;
@@ -12,9 +9,6 @@ type Day = {
 };
 
 export default function HomeScreen() {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? "light"];
-
   // HARDCODED VARIABLES /////////////////////////////
   const name = "Jane";
   const goalPerDay = 3;
@@ -32,59 +26,50 @@ export default function HomeScreen() {
   const goalText = `${goalPerDay}x per day`;
 
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: theme.background }]}>
-      <View style={styles.container}>
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
+      <View className="flex-1 px-[22px] pt-3">
         {/* Top section */}
-        <View style={styles.topSection}>
-          <Text style={[styles.welcome, { color: theme.text }]}>
+        <View className="pt-4 items-center gap-2">
+          <Text className="text-[26px] pb-2 text-[#11181C] dark:text-[#ECEDEE]">
             Welcome back, {name}!
           </Text>
 
-          <IconSymbol name="flame.fill" size={120} color={theme.orange} />
+          <IconSymbol name="flame.fill" size={120} color="#FF7A28" />
 
-          <Text style={[styles.goal, { color: theme.text }]}>
-            <Text style={styles.goalBold}>GOAL:</Text> {goalText}
+          <Text className="text-xl text-[#11181C] dark:text-[#ECEDEE]">
+            <Text className="font-extrabold">GOAL:</Text> {goalText}
           </Text>
         </View>
 
         {/* Middle section */}
-        <View style={styles.middleSection}>
-          <View style={styles.streakGrid}>
+        <View className="items-center flex-1 justify-center">
+          <View className="flex-row justify-between w-full px-1">
             {days.map((d) => (
               <View
                 key={d.label}
-                style={[
-                  styles.dayGridCol,
-                  d.isToday && {
-                    borderWidth: 2,
-                    borderColor: theme.darkPurple,
-                  },
-                ]}
+                className={`items-center w-10 py-1.5 rounded-xl ${
+                  d.isToday ? "border-2 border-brand-purple" : ""
+                }`}
               >
-                <Text style={[styles.dayTopLabel, { color: theme.text }]}>
+                <Text className="text-sm mb-2 text-[#11181C] dark:text-[#ECEDEE]">
                   {d.label}
                 </Text>
 
-                <View style={styles.boxStack}>
+                <View className="gap-2 items-center">
                   {Array.from({ length: goalPerDay }).map((_, i) => {
                     const filled = i < d.completedCount;
                     return (
                       <View
                         key={i}
-                        style={[
-                          styles.goalBox,
-                          {
-                            backgroundColor: filled
-                              ? theme.darkPurple
-                              : theme.lightGrey,
-                          },
-                        ]}
+                        className={`w-[22px] h-[22px] rounded-md items-center justify-center ${
+                          filled ? "bg-brand-purple" : "bg-brand-grey"
+                        }`}
                       >
                         {filled && (
                           <IconSymbol
                             name="checkmark"
                             size={14}
-                            color={theme.white}
+                            color="#fff"
                           />
                         )}
                       </View>
@@ -97,19 +82,15 @@ export default function HomeScreen() {
         </View>
 
         {/* Bottom section */}
-        <View style={styles.bottomSection}>
-          <View style={styles.buttons}>
+        <View className="pb-12 items-center">
+          <View className="w-4/5 gap-3.5 self-center max-w-[420px]">
             <PillButton
               title={"View most recent\nexercise session"}
               onPress={() => {}}
-              backgroundColor={theme.darkPurple}
-              textColor={theme.white}
             />
             <PillButton
               title={"Start new\nexercise session"}
               onPress={() => {}}
-              backgroundColor={theme.darkPurple}
-              textColor={theme.white}
             />
           </View>
         </View>
@@ -121,126 +102,18 @@ export default function HomeScreen() {
 function PillButton({
   title,
   onPress,
-  backgroundColor,
-  textColor,
 }: {
   title: string;
   onPress: () => void;
-  backgroundColor?: string;
-  textColor?: string;
 }) {
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.button,
-        backgroundColor && { backgroundColor },
-        pressed && styles.pressed,
-      ]}
+      className="rounded-full py-4 px-[22px] items-center justify-center bg-brand-purple active:opacity-90"
     >
-      <Text style={[styles.buttonText, textColor && { color: textColor }]}>
+      <Text className="text-xl font-bold text-center leading-[22px] text-white">
         {title}
       </Text>
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-  },
-
-  container: {
-    flex: 1,
-    paddingHorizontal: 22,
-    paddingTop: 12,
-  },
-
-  topSection: {
-    paddingTop: 16,
-    alignItems: "center",
-    gap: 8,
-  },
-
-  middleSection: {
-    alignItems: "center",
-    flex: 1, // takes up remaining space
-    justifyContent: "center",
-  },
-
-  bottomSection: {
-    paddingBottom: 48,
-    alignItems: "center",
-  },
-
-  welcome: {
-    fontSize: 26,
-    fontWeight: "400",
-    paddingBottom: 8,
-  },
-
-  goal: {
-    fontSize: 20,
-  },
-
-  goalBold: {
-    fontWeight: "800",
-  },
-
-  streakGrid: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingHorizontal: 4,
-  },
-
-  dayGridCol: {
-    alignItems: "center",
-    width: 40,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-
-  dayTopLabel: {
-    fontSize: 14,
-    marginBottom: 8,
-  },
-
-  boxStack: {
-    gap: 8,
-    alignItems: "center",
-  },
-
-  goalBox: {
-    width: 22,
-    height: 22,
-    borderRadius: 6,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  buttons: {
-    width: "80%",
-    gap: 14,
-    alignSelf: "center",
-    maxWidth: 420,
-  },
-
-  button: {
-    borderRadius: 999,
-    paddingVertical: 16,
-    paddingHorizontal: 22,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.9,
-    transform: [{ scale: 0.99 }],
-  },
-  buttonText: {
-    fontSize: 20,
-    fontWeight: "700",
-    textAlign: "center",
-    lineHeight: 22,
-  },
-});

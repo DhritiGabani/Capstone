@@ -1,43 +1,44 @@
 import { Tabs } from "expo-router";
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? "light"];
   const insets = useSafeAreaInsets();
   const [bluetoothOn, setBluetoothOn] = useState(false);
 
+  const iconColor = colorScheme === "dark" ? "#9BA1A6" : "#687076";
+  const tintColor = colorScheme === "dark" ? "#fff" : "#8d44bc";
+  const tabBgColor = colorScheme === "dark" ? "#151718" : "#fff";
+
   return (
-    <View style={styles.container}>
+    <View className="flex-1">
       {/* Static Top Bar */}
       <View
-        style={[
-          styles.topBar,
-          { backgroundColor: theme.background, paddingTop: insets.top },
-        ]}
+        className="bg-white dark:bg-[#151718]"
+        style={{ paddingTop: insets.top }}
       >
-        <View style={styles.topBarInner}>
-          <Text style={[styles.title, { color: theme.text }]}>DorsiFlexx™</Text>
+        <View className="h-8 justify-center items-center relative">
+          <Text className="text-base font-black text-[#11181C] dark:text-[#ECEDEE]">
+            DorsiFlexx™
+          </Text>
 
-          <View style={styles.rightIcon}>
+          <View className="absolute right-4 top-0 bottom-0 justify-center">
             <Pressable
               onPress={() => setBluetoothOn((prev) => !prev)}
-              style={[
-                styles.bluetoothButton,
-                bluetoothOn && { backgroundColor: theme.darkPurple },
-              ]}
+              className={`w-8 h-8 rounded-full items-center justify-center ${
+                bluetoothOn ? "bg-brand-purple" : ""
+              }`}
             >
               <IconSymbol
                 name="antenna.radiowaves.left.and.right"
                 size={18}
-                color={bluetoothOn ? theme.white : theme.icon}
+                color={bluetoothOn ? "#fff" : iconColor}
               />
             </Pressable>
           </View>
@@ -45,13 +46,11 @@ export default function TabLayout() {
       </View>
 
       {/* Tabs */}
-      <View style={styles.tabsContainer}>
+      <View className="flex-1">
         <Tabs
           screenOptions={{
-            tabBarActiveTintColor: theme.tint,
-            tabBarStyle: {
-              backgroundColor: theme.background,
-            },
+            tabBarActiveTintColor: tintColor,
+            tabBarStyle: { backgroundColor: tabBgColor },
             headerShown: false,
             tabBarButton: HapticTab,
           }}
@@ -111,35 +110,3 @@ export default function TabLayout() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-
-  topBar: {},
-  topBarInner: {
-    height: 32,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "900",
-  },
-  rightIcon: {
-    position: "absolute",
-    right: 16,
-    top: 0,
-    bottom: 0,
-    justifyContent: "center",
-  },
-  bluetoothButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  tabsContainer: { flex: 1 },
-});
