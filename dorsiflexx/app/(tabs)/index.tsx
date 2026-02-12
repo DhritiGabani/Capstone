@@ -17,7 +17,7 @@ export default function HomeScreen() {
 
   // HARDCODED VARIABLES /////////////////////////////
   const name = "Jane";
-  const goalPerDay = 2;
+  const goalPerDay = 3;
   const days: Day[] = [
     { label: "Sun", completedCount: 2 },
     { label: "Mon", completedCount: 0 },
