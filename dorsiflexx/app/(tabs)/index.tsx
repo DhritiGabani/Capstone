@@ -11,7 +11,7 @@ type Day = {
 export default function HomeScreen() {
   // HARDCODED VARIABLES /////////////////////////////
   const name = "Jane";
-  const goalPerDay = 3;
+  const goalPerDay = 2;
   const days: Day[] = [
     { label: "Sun", completedCount: 2 },
     { label: "Mon", completedCount: 0 },
@@ -66,11 +66,7 @@ export default function HomeScreen() {
                         }`}
                       >
                         {filled && (
-                          <IconSymbol
-                            name="checkmark"
-                            size={14}
-                            color="#fff"
-                          />
+                          <IconSymbol name="checkmark" size={14} color="#fff" />
                         )}
                       </View>
                     );
@@ -109,7 +105,14 @@ function PillButton({
   return (
     <Pressable
       onPress={onPress}
-      className="rounded-full py-4 px-[22px] items-center justify-center bg-brand-purple active:opacity-90"
+      className="
+        rounded-full 
+        py-4 px-[22px] 
+        items-center justify-center 
+        bg-brand-purple
+        active:opacity-80
+        active:scale-95
+      "
     >
       <Text className="text-xl font-bold text-center leading-[22px] text-white">
         {title}
