@@ -1,98 +1,122 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import React from "react";
+import { Pressable, SafeAreaView, Text, View } from "react-native";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+type Day = {
+  label: string;
+  completedCount: number;
+  isToday?: boolean;
+};
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  // HARDCODED VARIABLES /////////////////////////////
+  const name = "Jane";
+  const goalPerDay = 2;
+  const days: Day[] = [
+    { label: "Sun", completedCount: 2 },
+    { label: "Mon", completedCount: 0 },
+    { label: "Tue", completedCount: 2 },
+    { label: "Wed", completedCount: 1 },
+    { label: "Thu", completedCount: 0, isToday: true },
+    { label: "Fri", completedCount: 0 },
+    { label: "Sat", completedCount: 0 },
+  ];
+  ////////////////////////////////////////////////////
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const goalText = `${goalPerDay}x per day`;
+
+  return (
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
+      <View className="flex-1 px-[22px] pt-3">
+        {/* Top section */}
+        <View className="pt-4 items-center gap-2">
+          <Text className="text-[26px] pb-2 text-[#11181C] dark:text-[#ECEDEE]">
+            Welcome back, {name}!
+          </Text>
+
+          <IconSymbol name="flame.fill" size={120} color="#FF7A28" />
+
+          <Text className="text-xl text-[#11181C] dark:text-[#ECEDEE]">
+            <Text className="font-extrabold">GOAL:</Text> {goalText}
+          </Text>
+        </View>
+
+        {/* Middle section */}
+        <View className="items-center flex-1 justify-center">
+          <View className="flex-row justify-between w-full px-1">
+            {days.map((d) => (
+              <View
+                key={d.label}
+                className={`items-center w-10 py-1.5 rounded-xl ${
+                  d.isToday ? "border-2 border-brand-purple" : ""
+                }`}
+              >
+                <Text className="text-sm mb-2 text-[#11181C] dark:text-[#ECEDEE]">
+                  {d.label}
+                </Text>
+
+                <View className="gap-2 items-center">
+                  {Array.from({ length: goalPerDay }).map((_, i) => {
+                    const filled = i < d.completedCount;
+                    return (
+                      <View
+                        key={i}
+                        className={`w-[22px] h-[22px] rounded-md items-center justify-center ${
+                          filled ? "bg-brand-purple" : "bg-brand-grey"
+                        }`}
+                      >
+                        {filled && (
+                          <IconSymbol name="checkmark" size={14} color="#fff" />
+                        )}
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Bottom section */}
+        <View className="pb-12 items-center">
+          <View className="w-4/5 gap-3.5 self-center max-w-[420px]">
+            <PillButton
+              title={"View most recent\nexercise session"}
+              onPress={() => {}}
+            />
+            <PillButton
+              title={"Start new\nexercise session"}
+              onPress={() => {}}
+            />
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+function PillButton({
+  title,
+  onPress,
+}: {
+  title: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      className="
+        rounded-full 
+        py-4 px-[22px] 
+        items-center justify-center 
+        bg-brand-purple
+        active:opacity-80
+        active:scale-95
+      "
+    >
+      <Text className="text-xl font-bold text-center leading-[22px] text-white">
+        {title}
+      </Text>
+    </Pressable>
+  );
+}
