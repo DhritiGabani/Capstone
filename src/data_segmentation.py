@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from scipy.signal import find_peaks
+import numpy as np
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.join(SCRIPT_DIR, "..")
@@ -74,15 +75,41 @@ def remove_bad_reps_and_renumber(segmented_df):
     
     return cleaned_df
 
+def normalize_rep_data(rep_data, features_to_normalize, n_baseline_samples=5):
+    """
+    Normalize a rep using its own first N samples as baseline.
+    """
+    rep_data_copy = rep_data.copy()
+    
+    for feature in features_to_normalize:
+        signal = rep_data_copy[feature].values
+        
+        if len(signal) >= n_baseline_samples:
+            baseline = np.mean(signal[:n_baseline_samples])
+        else:
+            baseline = signal[0] if len(signal) > 0 else 0
+        
+        if baseline != 0:
+            rep_data_copy[f'{feature}_norm'] = signal / baseline
+        else:
+            max_val = np.max(np.abs(signal))
+            if max_val != 0:
+                rep_data_copy[f'{feature}_norm'] = signal / max_val
+            else:
+                rep_data_copy[f'{feature}_norm'] = signal
+    
+    return rep_data_copy
+
 def segment_data(signals_df, meta_df):
     """
-    Segment the signals dataframe into individual reps with normalization.
+    Segment the signals dataframe into individual reps with PER-REP normalization.
     """
     segmented_rows = []
     
     foot_files = meta_df[meta_df['sensor_location'] == 'foot']['file_path'].unique()
     
-    for foot_file in foot_files:
+    
+    for file_idx, foot_file in enumerate(foot_files):
         foot_meta = meta_df[meta_df['file_path'] == foot_file].iloc[0]
         
         if foot_meta['exercise'] not in ['Ankle Rotation', 'Calf Raises', 'Heel Walk']:
@@ -112,30 +139,14 @@ def segment_data(signals_df, meta_df):
         if len(boundaries) == 0 or len(boundaries) < 7:
             continue
         
-        fifth_rep_start_idx = boundaries[4][0]
-        features_to_normalize = ['acc_x', 'acc_y', 'acc_z', 'gyr_x', 'gyr_y', 'gyr_z', 'roll', 'pitch']
-        
-        for feature in features_to_normalize:
-            baseline_value = foot_data[feature].iloc[fifth_rep_start_idx]
-            if baseline_value != 0:
-                foot_data[f'{feature}_norm'] = foot_data[feature] / baseline_value
-            else:
-                foot_data[f'{feature}_norm'] = foot_data[feature]
-        
-        fifth_rep_start_time = foot_data['time'].iloc[fifth_rep_start_idx]
-        shank_baseline_idx = (shank_data['time'] - fifth_rep_start_time).abs().idxmin()
-        
-        for feature in features_to_normalize:
-            baseline_value = shank_data[feature].loc[shank_baseline_idx]
-            if baseline_value != 0:
-                shank_data[f'{feature}_norm'] = shank_data[feature] / baseline_value
-            else:
-                shank_data[f'{feature}_norm'] = shank_data[feature]
-        
         trimmed_boundaries = boundaries[1:-1]
         
+        features_to_normalize = ['acc_x', 'acc_y', 'acc_z', 'gyr_x', 'gyr_y', 'gyr_z', 'roll', 'pitch']
+        
         for new_rep_num, (start_idx, end_idx) in enumerate(trimmed_boundaries, start=1):
-            foot_rep = foot_data.iloc[start_idx:end_idx+1]
+            foot_rep = foot_data.iloc[start_idx:end_idx+1].copy()
+            
+            foot_rep = normalize_rep_data(foot_rep, features_to_normalize, n_baseline_samples=5)
             
             start_time = foot_rep['time'].iloc[0]
             end_time = foot_rep['time'].iloc[-1]
@@ -143,7 +154,10 @@ def segment_data(signals_df, meta_df):
             shank_rep = shank_data[
                 (shank_data['time'] >= start_time) &
                 (shank_data['time'] <= end_time)
-            ]
+            ].copy()
+            
+            if not shank_rep.empty:
+                shank_rep = normalize_rep_data(shank_rep, features_to_normalize, n_baseline_samples=5)
             
             foot_row = {
                 'subject_id': foot_meta['subject_id'],
@@ -202,9 +216,11 @@ def segment_data(signals_df, meta_df):
                 }
                 segmented_rows.append(shank_row)
     
-    segmented_df_initial = pd.DataFrame(segmented_rows)
-    segmented_df_cleaned = remove_bad_reps_and_renumber(segmented_df_initial)
     
+    segmented_df_initial = pd.DataFrame(segmented_rows)
+    
+    segmented_df_cleaned = remove_bad_reps_and_renumber(segmented_df_initial)
+        
     return segmented_df_cleaned
 
 if __name__ == "__main__":
@@ -213,4 +229,5 @@ if __name__ == "__main__":
     
     segmented_signals = segment_data(signals_df, meta_df)
     
-    segmented_signals.to_csv("results/segmented_signals.csv", index=False)
+    output_path = os.path.join(PROJECT_DIR, "results/segmented_signals.csv")
+    segmented_signals.to_csv(output_path, index=False)
