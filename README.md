@@ -1,6 +1,6 @@
-# Dorsiflexx
+# DorsiFlexx
 ```markdown
-Ankle Rehabilitation Monitoring System
+A Wearable that Elevates Ankle Physiotherapy
 
 A React Native mobile application for tracking ankle rehabilitation exercises using dual-IMU sensors and on-device ML inference.
 
