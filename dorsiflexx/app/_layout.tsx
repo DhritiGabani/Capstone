@@ -28,7 +28,7 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="start-exercise"
-          options={{ title: "Start Exercise", headerBackTitle: "Home" }}
+          options={{ title: "Start Exercise Session", headerBackTitle: "Home" }}
         />
         <Stack.Screen
           name="exercise-in-progress"
