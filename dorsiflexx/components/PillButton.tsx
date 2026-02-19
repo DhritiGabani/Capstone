@@ -20,7 +20,7 @@ export default function PillButton({
         py-4 px-[22px] 
         items-center justify-center 
         bg-brand-purple-dark
-        ${disabled ? "opacity-50" : "active:opacity-80"}
+        ${disabled ? "opacity-25" : "active:opacity-80"}
       `}
     >
       <Text className="text-xl font-bold text-center leading-[22px] text-white">
