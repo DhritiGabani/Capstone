@@ -38,6 +38,14 @@ export default function RootLayout() {
             headerBackButtonMenuEnabled: false,
           }}
         />
+        <Stack.Screen
+          name="end-exercise"
+          options={{
+            title: "End Exercise",
+            headerBackVisible: false,
+            gestureEnabled: false,
+          }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

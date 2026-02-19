@@ -86,7 +86,7 @@ export default function ExerciseInProgress() {
           </View>
 
           <View className="items-center">
-            <View className="w-full px-5 flex-row gap-8">
+            <View className="w-full px-4 flex-row gap-8">
               <View className="flex-1">
                 <PillButton
                   title={isPaused ? "Continue" : "Pause"}
