@@ -29,9 +29,9 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
-      <View className="flex-1 px-[22px] pt-3">
+      <View className="flex-1 px-[22px] justify-center gap-12">
         {/* Top section */}
-        <View className="pt-4 items-center gap-2">
+        <View className="items-center gap-2">
           <Text className="text-[26px] pb-2 text-[#11181C] dark:text-[#ECEDEE]">
             Welcome back, {userName}!
           </Text>
@@ -44,8 +44,8 @@ export default function HomeScreen() {
         </View>
 
         {/* Middle section */}
-        <View className="items-center flex-1 justify-center">
-          <View className="flex-row justify-between w-full px-1">
+        <View className="items-center">
+          <View className="flex-row gap-4 self-center max-w-[420px]">
             {days.map((d) => (
               <View
                 key={d.label}
@@ -80,7 +80,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Bottom section */}
-        <View className="pb-12 items-center">
+        <View className="items-center">
           <View className="w-4/5 gap-3.5 self-center max-w-[420px]">
             <PillButton
               title={"View most recent\nexercise session"}
