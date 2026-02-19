@@ -24,21 +24,28 @@ export default function ExerciseInProgress() {
     );
   }, []);
 
+  const confirmEndSession = useCallback((onConfirm: () => void) => {
+    Alert.alert("End session?", "Are you sure you want to end this session?", [
+      { text: "Keep going", style: "cancel" },
+      { text: "End session", style: "destructive", onPress: onConfirm },
+    ]);
+  }, []);
+
   const onPressCancel = useCallback(() => {
     confirmLeave(() => router.back());
   }, [confirmLeave]);
+
+  const onPressEndSession = useCallback(() => {
+    confirmEndSession(() => router.replace("/end-exercise"));
+  }, [confirmEndSession]);
 
   return (
     <>
       <Stack.Screen
         options={{
-          // Hide the default back button
           headerBackVisible: false,
-
-          // Prevent iOS swipe-back (otherwise it can still trigger the “fade”)
           gestureEnabled: false,
 
-          // Provide your own Cancel button that won't "half-navigate"
           headerLeft: () => (
             <Pressable
               onPress={onPressCancel}
@@ -92,7 +99,7 @@ export default function ExerciseInProgress() {
                 <PillButton
                   title="END SESSION"
                   variant="danger"
-                  onPress={() => router.replace("/end-exercise")}
+                  onPress={onPressEndSession}
                 />
               </View>
             </View>
