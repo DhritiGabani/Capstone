@@ -1,11 +1,13 @@
 import PillButton from "@/components/PillButton";
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { Image, SafeAreaView, Text, View } from "react-native";
+import { Image, SafeAreaView, Text, useColorScheme, View } from "react-native";
 
 type BtState = "disconnected" | "connecting" | "connected";
 
 export default function StartExercise() {
+  const scheme = useColorScheme();
+
   const [btState, setBtState] = useState<BtState>("disconnected");
 
   // HARDCODED VARIABLES /////////////////////////////
@@ -53,9 +55,12 @@ export default function StartExercise() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-brand-purple-light">
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
       <View className="flex-1 px-6 pt-12">
-        <Text className="text-4xl font-black text-[#11181C] mb-8 text-center">
+        <Text
+          className="text-4xl font-black text-[#11181C] dark:text-[#ECEDEE]
+ mb-8 text-center"
+        >
           Instructions for{"\n"}device placement:
         </Text>
 
@@ -63,10 +68,16 @@ export default function StartExercise() {
           <View className="flex-1 pr-4 pl-2">
             {instructions.map((line, idx) => (
               <View key={idx} className="flex-row mb-3">
-                <Text className="text-lg font-bold text-[#11181C] mr-2">
+                <Text
+                  className="text-lg font-bold text-[#11181C] dark:text-[#ECEDEE]
+  mr-2"
+                >
                   {idx + 1}.
                 </Text>
-                <Text className="text-lg leading-6 text-[#11181C] flex-1">
+                <Text
+                  className="text-lg leading-6 text-[#11181C] dark:text-[#ECEDEE]
+ flex-1"
+                >
                   {line}
                 </Text>
               </View>
@@ -75,8 +86,13 @@ export default function StartExercise() {
         </View>
 
         <Image
-          source={require("@/assets/images/InstructionsForDevicePlacement.png")} // adjust path if needed
-          className="w-48 h-48 self-center"
+          source={require("@/assets/images/InstructionsForDevicePlacement.png")}
+          style={{
+            width: 160,
+            height: 160,
+            tintColor: scheme === "dark" ? "#ECEDEE" : "#11181C",
+            alignSelf: "center",
+          }}
           resizeMode="contain"
         />
 
@@ -98,7 +114,7 @@ export default function StartExercise() {
             />
 
             <PillButton
-              title="START"
+              title={isConnected ? "START" : "Waiting for device connection..."}
               onPress={handleStart}
               disabled={!isConnected}
             />

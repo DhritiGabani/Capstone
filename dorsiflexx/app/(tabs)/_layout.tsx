@@ -1,10 +1,9 @@
 import { Tabs } from "expo-router";
 import React, { useState } from "react";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HapticTab } from "@/components/haptic-tab";
-import { TopBar } from "@/components/TopBar";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
@@ -19,11 +18,17 @@ export default function TabLayout() {
 
   return (
     <View className="flex-1">
-      <TopBar
-        bluetoothOn={bluetoothOn}
-        setBluetoothOn={setBluetoothOn}
-        iconColor={iconColor}
-      />
+      {/* Static Top Bar */}
+      <View
+        className="bg-white dark:bg-[#151718]"
+        style={{ paddingTop: insets.top }}
+      >
+        <View className="h-8 justify-center items-center relative">
+          <Text className="text-base font-black text-[#11181C] dark:text-[#ECEDEE]">
+            DorsiFlexx™
+          </Text>
+        </View>
+      </View>
 
       {/* Tabs */}
       <View className="flex-1">
