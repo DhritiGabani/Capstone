@@ -52,7 +52,7 @@ export default function StartExercise() {
       <View className="flex-1 px-6 justify-center gap-8">
         {/* Top section */}
         <View className="items-center">
-          <Text className="text-4xl font-black text-[#11181C] dark:text-[#ECEDEE] text-center">
+          <Text className="text-4xl font-bold text-[#11181C] dark:text-[#ECEDEE] text-center">
             Instructions for{"\n"}device placement:
           </Text>
         </View>

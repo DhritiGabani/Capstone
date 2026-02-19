@@ -32,7 +32,11 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="exercise-in-progress"
-          options={{ title: "Exercise in Progress", headerBackTitle: "Cancel" }}
+          options={{
+            title: "Exercise in Progress",
+            headerBackTitle: "Cancel",
+            headerBackButtonMenuEnabled: false,
+          }}
         />
       </Stack>
       <StatusBar style="auto" />

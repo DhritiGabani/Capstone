@@ -4,11 +4,20 @@ export default function PillButton({
   title,
   onPress,
   disabled = false,
+  variant = "primary",
 }: {
   title: string;
   onPress: () => void;
   disabled?: boolean;
+  variant?: "primary" | "success" | "warning" | "danger";
 }) {
+  const backgroundMap = {
+    primary: "bg-brand-purple-dark", // ✅ your original default
+    success: "bg-green-500",
+    warning: "bg-yellow-500",
+    danger: "bg-red-700",
+  };
+
   return (
     <Pressable
       onPress={disabled ? undefined : onPress}
@@ -16,10 +25,10 @@ export default function PillButton({
       className={`
         w-full
         min-h-[72px]
-        rounded-full 
-        py-4 px-[22px] 
-        items-center justify-center 
-        bg-brand-purple-dark
+        rounded-full
+        py-4 px-[22px]
+        items-center justify-center
+        ${backgroundMap[variant]}
         ${disabled ? "opacity-25" : "active:opacity-80"}
       `}
     >
