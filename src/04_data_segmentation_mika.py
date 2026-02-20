@@ -22,6 +22,47 @@ def find_rep_boundaries(pitch_signal):
     
     return boundaries, peaks
 
+def remove_bad_reps_and_renumber(segmented_df):
+    """
+    Remove bad reps and renumber remaining reps sequentially
+    """
+    bad_reps = [
+        (3, "Calf Raises", "10_fast", [10]),
+        (3, "Heel Walk", "toe_high", [1]),
+        (3, "Heel Walk", "toe_low", [4, 8]),
+        (4, "Ankle Rotation", "10_fast_CW", [10]),
+        (4, "Calf Raises", "10_fast", [10]),
+        (4, "Calf Raises", "10_slow", [10]),
+        (4, "Heel Walk", "toe_high", [1, 2, 3]),
+    ]
+    
+    cleaned_df = segmented_df.copy()
+    
+    for subject_id, exercise, set_name, reps_to_remove in bad_reps:
+        mask = (
+            (cleaned_df['subject_id'] == subject_id) &
+            (cleaned_df['exercise'] == exercise) &
+            (cleaned_df['set'] == set_name) &
+            (cleaned_df['rep'].isin(reps_to_remove))
+        )
+        cleaned_df = cleaned_df[~mask]
+    
+    renumbered_rows = []
+    grouped = cleaned_df.groupby(['subject_id', 'exercise', 'set', 'sensor_location', 'file_path'])
+    
+    for (subject_id, exercise, set_name, sensor_location, file_path), group in grouped:
+        group = group.sort_values('rep')
+        
+        for new_rep_num, (idx, row) in enumerate(group.iterrows(), start=1):
+            row_dict = row.to_dict()
+            row_dict['rep'] = new_rep_num
+            renumbered_rows.append(row_dict)
+    
+    cleaned_df = pd.DataFrame(renumbered_rows)
+    cleaned_df = cleaned_df.sort_values(['subject_id', 'exercise', 'set', 'sensor_location', 'rep']).reset_index(drop=True)
+    
+    return cleaned_df
+
 def normalize_rep_data(rep_data, features_to_normalize, n_baseline_samples=5):
     """
     Normalize a rep using its own first N samples as baseline.
@@ -161,7 +202,8 @@ def segment_data(signals_df, meta_df):
                 segmented_rows.append(shank_row)
     
     
-    segmented_df_cleaned = pd.DataFrame(segmented_rows)
+    segmented_df_initial = pd.DataFrame(segmented_rows)
+    segmented_df_cleaned = remove_bad_reps_and_renumber(segmented_df_initial)
         
     return segmented_df_cleaned
 
