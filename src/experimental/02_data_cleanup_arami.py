@@ -4,7 +4,7 @@ import numpy as np
 from scipy.signal import butter, filtfilt
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.join(SCRIPT_DIR, "..")
+PROJECT_DIR = os.path.join(SCRIPT_DIR, "..", "..")
 RAW_META_PATH = os.path.join(PROJECT_DIR, "results/raw_metadata.csv")
 RAW_SIGNALS_PATH = os.path.join(PROJECT_DIR, "results/raw_signals.csv")
 

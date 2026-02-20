@@ -4,7 +4,7 @@ from scipy.signal import find_peaks
 import numpy as np
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.join(SCRIPT_DIR, "..")
+PROJECT_DIR = os.path.join(SCRIPT_DIR, "..", "..")
 CLEAN_SIGNALS_PATH = os.path.join(PROJECT_DIR, "results/clean_signals_with_features.csv")
 CLEAN_META_PATH = os.path.join(PROJECT_DIR, "results/clean_metadata.csv")
 

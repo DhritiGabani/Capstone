@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.join(SCRIPT_DIR, "..")
-RAW_SIGNALS_PATH = os.path.join(PROJECT_DIR, "results/clean_signals_mika.csv")
+PROJECT_DIR = os.path.join(SCRIPT_DIR, "..", "..")
+RAW_SIGNALS_PATH = os.path.join(PROJECT_DIR, "results/clean_signals.csv")
 
 def roll_pitch_from_acc(acc_x, acc_y, acc_z, exercise):
     """
@@ -52,4 +52,4 @@ if __name__ == "__main__":
 
     signals_with_features = extract_features(signals_df)
 
-    signals_with_features.to_csv("results/clean_signals_with_features_mika.csv", index=False)
+    signals_with_features.to_csv("results/clean_signals_with_features.csv", index=False)

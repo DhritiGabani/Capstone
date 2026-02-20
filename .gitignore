@@ -1,2 +1,2 @@
 *.csv
-src/sandbox.ipynb
+src/**/sandbox.ipynb

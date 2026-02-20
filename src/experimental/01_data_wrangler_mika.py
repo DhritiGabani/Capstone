@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(SCRIPT_DIR, "..", "data_mika")
+DATA_DIR = os.path.join(SCRIPT_DIR, "..", "..", "data_mika")
 
 EXPECTED_STEP = 0.01
 
