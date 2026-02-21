@@ -49,13 +49,10 @@ export default function ExerciseInProgress() {
           headerLeft: () => (
             <Pressable
               onPress={onPressCancel}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.4 : 1,
-                paddingHorizontal: 12,
-              })}
+              className="px-3 active:opacity-40"
               hitSlop={10}
             >
-              <Text style={{ fontSize: 17, color: "#007AFF" }}>Cancel</Text>
+              <Text className="text-[17px] text-[#007AFF]">Cancel</Text>
             </Pressable>
           ),
         }}
@@ -76,7 +73,7 @@ export default function ExerciseInProgress() {
                 animating={!isPaused}
                 hidesWhenStopped={false}
                 color="#8d44bc"
-                style={{ transform: [{ scale: 3 }] }}
+                className="scale-[3]"
               />
             </View>
 

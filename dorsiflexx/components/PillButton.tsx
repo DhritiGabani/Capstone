@@ -12,7 +12,7 @@ export default function PillButton({
   variant?: "primary" | "success" | "warning" | "danger";
 }) {
   const backgroundMap = {
-    primary: "bg-brand-purple-dark", // ✅ your original default
+    primary: "bg-brand-purple-dark",
     success: "bg-green-500",
     warning: "bg-yellow-500",
     danger: "bg-red-700",
