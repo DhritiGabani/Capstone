@@ -1,0 +1,7 @@
+﻿src/**/sandbox.ipynb
+data_arami/
+data_mika/
+results/
+**/__pycache__/
+venv/
+.vscode/
