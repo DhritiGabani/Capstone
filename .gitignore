@@ -1,5 +1,4 @@
-﻿*.csv
-src/**/sandbox.ipynb
+﻿src/**/sandbox.ipynb
 data_arami/
 data_mika/
 results/
