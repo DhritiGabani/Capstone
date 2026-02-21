@@ -1,6 +1,8 @@
+import PillButton from "@/components/PillButton";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { router } from "expo-router";
 import React from "react";
-import { Pressable, SafeAreaView, Text, View } from "react-native";
+import { SafeAreaView, Text, View } from "react-native";
 
 type Day = {
   label: string;
@@ -10,7 +12,7 @@ type Day = {
 
 export default function HomeScreen() {
   // HARDCODED VARIABLES /////////////////////////////
-  const name = "Jane";
+  const userName = "Jane";
   const goalPerDay = 2;
   const days: Day[] = [
     { label: "Sun", completedCount: 2 },
@@ -27,11 +29,11 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
-      <View className="flex-1 px-[22px] pt-3">
+      <View className="flex-1 px-[22px] justify-center gap-12">
         {/* Top section */}
-        <View className="pt-4 items-center gap-2">
+        <View className="items-center gap-2">
           <Text className="text-[26px] pb-2 text-[#11181C] dark:text-[#ECEDEE]">
-            Welcome back, {name}!
+            Welcome back, {userName}!
           </Text>
 
           <IconSymbol name="flame.fill" size={120} color="#FF7A28" />
@@ -42,13 +44,13 @@ export default function HomeScreen() {
         </View>
 
         {/* Middle section */}
-        <View className="items-center flex-1 justify-center">
-          <View className="flex-row justify-between w-full px-1">
+        <View className="items-center">
+          <View className="flex-row gap-4 self-center max-w-[420px]">
             {days.map((d) => (
               <View
                 key={d.label}
                 className={`items-center w-10 py-1.5 rounded-xl ${
-                  d.isToday ? "border-2 border-brand-purple" : ""
+                  d.isToday ? "border-2 border-brand-purple-dark" : ""
                 }`}
               >
                 <Text className="text-sm mb-2 text-[#11181C] dark:text-[#ECEDEE]">
@@ -62,7 +64,7 @@ export default function HomeScreen() {
                       <View
                         key={i}
                         className={`w-[22px] h-[22px] rounded-md items-center justify-center ${
-                          filled ? "bg-brand-purple" : "bg-brand-grey"
+                          filled ? "bg-brand-purple-dark" : "bg-brand-grey"
                         }`}
                       >
                         {filled && (
@@ -78,7 +80,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Bottom section */}
-        <View className="pb-12 items-center">
+        <View className="items-center">
           <View className="w-4/5 gap-3.5 self-center max-w-[420px]">
             <PillButton
               title={"View most recent\nexercise session"}
@@ -86,37 +88,11 @@ export default function HomeScreen() {
             />
             <PillButton
               title={"Start new\nexercise session"}
-              onPress={() => {}}
+              onPress={() => router.push("/start-exercise")}
             />
           </View>
         </View>
       </View>
     </SafeAreaView>
-  );
-}
-
-function PillButton({
-  title,
-  onPress,
-}: {
-  title: string;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      className="
-        rounded-full 
-        py-4 px-[22px] 
-        items-center justify-center 
-        bg-brand-purple
-        active:opacity-80
-        active:scale-95
-      "
-    >
-      <Text className="text-xl font-bold text-center leading-[22px] text-white">
-        {title}
-      </Text>
-    </Pressable>
   );
 }

@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import React, { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HapticTab } from "@/components/haptic-tab";
@@ -27,21 +27,6 @@ export default function TabLayout() {
           <Text className="text-base font-black text-[#11181C] dark:text-[#ECEDEE]">
             DorsiFlexx™
           </Text>
-
-          <View className="absolute right-4 top-0 bottom-0 justify-center">
-            <Pressable
-              onPress={() => setBluetoothOn((prev) => !prev)}
-              className={`w-8 h-8 rounded-full items-center justify-center ${
-                bluetoothOn ? "bg-brand-purple" : ""
-              }`}
-            >
-              <IconSymbol
-                name="antenna.radiowaves.left.and.right"
-                size={18}
-                color={bluetoothOn ? "#fff" : iconColor}
-              />
-            </Pressable>
-          </View>
         </View>
       </View>
 
