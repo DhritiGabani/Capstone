@@ -112,7 +112,7 @@ def filter_signals(signals_df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# Stage 3 — Feature Extraction
+# Stage 3 — Roll and Pitch Calculations
 # ---------------------------------------------------------------------------
 
 def _compute_roll_pitch(
