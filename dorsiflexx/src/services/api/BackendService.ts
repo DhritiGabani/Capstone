@@ -1,12 +1,13 @@
-const BACKEND_URL = "http://localhost:8000";
+import type { SensorReading } from "../ble/types";
+
+const BACKEND_URL = "https://dorsiflexx-api.onrender.com";
 
 export interface SessionStartResponse {
   session_id: string;
-  status: string;
   start_time: string;
 }
 
-export interface SessionStopResponse {
+export interface AnalyzeResponse {
   session_id: string;
   status: string;
   duration_seconds: number;
@@ -19,40 +20,75 @@ export interface SessionStopResponse {
     movement_consistency: number;
   }>;
   analysis: Record<string, any>;
-  raw_data: {
-    imu1_data: Record<string, any>;
-    imu2_data: Record<string, any>;
-  };
 }
 
 export interface StatusResponse {
   status: string;
-  is_streaming: boolean;
-  session_id: string | null;
-  stats: Record<string, any> | null;
 }
 
 class BackendService {
-  async connect(): Promise<SessionStartResponse> {
+  async createSession(): Promise<SessionStartResponse> {
     const res = await fetch(`${BACKEND_URL}/session/start`, {
       method: "POST",
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(err.detail || "Failed to start session");
+      throw new Error(err.detail || "Failed to create session");
     }
     return res.json();
   }
 
-  async disconnect(): Promise<SessionStopResponse> {
-    const res = await fetch(`${BACKEND_URL}/session/stop`, {
+  async analyzeSession(
+    sessionId: string,
+    readings: SensorReading[],
+    durationSeconds: number,
+  ): Promise<AnalyzeResponse> {
+    // Convert readings to compact array-of-arrays format
+    // [device_idx, timestamp_us, ax, ay, az, gx, gy, gz]
+    const deviceIdx: Record<string, number> = { imu1: 1, imu2: 2 };
+    const compactReadings = readings.map((r) => [
+      deviceIdx[r.device] ?? 0,
+      r.timestamp_us,
+      r.ax,
+      r.ay,
+      r.az,
+      r.gx,
+      r.gy,
+      r.gz,
+    ]);
+
+    const res = await fetch(`${BACKEND_URL}/session/${sessionId}/analyze`, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        readings: compactReadings,
+        duration_seconds: durationSeconds,
+      }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(err.detail || "Failed to stop session");
+      throw new Error(err.detail || "Failed to analyze session");
     }
     return res.json();
+  }
+
+  async saveFeedback(
+    sessionId: string,
+    rating: string,
+    comments: string,
+  ): Promise<void> {
+    const res = await fetch(
+      `${BACKEND_URL}/session/${sessionId}/feedback`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating, comments }),
+      },
+    );
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || "Failed to save feedback");
+    }
   }
 
   async getStatus(): Promise<StatusResponse> {

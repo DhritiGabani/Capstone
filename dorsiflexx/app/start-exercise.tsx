@@ -1,22 +1,34 @@
 import PillButton from "@/components/PillButton";
+import BackendService from "@/src/services/api/BackendService";
+import BleService from "@/src/services/ble/BleService";
+import type { BleConnectionState } from "@/src/services/ble/types";
 import { router } from "expo-router";
-import React, { useMemo, useState } from "react";
-import { Image, SafeAreaView, Text, useColorScheme, View } from "react-native";
-
-type BtState = "disconnected" | "connecting" | "connected";
+import React, { useEffect, useMemo, useState } from "react";
+import { Alert, Image, SafeAreaView, Text, useColorScheme, View } from "react-native";
 
 export default function StartExercise() {
   const scheme = useColorScheme();
 
-  const [btState, setBtState] = useState<BtState>("disconnected");
+  const [bleState, setBleState] = useState<BleConnectionState>("idle");
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   // HARDCODED VARIABLES /////////////////////////////
   const userName = "Jane";
   const deviceName = `${userName}'s DorsiFlexx`;
   ////////////////////////////////////////////////////
 
-  const isConnected = btState === "connected";
-  const isConnecting = btState === "connecting";
+  const isStreaming = bleState === "streaming";
+  const isBusy =
+    bleState === "scanning" ||
+    bleState === "connecting" ||
+    bleState === "connected";
+
+  useEffect(() => {
+    const unsub = BleService.onStateChange((state) => {
+      setBleState(state);
+    });
+    return unsub;
+  }, []);
 
   const instructions = useMemo(
     () => [
@@ -28,23 +40,57 @@ export default function StartExercise() {
     [],
   );
 
+  const buttonLabel = useMemo(() => {
+    switch (bleState) {
+      case "scanning":
+        return "Scanning for sensors...";
+      case "connecting":
+        return "Connecting...";
+      case "connected":
+        return "Starting session...";
+      case "streaming":
+        return `Connected to\n${deviceName}`;
+      default:
+        return "Connect to Bluetooth";
+    }
+  }, [bleState, deviceName]);
+
   async function handleConnectBluetooth() {
-    if (btState !== "disconnected") return;
+    if (bleState !== "idle") return;
 
     try {
-      setBtState("connecting");
-      await new Promise((res) => setTimeout(res, 1000));
-      setBtState("connected");
+      // 1. Phone scans + connects BLE
+      await BleService.scanAndConnect();
+
+      // 2. Cloud creates DB session
+      let session;
+      try {
+        session = await BackendService.createSession();
+      } catch (e) {
+        // BLE connected but backend failed — clean up BLE
+        await BleService.cancelSession();
+        throw e;
+      }
+
+      setSessionId(session.session_id);
+
+      // 3. Phone starts buffering readings
+      await BleService.startStreaming();
     } catch (e) {
-      setBtState("disconnected");
+      Alert.alert(
+        "Connection Failed",
+        e instanceof Error ? e.message : "Could not connect to sensors.",
+      );
     }
   }
 
   function handleStart() {
-    // Only allow if connected
-    if (!isConnected) return;
+    if (!isStreaming || !sessionId) return;
 
-    router.push("/exercise-in-progress");
+    router.push({
+      pathname: "/exercise-in-progress",
+      params: { session_id: sessionId },
+    });
   }
 
   return (
@@ -88,21 +134,15 @@ export default function StartExercise() {
         <View className="items-center">
           <View className="w-4/5 gap-3.5 self-center max-w-[420px]">
             <PillButton
-              title={
-                isConnected
-                  ? `Connected to\n${deviceName}`
-                  : isConnecting
-                    ? "Connecting..."
-                    : "Connect to Bluetooth"
-              }
+              title={buttonLabel}
               onPress={handleConnectBluetooth}
-              disabled={isConnected || isConnecting}
+              disabled={isStreaming || isBusy}
             />
 
             <PillButton
-              title={isConnected ? "START" : "Waiting for device connection..."}
+              title={isStreaming ? "START" : "Waiting for device connection..."}
               onPress={handleStart}
-              disabled={!isConnected}
+              disabled={!isStreaming}
             />
           </View>
         </View>

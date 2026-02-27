@@ -1,6 +1,9 @@
 import PillButton from "@/components/PillButton";
-import { Stack, router } from "expo-router";
-import React, { useCallback, useState } from "react";
+import BackendService from "@/src/services/api/BackendService";
+import BleService from "@/src/services/ble/BleService";
+import type { StreamingStats } from "@/src/services/ble/types";
+import { Stack, router, useLocalSearchParams } from "expo-router";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -11,7 +14,16 @@ import {
 } from "react-native";
 
 export default function ExerciseInProgress() {
+  const { session_id } = useLocalSearchParams<{ session_id: string }>();
   const [isPaused, setIsPaused] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [stats, setStats] = useState<StreamingStats | null>(null);
+  const startTimeRef = useRef(Date.now());
+
+  useEffect(() => {
+    const unsub = BleService.onStatsUpdate((s) => setStats(s));
+    return unsub;
+  }, []);
 
   const confirmLeave = useCallback((onConfirm: () => void) => {
     Alert.alert(
@@ -32,12 +44,47 @@ export default function ExerciseInProgress() {
   }, []);
 
   const onPressCancel = useCallback(() => {
-    confirmLeave(() => router.back());
+    confirmLeave(async () => {
+      await BleService.cancelSession();
+      router.back();
+    });
   }, [confirmLeave]);
 
+  const handleEndSession = useCallback(async () => {
+    setIsProcessing(true);
+    try {
+      // 1. Stop BLE streaming and capture readings
+      const readings = await BleService.stopStreaming();
+      const durationSeconds = (Date.now() - startTimeRef.current) / 1000;
+
+      // 2. Send readings to cloud for analysis
+      const results = await BackendService.analyzeSession(
+        session_id!,
+        readings,
+        durationSeconds,
+      );
+
+      router.replace({
+        pathname: "/end-exercise",
+        params: {
+          session_id: results.session_id,
+          duration_seconds: String(results.duration_seconds),
+          total_samples: String(results.total_samples),
+          exercises: JSON.stringify(results.exercises),
+        },
+      });
+    } catch (e) {
+      setIsProcessing(false);
+      Alert.alert(
+        "Processing Failed",
+        e instanceof Error ? e.message : "Could not process session.",
+      );
+    }
+  }, [session_id]);
+
   const onPressEndSession = useCallback(() => {
-    confirmEndSession(() => router.replace("/end-exercise"));
-  }, [confirmEndSession]);
+    confirmEndSession(() => handleEndSession());
+  }, [confirmEndSession, handleEndSession]);
 
   return (
     <>
@@ -62,7 +109,9 @@ export default function ExerciseInProgress() {
         <View className="flex-1 px-6 py-8 justify-center gap-14">
           <View className="items-center">
             <Text className="text-4xl font-semibold text-[#11181C] dark:text-[#ECEDEE] text-center">
-              Exercise Session{"\n"}In Progress
+              {isProcessing
+                ? "Processing\nSession..."
+                : "Exercise Session\nIn Progress"}
             </Text>
           </View>
 
@@ -70,7 +119,7 @@ export default function ExerciseInProgress() {
             <View className="h-28 w-28 items-center justify-center">
               <ActivityIndicator
                 size="large"
-                animating={!isPaused}
+                animating={isProcessing || !isPaused}
                 hidesWhenStopped={false}
                 color="#8d44bc"
                 className="scale-[3]"
@@ -78,29 +127,42 @@ export default function ExerciseInProgress() {
             </View>
 
             <Text className="mt-4 text-lg text-[#11181C] dark:text-[#ECEDEE]">
-              {isPaused ? "Paused" : "Collecting data"}
+              {isProcessing
+                ? "Analyzing your exercises..."
+                : isPaused
+                  ? "Paused"
+                  : "Collecting data"}
             </Text>
+
+            {!isProcessing && stats && (
+              <Text className="mt-2 text-sm text-[#687076] dark:text-[#9BA1A6]">
+                IMU1: {stats.imu1Count} | IMU2: {stats.imu2Count} |{" "}
+                {stats.elapsedSeconds}s
+              </Text>
+            )}
           </View>
 
-          <View className="items-center">
-            <View className="w-full px-4 flex-row gap-8">
-              <View className="flex-1">
-                <PillButton
-                  title={isPaused ? "Continue" : "Pause"}
-                  variant={isPaused ? "success" : "warning"}
-                  onPress={() => setIsPaused((p) => !p)}
-                />
-              </View>
+          {!isProcessing && (
+            <View className="items-center">
+              <View className="w-full px-4 flex-row gap-8">
+                <View className="flex-1">
+                  <PillButton
+                    title={isPaused ? "Continue" : "Pause"}
+                    variant={isPaused ? "success" : "warning"}
+                    onPress={() => setIsPaused((p) => !p)}
+                  />
+                </View>
 
-              <View className="flex-1">
-                <PillButton
-                  title="END SESSION"
-                  variant="danger"
-                  onPress={onPressEndSession}
-                />
+                <View className="flex-1">
+                  <PillButton
+                    title="END SESSION"
+                    variant="danger"
+                    onPress={onPressEndSession}
+                  />
+                </View>
               </View>
             </View>
-          </View>
+          )}
         </View>
       </SafeAreaView>
     </>
