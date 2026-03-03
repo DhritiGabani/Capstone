@@ -5,6 +5,7 @@ import { SafeAreaView, Text, useColorScheme, View } from "react-native";
 import Svg, { Circle, Line, Polyline, Text as SvgText } from "react-native-svg";
 
 type Measurement = {
+  date: string;
   dateLabel: string;
   valueCm: number;
 };
@@ -14,11 +15,11 @@ export default function MeasurementsScreen() {
   const goalCm = 10;
 
   const measurements: Measurement[] = [
-    { dateLabel: "Oct 2", valueCm: 6.2 },
-    { dateLabel: "Oct 13", valueCm: 6.7 },
-    { dateLabel: "Oct 27", valueCm: 7.4 },
-    { dateLabel: "Nov 2", valueCm: 7.3 },
-    { dateLabel: "Nov 12", valueCm: 7.6 },
+    { date: "2025-10-02", dateLabel: "Oct 2", valueCm: 6.2 },
+    { date: "2025-10-13", dateLabel: "Oct 13", valueCm: 6.7 },
+    { date: "2025-10-27", dateLabel: "Oct 27", valueCm: 7.4 },
+    { date: "2025-11-02", dateLabel: "Nov 2", valueCm: 7.3 },
+    { date: "2025-11-12", dateLabel: "Nov 12", valueCm: 7.6 },
   ];
   ////////////////////////////////////////////////////
 
@@ -40,14 +41,21 @@ export default function MeasurementsScreen() {
     const yMin = 0;
     const yMax = 12;
 
-    const xForIndex = (i: number) => {
-      if (measurements.length <= 1) return padL + innerW / 2;
+    const parseTime = (isoDate: string) => new Date(isoDate).getTime();
 
-      const edgePadding = 12;
+    const times = measurements.map((m) => parseTime(m.date));
+    const tMin = Math.min(...times);
+    const tMax = Math.max(...times);
 
+    const xForMeasurement = (m: Measurement) => {
+      // If all dates are same, center
+      if (tMax === tMin) return padL + innerW / 2;
+
+      const edgePadding = 12; // keeps first point off the y-axis and last off right edge
       const usableWidth = innerW - edgePadding * 2;
 
-      return padL + edgePadding + (i * usableWidth) / (measurements.length - 1);
+      const t = (parseTime(m.date) - tMin) / (tMax - tMin); // 0..1
+      return padL + edgePadding + t * usableWidth;
     };
 
     const yForValue = (v: number) => {
@@ -56,7 +64,7 @@ export default function MeasurementsScreen() {
     };
 
     const points = measurements
-      .map((m, i) => `${xForIndex(i)},${yForValue(m.valueCm)}`)
+      .map((m) => `${xForMeasurement(m)},${yForValue(m.valueCm)}`)
       .join(" ");
 
     const goalY = yForValue(goalCm);
@@ -78,7 +86,7 @@ export default function MeasurementsScreen() {
       innerW,
       innerH,
       points,
-      xForIndex,
+      xForMeasurement,
       yForValue,
       goalY,
       ticks,
@@ -143,7 +151,7 @@ export default function MeasurementsScreen() {
                 </SvgText>
 
                 {measurements.map((m, i) => {
-                  const x = chart.xForIndex(i);
+                  const x = chart.xForMeasurement(m);
                   const yAxis = chart.H - chart.padB;
 
                   return (
@@ -203,7 +211,7 @@ export default function MeasurementsScreen() {
 
                 {/* Points */}
                 {measurements.map((m, i) => {
-                  const cx = chart.xForIndex(i);
+                  const cx = chart.xForMeasurement(m);
                   const cy = chart.yForValue(m.valueCm);
                   return (
                     <Circle
@@ -218,10 +226,11 @@ export default function MeasurementsScreen() {
 
                 {/* X labels */}
                 {measurements.map((m, i) => {
-                  const x = chart.xForIndex(i) + 5;
+                  const x = chart.xForMeasurement(m) + 5;
                   const y = chart.H - chart.padB + 18;
                   return (
                     <SvgText
+                      key={`xlabel-${m.date}-${i}`}
                       x={x}
                       y={y}
                       fontSize={14}
