@@ -9,8 +9,8 @@ from bleak import BleakClient, BleakScanner
 UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
 UART_TX_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
 
-EXPECTED_ID_1 = "IMU_1"
-EXPECTED_ID_2 = "IMU_2"
+EXPECTED_ID_1 = "IMU_3"
+EXPECTED_ID_2 = "IMU_4"
 
 # ---------------------------------------------------------
 # ✅ Custom Device-ID characteristic UUIDs (YOU set in FW)
@@ -64,15 +64,23 @@ def unpack_packet(pkt: bytes):
 
 
 async def scan_candidates(timeout=SCAN_SECONDS):
+    """
+    Scan BLE devices and return a list of candidates.
+    Uses advertised local name rather than device.name.
+    """
     results = await BleakScanner.discover(timeout=timeout, return_adv=True)
-    # results is a dict: {address: (BLEDevice, AdvertisementData)}
     nus = []
     all_devices = []
+
     for address, (device, adv) in results.items():
-        all_devices.append((device, adv))
+        # Use advertised local name first, fallback to device.name
+        name = (adv.local_name or device.name or "").strip()
+        all_devices.append((device, adv, name))
+
         uuids = [u.lower() for u in (adv.service_uuids or [])]
         if UART_SERVICE_UUID in uuids:
-            nus.append((device, adv))
+            nus.append((device, adv, name))
+
     return nus if nus else all_devices
 
 
@@ -85,14 +93,13 @@ async def resolve_two_imus():
     found_by_name = {}
 
     def rssi_key(pair):
-        _, adv = pair
+        _, adv, _ = pair  # unpack device, adv, name
         return adv.rssi if adv.rssi is not None else -999
 
     device_advs = sorted(device_advs, key=rssi_key, reverse=True)
 
-    for device, adv in device_advs:
+    for device, adv, name in device_advs:
         addr = device.address
-        name = (device.name or "").strip()
         if name:
             found_by_name[name] = addr
 

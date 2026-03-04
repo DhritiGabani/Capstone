@@ -1,16 +1,18 @@
 """
-FastAPI server for dorsiflexx backend (cloud deployment).
+FastAPI server for dorsiflexx backend.
 
 Endpoints:
-  POST  /session/start               - create DB session
-  POST  /session/{session_id}/analyze - receive readings, run analysis pipeline
-  GET   /status                       - health check
-  PATCH /session/{session_id}/feedback - save user feedback
+  POST /session/start  - connect BLE, start streaming, create DB session
+  POST /session/stop   - stop streaming, save readings, run analysis pipeline
+  GET  /status         - return streaming state and sample counts
 """
 
 import logging
+import time
+import traceback
 from contextlib import asynccontextmanager
-from typing import List
+
+logging.basicConfig(level=logging.INFO)
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,17 +20,22 @@ from pydantic import BaseModel
 
 log = logging.getLogger(__name__)
 
+from ble_manager import BLEManager
 from classifier import ExerciseClassifier
-from database import init_db, create_session, save_readings, complete_session, save_feedback
-from pipeline import preprocess_session
+from database import init_db, create_session, save_raw_data, complete_session, save_feedback
+from pipeline import preprocess_session, sensor_readings_to_imu_json
 from analysis import analyze_session
-from sensor import SensorReading
 
 # ---------------------------------------------------------------------------
 # Application state
 # ---------------------------------------------------------------------------
 
+ble = BLEManager()
 classifier: ExerciseClassifier | None = None
+
+_session_id: str | None = None
+_start_time: str | None = None
+_start_ts: float | None = None
 
 
 @asynccontextmanager
@@ -55,52 +62,51 @@ app.add_middleware(
 
 @app.post("/session/start")
 async def session_start():
-    session_id, start_time = create_session()
+    global _session_id, _start_time, _start_ts
+
+    if ble.is_streaming:
+        raise HTTPException(400, "A session is already in progress.")
+
+    await ble.connect()
+    await ble.start_streaming()
+
+    _session_id, _start_time = create_session()
+    _start_ts = time.time()
+
     return {
-        "session_id": session_id,
-        "start_time": start_time,
+        "session_id": _session_id,
+        "status": "streaming",
+        "start_time": _start_time,
     }
 
 
 # ---------------------------------------------------------------------------
-# POST /session/{session_id}/analyze
+# POST /session/stop
 # ---------------------------------------------------------------------------
 
-class AnalyzeBody(BaseModel):
-    readings: List[List[float]]  # [[device_idx, timestamp_us, ax, ay, az, gx, gy, gz], ...]
-    duration_seconds: float
+@app.post("/session/stop")
+async def session_stop():
+    global _session_id, _start_time, _start_ts
 
+    if not ble.is_streaming or _session_id is None:
+        raise HTTPException(400, "No active session to stop.")
 
-@app.post("/session/{session_id}/analyze")
-async def session_analyze(session_id: str, body: AnalyzeBody):
-    if not body.readings:
-        raise HTTPException(400, "No readings provided.")
+    session_id = _session_id
+    start_ts = _start_ts
 
-    # Convert compact array-of-arrays to SensorReading objects
-    device_map = {1: "imu1", 2: "imu2"}
-    readings = []
-    for row in body.readings:
-        if len(row) < 8:
-            continue
-        device_idx = int(row[0])
-        readings.append(SensorReading(
-            device=device_map.get(device_idx, f"imu{device_idx}"),
-            timestamp_us=int(row[1]),
-            ax=row[2],
-            ay=row[3],
-            az=row[4],
-            gx=row[5],
-            gy=row[6],
-            gz=row[7],
-        ))
+    readings = await ble.stop_streaming()
+    duration_s = round(time.time() - start_ts, 2)
 
-    imu1_count = sum(1 for r in readings if r.device == "imu1")
-    imu2_count = sum(1 for r in readings if r.device == "imu2")
-    log.info("Analyze: %d readings (imu1=%d, imu2=%d)", len(readings), imu1_count, imu2_count)
+    # Convert readings to per-device JSON and save immediately
+    imu1_json = sensor_readings_to_imu_json(readings, "imu1")
+    imu2_json = sensor_readings_to_imu_json(readings, "imu2")
 
-    # Save raw readings
-    if readings:
-        save_readings(session_id, readings)
+    imu1_count = len(imu1_json.get("samples", []))
+    imu2_count = len(imu2_json.get("samples", []))
+    log.info("Session stopped: %d readings (imu1=%d, imu2=%d)", len(readings), imu1_count, imu2_count)
+
+    # Save raw IMU data even if analysis fails
+    save_raw_data(session_id, imu1_json, imu2_json)
 
     # Run analysis pipeline only if we have data from both sensors
     exercises = []
@@ -108,8 +114,11 @@ async def session_analyze(session_id: str, body: AnalyzeBody):
 
     if imu1_count > 0 and imu2_count > 0:
         try:
+            log.info("Running preprocessing pipeline...")
             pipeline_result = preprocess_session(readings)
+            log.info("Preprocessing done: X shape=%s, %d reps", pipeline_result["X"].shape, len(set(pipeline_result["rep_indices"])))
 
+            log.info("Running analysis...")
             analysis = analyze_session(
                 X=pipeline_result["X"],
                 rep_indices=pipeline_result["rep_indices"],
@@ -117,8 +126,9 @@ async def session_analyze(session_id: str, body: AnalyzeBody):
                 segmented_df=pipeline_result["segmented_df"],
                 classifier=classifier,
             )
+            log.info("Analysis done: %s", list(analysis.keys()))
 
-            # Build exercise list matching AnalyzeResponse shape
+            # Build exercise list matching SessionStopResponse shape
             rep_counts = analysis.get("rep_counts", {})
             consistency = analysis.get("consistency_scores", {})
             durations = analysis.get("rep_durations", {})
@@ -134,15 +144,21 @@ async def session_analyze(session_id: str, body: AnalyzeBody):
                 }
                 exercises.append(ex)
         except Exception as e:
-            log.warning("Analysis pipeline failed: %s", e)
+            log.error("Analysis pipeline failed: %s\n%s", e, traceback.format_exc())
             analysis = {"error": str(e)}
+    else:
+        log.warning("Skipping analysis: imu1_count=%d, imu2_count=%d", imu1_count, imu2_count)
 
-    complete_session(session_id, body.duration_seconds, analysis)
+    complete_session(session_id, duration_s, analysis)
+
+    _session_id = None
+    _start_time = None
+    _start_ts = None
 
     return {
         "session_id": session_id,
         "status": "completed",
-        "duration_seconds": body.duration_seconds,
+        "duration_seconds": duration_s,
         "total_samples": len(readings),
         "exercises": exercises,
         "analysis": analysis,
@@ -155,7 +171,12 @@ async def session_analyze(session_id: str, body: AnalyzeBody):
 
 @app.get("/status")
 async def status():
-    return {"status": "ok"}
+    return {
+        "status": "streaming" if ble.is_streaming else "idle",
+        "is_streaming": ble.is_streaming,
+        "session_id": _session_id,
+        "stats": ble.sample_counts if ble.is_streaming else None,
+    }
 
 
 # ---------------------------------------------------------------------------

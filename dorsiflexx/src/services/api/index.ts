@@ -1,6 +1,6 @@
 export { default as BackendService } from "./BackendService";
 export type {
   SessionStartResponse,
-  AnalyzeResponse,
+  SessionStopResponse,
   StatusResponse,
 } from "./BackendService";

@@ -1,9 +1,7 @@
 import PillButton from "@/components/PillButton";
 import BackendService from "@/src/services/api/BackendService";
-import BleService from "@/src/services/ble/BleService";
-import type { StreamingStats } from "@/src/services/ble/types";
 import { Stack, router, useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -17,13 +15,6 @@ export default function ExerciseInProgress() {
   const { session_id } = useLocalSearchParams<{ session_id: string }>();
   const [isPaused, setIsPaused] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [stats, setStats] = useState<StreamingStats | null>(null);
-  const startTimeRef = useRef(Date.now());
-
-  useEffect(() => {
-    const unsub = BleService.onStatsUpdate((s) => setStats(s));
-    return unsub;
-  }, []);
 
   const confirmLeave = useCallback((onConfirm: () => void) => {
     Alert.alert(
@@ -44,26 +35,13 @@ export default function ExerciseInProgress() {
   }, []);
 
   const onPressCancel = useCallback(() => {
-    confirmLeave(async () => {
-      await BleService.cancelSession();
-      router.back();
-    });
+    confirmLeave(() => router.back());
   }, [confirmLeave]);
 
   const handleEndSession = useCallback(async () => {
     setIsProcessing(true);
     try {
-      // 1. Stop BLE streaming and capture readings
-      const readings = await BleService.stopStreaming();
-      const durationSeconds = (Date.now() - startTimeRef.current) / 1000;
-
-      // 2. Send readings to cloud for analysis
-      const results = await BackendService.analyzeSession(
-        session_id!,
-        readings,
-        durationSeconds,
-      );
-
+      const results = await BackendService.disconnect();
       router.replace({
         pathname: "/end-exercise",
         params: {
@@ -80,7 +58,7 @@ export default function ExerciseInProgress() {
         e instanceof Error ? e.message : "Could not process session.",
       );
     }
-  }, [session_id]);
+  }, []);
 
   const onPressEndSession = useCallback(() => {
     confirmEndSession(() => handleEndSession());
@@ -133,13 +111,6 @@ export default function ExerciseInProgress() {
                   ? "Paused"
                   : "Collecting data"}
             </Text>
-
-            {!isProcessing && stats && (
-              <Text className="mt-2 text-sm text-[#687076] dark:text-[#9BA1A6]">
-                IMU1: {stats.imu1Count} | IMU2: {stats.imu2Count} |{" "}
-                {stats.elapsedSeconds}s
-              </Text>
-            )}
           </View>
 
           {!isProcessing && (

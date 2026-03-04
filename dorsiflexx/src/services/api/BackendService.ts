@@ -1,13 +1,12 @@
-import type { SensorReading } from "../ble/types";
-
-const BACKEND_URL = "https://dorsiflexx-api.onrender.com";
+const BACKEND_URL = "http://localhost:8000";
 
 export interface SessionStartResponse {
   session_id: string;
+  status: string;
   start_time: string;
 }
 
-export interface AnalyzeResponse {
+export interface SessionStopResponse {
   session_id: string;
   status: string;
   duration_seconds: number;
@@ -24,50 +23,30 @@ export interface AnalyzeResponse {
 
 export interface StatusResponse {
   status: string;
+  is_streaming: boolean;
+  session_id: string | null;
+  stats: Record<string, any> | null;
 }
 
 class BackendService {
-  async createSession(): Promise<SessionStartResponse> {
+  async connect(): Promise<SessionStartResponse> {
     const res = await fetch(`${BACKEND_URL}/session/start`, {
       method: "POST",
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(err.detail || "Failed to create session");
+      throw new Error(err.detail || "Failed to start session");
     }
     return res.json();
   }
 
-  async analyzeSession(
-    sessionId: string,
-    readings: SensorReading[],
-    durationSeconds: number,
-  ): Promise<AnalyzeResponse> {
-    // Convert readings to compact array-of-arrays format
-    // [device_idx, timestamp_us, ax, ay, az, gx, gy, gz]
-    const deviceIdx: Record<string, number> = { imu1: 1, imu2: 2 };
-    const compactReadings = readings.map((r) => [
-      deviceIdx[r.device] ?? 0,
-      r.timestamp_us,
-      r.ax,
-      r.ay,
-      r.az,
-      r.gx,
-      r.gy,
-      r.gz,
-    ]);
-
-    const res = await fetch(`${BACKEND_URL}/session/${sessionId}/analyze`, {
+  async disconnect(): Promise<SessionStopResponse> {
+    const res = await fetch(`${BACKEND_URL}/session/stop`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        readings: compactReadings,
-        duration_seconds: durationSeconds,
-      }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(err.detail || "Failed to analyze session");
+      throw new Error(err.detail || "Failed to stop session");
     }
     return res.json();
   }

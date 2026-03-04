@@ -3,50 +3,43 @@ SQLite persistence for dorsiflexx backend.
 """
 
 import json
+import logging
 import sqlite3
 import uuid
 from datetime import datetime, timezone
 
 from config import DATABASE_PATH
-from sensor import SensorReading
+
+log = logging.getLogger(__name__)
 
 
 def _get_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(DATABASE_PATH)
     conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA foreign_keys=ON")
     return conn
 
 
 def init_db() -> None:
     """Create tables if they don't exist."""
     conn = _get_connection()
+    conn.execute("PRAGMA foreign_keys = ON")
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS sessions (
-            session_id   TEXT PRIMARY KEY,
-            start_time   TEXT NOT NULL,
-            end_time     TEXT,
-            duration_s   REAL,
+            session_id    TEXT PRIMARY KEY,
+            start_time    TEXT NOT NULL,
+            end_time      TEXT,
+            duration_s    REAL,
             analysis_json TEXT,
-            rating       TEXT,
-            comments     TEXT
+            rating        TEXT,
+            comments      TEXT
         );
 
-        CREATE TABLE IF NOT EXISTS sensor_readings (
-            id           INTEGER PRIMARY KEY AUTOINCREMENT,
-            session_id   TEXT NOT NULL REFERENCES sessions(session_id),
-            device       TEXT NOT NULL,
-            timestamp_us INTEGER NOT NULL,
-            ax           REAL NOT NULL,
-            ay           REAL NOT NULL,
-            az           REAL NOT NULL,
-            gx           REAL NOT NULL,
-            gy           REAL NOT NULL,
-            gz           REAL NOT NULL
+        CREATE TABLE IF NOT EXISTS raw_sensor_data (
+            session_id  TEXT PRIMARY KEY,
+            imu1_json   TEXT,
+            imu2_json   TEXT,
+            FOREIGN KEY (session_id) REFERENCES sessions(session_id)
         );
-
-        CREATE INDEX IF NOT EXISTS idx_readings_session
-            ON sensor_readings(session_id);
     """)
     conn.commit()
     conn.close()
@@ -67,31 +60,19 @@ def create_session() -> tuple[str, str]:
     return session_id, start_time
 
 
-def save_readings(session_id: str, readings: list[SensorReading]) -> None:
-    """Bulk-insert sensor readings for a session."""
-    conn = _get_connection()
-    conn.executemany(
-        """INSERT INTO sensor_readings
-           (session_id, device, timestamp_us, ax, ay, az, gx, gy, gz)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        [
-            (session_id, r.device, r.timestamp_us, r.ax, r.ay, r.az, r.gx, r.gy, r.gz)
-            for r in readings
-        ],
-    )
-    conn.commit()
-    conn.close()
-
-
-def save_feedback(session_id: str, rating: str, comments: str) -> None:
-    """Update a session with user feedback (rating + comments)."""
+def save_raw_data(session_id: str, imu1_json: dict, imu2_json: dict) -> None:
+    """Save raw IMU data to the raw_sensor_data table."""
+    imu1_str = json.dumps(imu1_json)
+    imu2_str = json.dumps(imu2_json)
+    log.info("save_raw_data: session=%s imu1_len=%d imu2_len=%d", session_id, len(imu1_str), len(imu2_str))
     conn = _get_connection()
     conn.execute(
-        "UPDATE sessions SET rating = ?, comments = ? WHERE session_id = ?",
-        (rating, comments, session_id),
+        "INSERT INTO raw_sensor_data (session_id, imu1_json, imu2_json) VALUES (?, ?, ?)",
+        (session_id, imu1_str, imu2_str),
     )
     conn.commit()
     conn.close()
+    log.info("save_raw_data: committed successfully")
 
 
 def complete_session(
@@ -101,12 +82,26 @@ def complete_session(
 ) -> None:
     """Mark session as complete with end time, duration, and analysis results."""
     end_time = datetime.now(timezone.utc).isoformat()
+    analysis_str = json.dumps(analysis)
+    log.info("complete_session: session=%s duration=%.2f analysis_len=%d", session_id, duration_s, len(analysis_str))
     conn = _get_connection()
     conn.execute(
         """UPDATE sessions
            SET end_time = ?, duration_s = ?, analysis_json = ?
            WHERE session_id = ?""",
-        (end_time, duration_s, json.dumps(analysis), session_id),
+        (end_time, duration_s, analysis_str, session_id),
+    )
+    conn.commit()
+    conn.close()
+    log.info("complete_session: committed successfully")
+
+
+def save_feedback(session_id: str, rating: str, comments: str) -> None:
+    """Update a session with user feedback (rating + comments)."""
+    conn = _get_connection()
+    conn.execute(
+        "UPDATE sessions SET rating = ?, comments = ? WHERE session_id = ?",
+        (rating, comments, session_id),
     )
     conn.commit()
     conn.close()
