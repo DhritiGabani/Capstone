@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+bleak
+numpy
+pandas
+scipy
+ai-edge-litert
