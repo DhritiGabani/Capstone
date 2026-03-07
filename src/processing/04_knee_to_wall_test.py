@@ -96,7 +96,7 @@ def _detect_hold_phases(
         active_phases.append({
             "start_idx":     start,
             "end_idx":       end,
-            "mean_angle_deg": round(abs(mean_angle, 3)),
+            "mean_angle_deg": round(abs(mean_angle), 3),
             "duration_s":    round(duration, 3),
         })
 
@@ -190,8 +190,8 @@ def analyze(signals_df: pd.DataFrame) -> dict:
         longest_hold_duration = longest_phase["duration_s"]
 
     return {
-        "highest_angle_deg":      round(peak_angle, 3),
-        "highest_angle_held_for_s": peak_held_for,
+        "smallest_angle_deg":      round(peak_angle, 3),
+        "smallest_angle_held_for_s": peak_held_for,
         "longest_hold_angle_deg": longest_hold_angle,
         "longest_hold_duration_s": longest_hold_duration,
     }
