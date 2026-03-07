@@ -623,24 +623,27 @@ def save_results_json(results: dict, output_path: str) -> None:
 
     print(f"Results saved to {out}")
 
+# ---------------------------------------------------------------------------
+# Test entry point
+# ---------------------------------------------------------------------------
 
-if __name__ == "__main__":
-    import json
-    import pprint
-    import importlib
-    preprocessing = importlib.import_module("02_preprocessing")
+# if __name__ == "__main__":
+#     import json
+#     import pprint
+#     import importlib
+#     preprocessing = importlib.import_module("02_preprocessing")
 
-    imu1_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu1_data.json"
-    imu2_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu2_data.json"
-    output_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\results.json"
+#     imu1_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu1_data.json"
+#     imu2_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu2_data.json"
+#     output_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\results.json"
 
-    with open(imu1_path) as f:
-        imu1_json = json.load(f)
-    with open(imu2_path) as f:
-        imu2_json = json.load(f)
+#     with open(imu1_path) as f:
+#         imu1_json = json.load(f)
+#     with open(imu2_path) as f:
+#         imu2_json = json.load(f)
 
-    segmented_df = preprocessing.run(imu1_json, imu2_json)
-    results      = run(segmented_df)
+#     segmented_df = preprocessing.run(imu1_json, imu2_json)
+#     results      = run(segmented_df)
 
-    pprint.pprint(results)
-    save_results_json(results, output_path)
+#     pprint.pprint(results)
+#     save_results_json(results, output_path)
