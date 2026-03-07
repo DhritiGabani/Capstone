@@ -502,7 +502,7 @@ def calculate_ankle_angles(blocks: list[dict]) -> dict | None:
         shank_pitch_interp = np.interp(foot_row["time"], shank_row["time"], shank_row["pitch"])
         ankle_angle        = foot_pitch - shank_pitch_interp
 
-        rep_max_angles[rep] = round(float(np.max(ankle_angle)), 3)
+        rep_max_angles[rep] = round(float(np.max(ankle_angle)) + 90.0, 3)
 
     if not rep_max_angles:
         return None
