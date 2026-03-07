@@ -9,9 +9,9 @@ from scipy.interpolate import interp1d
 # Constants
 # ---------------------------------------------------------------------------
 
-MODEL_PATH         = Path(__file__).parent.parent / "model" / "mlp_model_v3.pkl"
-SCALER_PATH        = Path(__file__).parent.parent / "model" / "scaler_v3.pkl"
-LABEL_ENCODER_PATH = Path(__file__).parent.parent / "model" / "label_encoder_v3.pkl"
+MODEL_PATH         = Path(__file__).parent.parent / "model" / "mlp_model_v4.pkl"
+SCALER_PATH        = Path(__file__).parent.parent / "model" / "scaler_v4.pkl"
+LABEL_ENCODER_PATH = Path(__file__).parent.parent / "model" / "label_encoder_v4.pkl"
 
 STATISTICAL_FEATURE_COLS = [
     "acc_x_norm", "acc_y_norm", "acc_z_norm",
@@ -181,15 +181,25 @@ def classify(
 
 def _smooth_classifications(classifications_df: pd.DataFrame) -> pd.DataFrame:
     """
-    Apply majority-vote smoothing to correct isolated misclassifications
-    at exercise transition boundaries.
+    Apply majority-vote smoothing to correct isolated misclassifications.
+
+    Runs two passes to catch edge cases. The first rep and last rep are
+    also checked against their single neighbour.
     """
     smoothed = classifications_df.copy()
-    labels   = smoothed["predicted_exercise"].values
 
-    for i in range(1, len(labels) - 1):
-        if labels[i - 1] == labels[i + 1] and labels[i] != labels[i - 1]:
-            smoothed.loc[smoothed.index[i], "predicted_exercise"] = labels[i - 1]
+    for _ in range(2):
+        labels = smoothed["predicted_exercise"].values.copy()
+
+        if len(labels) >= 2 and labels[0] != labels[1]:
+            smoothed.loc[smoothed.index[0], "predicted_exercise"] = labels[1]
+
+        for i in range(1, len(labels) - 1):
+            if labels[i - 1] == labels[i + 1] and labels[i] != labels[i - 1]:
+                smoothed.loc[smoothed.index[i], "predicted_exercise"] = labels[i - 1]
+
+        if len(labels) >= 2 and labels[-1] != labels[-2]:
+            smoothed.loc[smoothed.index[-1], "predicted_exercise"] = labels[-2]
 
     return smoothed
 
@@ -282,7 +292,58 @@ def calculate_rep_durations(blocks: list[dict]) -> dict[str, dict]:
 
 
 # ---------------------------------------------------------------------------
-# Stage 5 — Movement Consistency (Ankle Rotation and Calf Raises only)
+# Stage 5 — ROM Consistency (Ankle Rotation and Calf Raises only)
+# ---------------------------------------------------------------------------
+
+def calculate_rom_consistency(blocks: list[dict]) -> dict[str, dict] | None:
+    """
+    Calculate per-rep ROM as a fraction of the maximum ROM rep in the session
+    """
+    exercise_foot_data: dict[str, pd.DataFrame] = {}
+
+    for block in blocks:
+        exercise = block["exercise"]
+        if exercise not in CONSISTENCY_EXERCISES:
+            continue
+        if exercise not in exercise_foot_data:
+            exercise_foot_data[exercise] = block["foot_data"]
+        else:
+            exercise_foot_data[exercise] = pd.concat(
+                [exercise_foot_data[exercise], block["foot_data"]], ignore_index=True
+            )
+
+    if not exercise_foot_data:
+        return None
+
+    results = {}
+
+    for exercise, foot_data in exercise_foot_data.items():
+        signal_col = "roll" if exercise == "Ankle Rotation" else "pitch"
+
+        rom_per_rep = {}
+        for _, row in foot_data.iterrows():
+            rep    = int(row["rep"])
+            signal = row[signal_col]
+            rom_per_rep[rep] = float(np.max(signal) - np.min(signal))
+
+        max_rom     = max(rom_per_rep.values())
+        max_rom_rep = max(rom_per_rep, key=rom_per_rep.get)
+
+        rom_fractions = {
+            rep: round(rom / max_rom, 4)
+            for rep, rom in rom_per_rep.items()
+        }
+
+        results[exercise] = {
+            "rep_rom_fraction": rom_fractions,
+            "max_rom_rep":      max_rom_rep,
+        }
+
+    return results
+
+
+# ---------------------------------------------------------------------------
+# Stage 6 — Movement Consistency (Ankle Rotation and Calf Raises only)
 # ---------------------------------------------------------------------------
 
 def _extract_kinematic_features(row: pd.Series, exercise: str) -> dict:
@@ -467,7 +528,7 @@ def calculate_consistency(blocks: list[dict]) -> dict[str, float | None]:
 
 
 # ---------------------------------------------------------------------------
-# Stage 6 — Ankle Angle (Heel Walk only)
+# Stage 7 — Ankle Angle (Heel Walk only)
 # ---------------------------------------------------------------------------
 
 def calculate_ankle_angles(blocks: list[dict]) -> dict | None:
@@ -524,11 +585,13 @@ def run(segmented_df: pd.DataFrame) -> dict:
     X, rep_indices, sensor_locations = extract_statistical_features(segmented_df)
     classifications_df               = classify(X, rep_indices, sensor_locations)
     blocks                           = build_exercise_blocks(classifications_df, segmented_df)
+    smoothed_df                      = _smooth_classifications(classifications_df)
 
     return {
-        "rep_classifications": classifications_df.to_dict(orient="records"),
+        "rep_classifications": smoothed_df.to_dict(orient="records"),
         "rep_counts":          count_reps(blocks),
         "rep_durations":       calculate_rep_durations(blocks),
+        "rom_consistency":     calculate_rom_consistency(blocks),
         "consistency_scores":  calculate_consistency(blocks),
         "ankle_angles":        calculate_ankle_angles(blocks),
     }
@@ -561,23 +624,23 @@ def save_results_json(results: dict, output_path: str) -> None:
     print(f"Results saved to {out}")
 
 
-# if __name__ == "__main__":
-#     import json
-#     import pprint
-#     import importlib
-#     preprocessing = importlib.import_module("02_preprocessing")
+if __name__ == "__main__":
+    import json
+    import pprint
+    import importlib
+    preprocessing = importlib.import_module("02_preprocessing")
 
-#     imu1_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu1_data.json"
-#     imu2_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu2_data.json"
-#     output_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\results.json"
+    imu1_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu1_data.json"
+    imu2_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu2_data.json"
+    output_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\results.json"
 
-#     with open(imu1_path) as f:
-#         imu1_json = json.load(f)
-#     with open(imu2_path) as f:
-#         imu2_json = json.load(f)
+    with open(imu1_path) as f:
+        imu1_json = json.load(f)
+    with open(imu2_path) as f:
+        imu2_json = json.load(f)
 
-#     segmented_df = preprocessing.run(imu1_json, imu2_json)
-#     results      = run(segmented_df)
+    segmented_df = preprocessing.run(imu1_json, imu2_json)
+    results      = run(segmented_df)
 
-#     pprint.pprint(results)
-#     save_results_json(results, output_path)
+    pprint.pprint(results)
+    save_results_json(results, output_path)
