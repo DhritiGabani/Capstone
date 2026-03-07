@@ -96,7 +96,7 @@ def _detect_hold_phases(
         active_phases.append({
             "start_idx":     start,
             "end_idx":       end,
-            "mean_angle_deg": round(mean_angle, 3),
+            "mean_angle_deg": round(abs(mean_angle, 3)),
             "duration_s":    round(duration, 3),
         })
 
@@ -164,7 +164,7 @@ def analyze(signals_df: pd.DataFrame) -> dict:
             f"below the rest threshold ({REST_ANGLE_THRESHOLD}°)."
         )
 
-    peak_angle    = float(np.max(ankle_angle_smooth[active_mask]))
+    peak_angle    = float(np.abs(np.max(ankle_angle_smooth[active_mask])))
     peak_held_for = _find_peak_hold_duration(ankle_angle_smooth, time, peak_angle)
 
     hold_phases = _detect_hold_phases(ankle_angle_smooth, time)
