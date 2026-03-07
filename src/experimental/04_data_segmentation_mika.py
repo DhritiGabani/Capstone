@@ -27,13 +27,29 @@ def remove_bad_reps_and_renumber(segmented_df):
     Remove bad reps and renumber remaining reps sequentially
     """
     bad_reps = [
-        (3, "Calf Raises", "10_fast", [10]),
-        (3, "Heel Walk", "toe_high", [1]),
-        (3, "Heel Walk", "toe_low", [4, 8]),
+        (3, "Calf Raises", "10_fast", [1]),
+        (3, "Heel Walk", "toe_high", [11]),
+        (3, "Heel Walk", "toe_low", [2, 5]),
         (4, "Ankle Rotation", "10_fast_CW", [10]),
         (4, "Calf Raises", "10_fast", [10]),
         (4, "Calf Raises", "10_slow", [10]),
-        (4, "Heel Walk", "toe_high", [1, 2, 3]),
+        (5, "Ankle Rotation", "10_fast_CCW", [1, 6, 7, 13]),
+        (5, "Ankle Rotation", "10_fast_CW", [3, 6]),
+        (5, "Ankle Rotation", "10_slow_CCW", [1, 2, 3, 4]),
+        (5, "Heel Walk", "toe_high", [1, 2, 3, 4]),
+        (6, "Ankle Rotation", "10_fast_CCW", [1, 2, 3, 4]),
+        (6, "Calf Raises", "10_fast", [10, 11]),
+        (7, "Heel Walk", "toe_low", [5]),
+        (8, "Ankle Rotation", "10_fast_CCW", [1, 2, 3]),
+        (9, "Calf Raises", "10_fast", [5, 9, 11, 12, 14, 15]),
+        (12, "Heel Walk", "toe_low", [17]),
+        (13, "Ankle Rotation", "10_fast_CW", [8]),
+        (13, "Calf Raises", "10_slow", [10, 11]),
+        (14, "Calf Raises", "10_fast", [6]),
+        (14, "Heel Walk", "toe_low", [1, 2, 6, 7, 8, 9, 10, 11]),
+        (15, "Ankle Rotation", "10_slow_CCW", [1]),
+        (15, "Heel Walk", "toe_high", [1, 2, 3, 4, 5, 8, 9, 11, 12, 13, 14]),
+        (15, "Heel Walk", "toe_low", [4, 5, 7, 9])
     ]
     
     cleaned_df = segmented_df.copy()
