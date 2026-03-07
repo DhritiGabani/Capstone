@@ -12,7 +12,7 @@ def find_rep_boundaries(pitch_signal):
     """
     Find rep boundaries based on pitch peaks
     """
-    peaks, _ = find_peaks(pitch_signal, distance=30, prominence=30)
+    peaks, _ = find_peaks(pitch_signal, distance=30, prominence=15)
     
     boundaries = []
     for i in range(len(peaks) - 1):
