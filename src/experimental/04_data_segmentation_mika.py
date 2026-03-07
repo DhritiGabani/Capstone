@@ -228,6 +228,18 @@ if __name__ == "__main__":
     meta_df = pd.read_csv(CLEAN_META_PATH)
     
     segmented_signals = segment_data(signals_df, meta_df)
+
+    array_columns = ['time', 'acc_x', 'acc_y', 'acc_z', 'gyr_x', 'gyr_y', 'gyr_z', 
+                     'roll', 'pitch', 'acc_x_norm', 'acc_y_norm', 'acc_z_norm', 
+                     'gyr_x_norm', 'gyr_y_norm', 'gyr_z_norm', 'roll_norm', 'pitch_norm']
+    
+    np.set_printoptions(threshold=np.inf)
+    
+    for col in array_columns:
+        if col in segmented_signals.columns:
+            segmented_signals[col] = segmented_signals[col].apply(
+                lambda x: np.array2string(x, separator=' ', max_line_width=np.inf, threshold=np.inf)
+            )
     
     output_path = os.path.join(PROJECT_DIR, "results/segmented_signals_mika.csv")
     segmented_signals.to_csv(output_path, index=False)
