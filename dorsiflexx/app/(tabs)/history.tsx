@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import { SafeAreaView, View, useColorScheme } from "react-native";
+import { Pressable, SafeAreaView, View, useColorScheme } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
 
 type MarkedDate = {
@@ -110,6 +110,12 @@ export default function HistoryCalendarScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
+      <Pressable
+        onPress={() => console.log("Export history")}
+        className="absolute right-6 top-16 p-2"
+      >
+        <Ionicons name="share-outline" size={36} color={colors.text} />
+      </Pressable>
       <View className="flex-1 px-6 pt-36">
         <View className="rounded-none">
           <Calendar
