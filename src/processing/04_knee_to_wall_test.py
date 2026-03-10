@@ -46,94 +46,6 @@ def _smooth_signal(signal: np.ndarray) -> np.ndarray:
     return smoothed
 
 
-def _detect_hold_phases(
-    ankle_angle_smooth: np.ndarray,
-    time: np.ndarray,
-) -> list[dict]:
-    """
-    Detect hold phases where the subject is maintaining a position.
-
-    A hold phase is a continuous period where the rolling variance of the
-    ankle angle stays below HOLD_VARIANCE_THRESHOLD. Phases shorter than
-    MIN_HOLD_DURATION samples and phases where the mean angle is at or
-    below REST_ANGLE_THRESHOLD are excluded.
-    """
-    variance = (
-        pd.Series(ankle_angle_smooth)
-        .rolling(window=VARIANCE_WINDOW, center=True)
-        .std()
-        .fillna(0)
-        .values
-    )
-
-    is_holding = variance < HOLD_VARIANCE_THRESHOLD
-
-    hold_phases = []
-    in_hold     = False
-    hold_start  = None
-
-    for i in range(len(is_holding)):
-        if is_holding[i] and not in_hold:
-            hold_start = i
-            in_hold    = True
-        elif not is_holding[i] and in_hold:
-            if i - hold_start >= MIN_HOLD_DURATION:
-                hold_phases.append((hold_start, i))
-            in_hold = False
-
-    if in_hold and len(ankle_angle_smooth) - hold_start >= MIN_HOLD_DURATION:
-        hold_phases.append((hold_start, len(ankle_angle_smooth) - 1))
-
-    active_phases = []
-    for start, end in hold_phases:
-        mean_angle = float(np.mean(ankle_angle_smooth[start:end]))
-
-        if mean_angle <= REST_ANGLE_THRESHOLD:
-            continue
-
-        duration = float(time[end] - time[start])
-
-        active_phases.append({
-            "start_idx":     start,
-            "end_idx":       end,
-            "mean_angle_deg": round(mean_angle, 3),
-            "duration_s":    round(duration, 3),
-        })
-
-    return active_phases
-
-
-def _find_peak_hold_duration(
-    ankle_angle_smooth: np.ndarray,
-    time: np.ndarray,
-    peak_angle: float,
-) -> float:
-    """
-    Calculate how long the ankle angle was held within PEAK_HOLD_TOLERANCE
-    """
-    near_peak = np.abs(ankle_angle_smooth - peak_angle) <= PEAK_HOLD_TOLERANCE
-
-    # Find the longest continuous region near the peak
-    max_duration = 0.0
-    in_region    = False
-    region_start = None
-
-    for i in range(len(near_peak)):
-        if near_peak[i] and not in_region:
-            region_start = i
-            in_region    = True
-        elif not near_peak[i] and in_region:
-            duration     = float(time[i] - time[region_start])
-            max_duration = max(max_duration, duration)
-            in_region    = False
-
-    if in_region:
-        duration     = float(time[-1] - time[region_start])
-        max_duration = max(max_duration, duration)
-
-    return round(max_duration, 3)
-
-
 def analyze(signals_df: pd.DataFrame) -> dict:
     """
     Run the Knee to Wall test analysis on the preprocessed signals DataFrame
@@ -155,6 +67,7 @@ def analyze(signals_df: pd.DataFrame) -> dict:
 
     ankle_angle_raw    = foot_df["pitch"].values - shank_pitch_interp
     ankle_angle_smooth = _smooth_signal(ankle_angle_raw)
+    ankle_angle_abs    = np.abs(ankle_angle_smooth)
     time               = foot_df["time"].values
 
     active_mask = ankle_angle_smooth > REST_ANGLE_THRESHOLD
@@ -164,36 +77,20 @@ def analyze(signals_df: pd.DataFrame) -> dict:
             f"below the rest threshold ({REST_ANGLE_THRESHOLD}°)."
         )
 
-    peak_angle    = float(np.max(ankle_angle_smooth[active_mask]))
-    peak_held_for = _find_peak_hold_duration(ankle_angle_smooth, time, peak_angle)
+    smallest_angle = round(float(np.min(ankle_angle_abs[active_mask])), 3)
 
-    hold_phases = _detect_hold_phases(ankle_angle_smooth, time)
+    session_duration = float(time[-1] - time[0])
+    sample_times     = np.arange(0, session_duration + 0.5, 0.5)
+    sampled_angles   = {}
 
-    if not hold_phases:
-        raise ValueError(
-            "No active hold phases detected. The subject may not have held "
-            "a position long enough, or all holds were below the rest threshold."
-        )
-
-    longest_phase = max(hold_phases, key=lambda p: p["duration_s"])
-
-    peak_idx          = int(np.argmax(ankle_angle_smooth))
-    longest_has_peak  = (
-        longest_phase["start_idx"] <= peak_idx <= longest_phase["end_idx"]
-    )
-
-    if longest_has_peak:
-        longest_hold_angle    = None
-        longest_hold_duration = None
-    else:
-        longest_hold_angle    = longest_phase["mean_angle_deg"]
-        longest_hold_duration = longest_phase["duration_s"]
+    for t in sample_times:
+        abs_t   = time[0] + t
+        idx     = int(np.argmin(np.abs(time - abs_t)))
+        sampled_angles[round(float(t), 1)] = round(float(ankle_angle_abs[idx]), 3)
 
     return {
-        "highest_angle_deg":      round(peak_angle, 3),
-        "highest_angle_held_for_s": peak_held_for,
-        "longest_hold_angle_deg": longest_hold_angle,
-        "longest_hold_duration_s": longest_hold_duration,
+        "smallest_angle_deg":    smallest_angle,
+        "angle_over_time":       sampled_angles,
     }
 
 

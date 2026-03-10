@@ -12,7 +12,7 @@ def find_rep_boundaries(pitch_signal):
     """
     Find rep boundaries based on pitch peaks
     """
-    peaks, _ = find_peaks(pitch_signal, distance=30, prominence=30)
+    peaks, _ = find_peaks(pitch_signal, distance=30, prominence=15)
     
     boundaries = []
     for i in range(len(peaks) - 1):
@@ -27,13 +27,29 @@ def remove_bad_reps_and_renumber(segmented_df):
     Remove bad reps and renumber remaining reps sequentially
     """
     bad_reps = [
-        (3, "Calf Raises", "10_fast", [10]),
-        (3, "Heel Walk", "toe_high", [1]),
-        (3, "Heel Walk", "toe_low", [4, 8]),
+        (3, "Calf Raises", "10_fast", [1]),
+        (3, "Heel Walk", "toe_high", [11]),
+        (3, "Heel Walk", "toe_low", [2, 5]),
         (4, "Ankle Rotation", "10_fast_CW", [10]),
         (4, "Calf Raises", "10_fast", [10]),
         (4, "Calf Raises", "10_slow", [10]),
-        (4, "Heel Walk", "toe_high", [1, 2, 3]),
+        (5, "Ankle Rotation", "10_fast_CCW", [1, 6, 7, 13]),
+        (5, "Ankle Rotation", "10_fast_CW", [3, 6]),
+        (5, "Ankle Rotation", "10_slow_CCW", [1, 2, 3, 4]),
+        (5, "Heel Walk", "toe_high", [1, 2, 3, 4]),
+        (6, "Ankle Rotation", "10_fast_CCW", [1, 2, 3, 4]),
+        (6, "Calf Raises", "10_fast", [10, 11]),
+        (7, "Heel Walk", "toe_low", [5]),
+        (8, "Ankle Rotation", "10_fast_CCW", [1, 2, 3]),
+        (9, "Calf Raises", "10_fast", [5, 9, 11, 12, 14, 15]),
+        (12, "Heel Walk", "toe_low", [17]),
+        (13, "Ankle Rotation", "10_fast_CW", [8]),
+        (13, "Calf Raises", "10_slow", [10, 11]),
+        (14, "Calf Raises", "10_fast", [6]),
+        (14, "Heel Walk", "toe_low", [1, 2, 6, 7, 8, 9, 10, 11]),
+        (15, "Ankle Rotation", "10_slow_CCW", [1]),
+        (15, "Heel Walk", "toe_high", [1, 2, 3, 4, 5, 8, 9, 11, 12, 13, 14]),
+        (15, "Heel Walk", "toe_low", [4, 5, 7, 9])
     ]
     
     cleaned_df = segmented_df.copy()
@@ -212,6 +228,18 @@ if __name__ == "__main__":
     meta_df = pd.read_csv(CLEAN_META_PATH)
     
     segmented_signals = segment_data(signals_df, meta_df)
+
+    array_columns = ['time', 'acc_x', 'acc_y', 'acc_z', 'gyr_x', 'gyr_y', 'gyr_z', 
+                     'roll', 'pitch', 'acc_x_norm', 'acc_y_norm', 'acc_z_norm', 
+                     'gyr_x_norm', 'gyr_y_norm', 'gyr_z_norm', 'roll_norm', 'pitch_norm']
+    
+    np.set_printoptions(threshold=np.inf)
+    
+    for col in array_columns:
+        if col in segmented_signals.columns:
+            segmented_signals[col] = segmented_signals[col].apply(
+                lambda x: np.array2string(x, separator=' ', max_line_width=np.inf, threshold=np.inf)
+            )
     
     output_path = os.path.join(PROJECT_DIR, "results/segmented_signals_mika.csv")
     segmented_signals.to_csv(output_path, index=False)
