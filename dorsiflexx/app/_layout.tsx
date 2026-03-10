@@ -47,6 +47,13 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="exercise-summary"
+          options={{
+            title: "Exercise Summary",
+            headerBackTitle: "Back",
+          }}
+        />
+        <Stack.Screen
           name="start-kneetowall"
           options={{
             title: "Start Knee-to-Wall",
