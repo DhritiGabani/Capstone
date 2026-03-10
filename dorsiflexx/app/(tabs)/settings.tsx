@@ -23,10 +23,7 @@ export default function TabTwoScreen() {
       }
     >
       <ThemedView className="flex-row gap-2">
-        <ThemedText
-          type="title"
-          style={{ fontFamily: Fonts.rounded }}
-        >
+        <ThemedText type="title" style={{ fontFamily: Fonts.rounded }}>
           Explore
         </ThemedText>
       </ThemedView>
