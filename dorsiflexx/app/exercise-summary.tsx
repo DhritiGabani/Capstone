@@ -71,8 +71,6 @@ type MiniLineChartProps = {
 function formatDateLabel(dateString?: string | string[]) {
   if (!dateString || Array.isArray(dateString)) return "";
 
-  console.log(dateString);
-
   const [year, month, day] = dateString.split("-").map(Number);
   if (!year || !month || !day) return "";
 
