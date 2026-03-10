@@ -35,6 +35,11 @@ npx expo start
 
 The database will initialize automatically on first launch.
 
+## Running server for sensor
+```
+cd dorsiflexx/backend
+uvicorn main:app --host 0.0.0.0 --port 8000 
+```
 ## Tech Stack
 
 - **Frontend**: React Native with Expo

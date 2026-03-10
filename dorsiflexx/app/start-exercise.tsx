@@ -1,7 +1,8 @@
 import PillButton from "@/components/PillButton";
+import BackendService from "@/src/services/api/BackendService";
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { Image, SafeAreaView, Text, useColorScheme, View } from "react-native";
+import { Alert, Image, SafeAreaView, Text, useColorScheme, View } from "react-native";
 
 type BtState = "disconnected" | "connecting" | "connected";
 
@@ -9,6 +10,7 @@ export default function StartExercise() {
   const scheme = useColorScheme();
 
   const [btState, setBtState] = useState<BtState>("disconnected");
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   // HARDCODED VARIABLES /////////////////////////////
   const userName = "Jane";
@@ -33,18 +35,25 @@ export default function StartExercise() {
 
     try {
       setBtState("connecting");
-      await new Promise((res) => setTimeout(res, 1000));
+      const response = await BackendService.connect();
+      setSessionId(response.session_id);
       setBtState("connected");
     } catch (e) {
       setBtState("disconnected");
+      Alert.alert(
+        "Connection Failed",
+        e instanceof Error ? e.message : "Could not connect to sensors.",
+      );
     }
   }
 
   function handleStart() {
-    // Only allow if connected
-    if (!isConnected) return;
+    if (!isConnected || !sessionId) return;
 
-    router.push("/exercise-in-progress");
+    router.push({
+      pathname: "/exercise-in-progress",
+      params: { session_id: sessionId },
+    });
   }
 
   return (

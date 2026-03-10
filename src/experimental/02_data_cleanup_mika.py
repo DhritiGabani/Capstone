@@ -62,7 +62,7 @@ def create_clean_datasets(apply_filter=True):
                     signals[col].values, 
                     fs=100, 
                     f_low=None, 
-                    f_high=5, 
+                    f_high=2, 
                     filter_type="lowpass", 
                     order=2
                 )
