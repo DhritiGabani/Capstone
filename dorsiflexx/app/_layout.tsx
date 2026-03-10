@@ -46,6 +46,13 @@ export default function RootLayout() {
             gestureEnabled: false,
           }}
         />
+        <Stack.Screen
+          name="exercise-summary"
+          options={{
+            title: "Exercise Summary",
+            headerBackTitle: "Back",
+          }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

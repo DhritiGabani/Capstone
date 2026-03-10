@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { Pressable, SafeAreaView, View, useColorScheme } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
@@ -105,7 +106,10 @@ export default function HistoryCalendarScreen() {
     if (!completedExerciseDates.includes(day.dateString)) return;
 
     // TODO: go to exercise session for this date
-    console.log("Pressed:", day.dateString);
+    router.push({
+      pathname: "/exercise-summary",
+      params: { date: day.dateString },
+    });
   };
 
   return (
