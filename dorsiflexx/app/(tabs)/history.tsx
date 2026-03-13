@@ -1,6 +1,7 @@
+import BackendService from "@/src/services/api/BackendService";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React, { useMemo, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useMemo, useState } from "react";
 import { Pressable, SafeAreaView, View, useColorScheme } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
 
@@ -30,21 +31,21 @@ export default function HistoryCalendarScreen() {
   const today = new Date();
   const todayString = toLocalDateString(today);
 
-  const [selectedMonth, setSelectedMonth] = useState(todayString);
+  const [completedExerciseDates, setCompletedExerciseDates] = useState<string[]>([]);
 
-  // TODO: replace with real completed exercise dates
-  const completedExerciseDates = [
-    "2026-02-03",
-    "2026-02-12",
-    "2026-02-13",
-    "2026-02-16",
-    "2026-02-17",
-    "2026-02-22",
-    "2026-03-01",
-    "2026-03-04",
-    "2026-03-05",
-    "2026-03-06",
-  ];
+  useFocusEffect(
+    useCallback(() => {
+      BackendService.getSessionDates()
+        .then((dates) => {
+          console.log("Fetched session dates:", dates);
+          setCompletedExerciseDates(dates);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch session dates:", err);
+          setCompletedExerciseDates([]);
+        });
+    }, []),
+  );
 
   const colors = {
     bg: isDark ? "#151718" : "#F5F1F8",
@@ -123,8 +124,7 @@ export default function HistoryCalendarScreen() {
       <View className="flex-1 px-6 pt-36">
         <View className="rounded-none">
           <Calendar
-            current={selectedMonth}
-            onMonthChange={(month) => setSelectedMonth(month.dateString)}
+            initialDate={todayString}
             onDayPress={handleDayPress}
             enableSwipeMonths
             hideExtraDays

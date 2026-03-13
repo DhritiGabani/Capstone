@@ -72,12 +72,9 @@ def analyze(signals_df: pd.DataFrame) -> dict:
 
     active_mask = ankle_angle_smooth > REST_ANGLE_THRESHOLD
     if not np.any(active_mask):
-        raise ValueError(
-            f"No active test positions detected. All ankle angles are at or "
-            f"below the rest threshold ({REST_ANGLE_THRESHOLD}°)."
-        )
+        active_mask = np.ones(len(ankle_angle_smooth), dtype=bool)
 
-    smallest_angle = round(float(np.min(ankle_angle_abs[active_mask])), 3)
+    smallest_angle = round(float(np.median(ankle_angle_abs[active_mask])), 3)
 
     session_duration = float(time[-1] - time[0])
     sample_times     = np.arange(0, session_duration + 0.5, 0.5)

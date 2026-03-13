@@ -1,27 +1,43 @@
 import PillButton from "@/components/PillButton";
-import { router } from "expo-router";
-import React, { useMemo } from "react";
+import BackendService, { KTWMeasurement } from "@/src/services/api/BackendService";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useMemo, useState } from "react";
 import { SafeAreaView, Text, useColorScheme, View } from "react-native";
 import Svg, { Circle, Line, Polyline, Text as SvgText } from "react-native-svg";
 
 type Measurement = {
   date: string;
   dateLabel: string;
-  valueCm: number;
+  angleDeg: number;
 };
 
-export default function MeasurementsScreen() {
-  // HARDCODED VARIABLES /////////////////////////////
-  const goalCm = 10;
+function formatDateLabel(isoDate: string): string {
+  const d = new Date(isoDate);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
 
-  const measurements: Measurement[] = [
-    { date: "2025-10-02", dateLabel: "Oct 2", valueCm: 6.2 },
-    { date: "2025-10-13", dateLabel: "Oct 13", valueCm: 6.7 },
-    { date: "2025-10-27", dateLabel: "Oct 27", valueCm: 7.4 },
-    { date: "2025-11-02", dateLabel: "Nov 2", valueCm: 7.3 },
-    { date: "2025-11-12", dateLabel: "Nov 12", valueCm: 7.6 },
-  ];
-  ////////////////////////////////////////////////////
+export default function MeasurementsScreen() {
+  const goalAngle = 45;
+
+  const [ktwData, setKtwData] = useState<KTWMeasurement[]>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      BackendService.getKTWHistory()
+        .then(setKtwData)
+        .catch(() => setKtwData([]));
+    }, []),
+  );
+
+  const measurements: Measurement[] = useMemo(
+    () =>
+      ktwData.map((m) => ({
+        date: m.measured_at,
+        dateLabel: formatDateLabel(m.measured_at),
+        angleDeg: m.angle_deg,
+      })),
+    [ktwData],
+  );
 
   const colorScheme = useColorScheme();
   const textColor = colorScheme === "dark" ? "#ECEDEE" : "#11181C";
@@ -39,7 +55,7 @@ export default function MeasurementsScreen() {
     const innerH = H - padT - padB;
 
     const yMin = 0;
-    const yMax = 12;
+    const yMax = 60;
 
     const parseTime = (isoDate: string) => new Date(isoDate).getTime();
 
@@ -64,17 +80,20 @@ export default function MeasurementsScreen() {
     };
 
     const points = measurements
-      .map((m) => `${xForMeasurement(m)},${yForValue(m.valueCm)}`)
+      .map((m) => `${xForMeasurement(m)},${yForValue(m.angleDeg)}`)
       .join(" ");
 
-    const goalY = yForValue(goalCm);
+    const goalY = yForValue(goalAngle);
 
-    // y-axis ticks (every 1 cm)
-    const ticks = Array.from({ length: 13 }).map((_, v) => ({
-      v,
-      y: yForValue(v),
-      isMajor: v === 5 || v === 10,
-    }));
+    // y-axis ticks (every 5 degrees)
+    const ticks = Array.from({ length: 13 }).map((_, i) => {
+      const v = i * 5;
+      return {
+        v,
+        y: yForValue(v),
+        isMajor: v === 20 || v === 40,
+      };
+    });
 
     return {
       W,
@@ -91,7 +110,7 @@ export default function MeasurementsScreen() {
       goalY,
       ticks,
     };
-  }, [measurements, goalCm]);
+  }, [measurements, goalAngle]);
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
@@ -126,28 +145,28 @@ export default function MeasurementsScreen() {
                   strokeWidth={1.5}
                 />
 
-                {/* 5 cm label */}
+                {/* 20° label */}
                 <SvgText
                   x={chart.padL - 20}
-                  y={chart.yForValue(5)}
+                  y={chart.yForValue(20)}
                   fontSize={14}
                   textAnchor="end"
                   alignmentBaseline="middle"
                   fill={textColor}
                 >
-                  5 cm
+                  20°
                 </SvgText>
 
-                {/* 10 cm label */}
+                {/* 40° label */}
                 <SvgText
                   x={chart.padL - 20}
-                  y={chart.yForValue(10)}
+                  y={chart.yForValue(40)}
                   fontSize={14}
                   textAnchor="end"
                   alignmentBaseline="middle"
                   fill={textColor}
                 >
-                  10 cm
+                  40°
                 </SvgText>
 
                 {measurements.map((m, i) => {
@@ -212,10 +231,10 @@ export default function MeasurementsScreen() {
                 {/* Points */}
                 {measurements.map((m, i) => {
                   const cx = chart.xForMeasurement(m);
-                  const cy = chart.yForValue(m.valueCm);
+                  const cy = chart.yForValue(m.angleDeg);
                   return (
                     <Circle
-                      key={m.dateLabel}
+                      key={`${m.date}-${i}`}
                       cx={cx}
                       cy={cy}
                       r={3.2}

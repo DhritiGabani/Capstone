@@ -40,6 +40,13 @@ def init_db() -> None:
             imu2_json   TEXT,
             FOREIGN KEY (session_id) REFERENCES sessions(session_id)
         );
+
+        CREATE TABLE IF NOT EXISTS ktw_measurements (
+            id            INTEGER PRIMARY KEY AUTOINCREMENT,
+            measured_at   TEXT NOT NULL,
+            angle_deg     REAL NOT NULL,
+            details_json  TEXT
+        );
     """)
     conn.commit()
     conn.close()
@@ -105,3 +112,126 @@ def save_feedback(session_id: str, rating: str, comments: str) -> None:
     )
     conn.commit()
     conn.close()
+
+
+# ---------------------------------------------------------------------------
+# KTW Measurements
+# ---------------------------------------------------------------------------
+
+def save_ktw_measurement(angle_deg: float, details: dict | None = None) -> int:
+    """Save a KTW measurement and return the new row id."""
+    measured_at = datetime.now(timezone.utc).isoformat()
+    details_str = json.dumps(details) if details else None
+
+    conn = _get_connection()
+    cursor = conn.execute(
+        "INSERT INTO ktw_measurements (measured_at, angle_deg, details_json) VALUES (?, ?, ?)",
+        (measured_at, angle_deg, details_str),
+    )
+    row_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return row_id
+
+
+def get_ktw_measurements() -> list[dict]:
+    """Return all KTW measurements ordered by date."""
+    conn = _get_connection()
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute(
+        "SELECT id, measured_at, angle_deg, details_json FROM ktw_measurements ORDER BY measured_at"
+    ).fetchall()
+    conn.close()
+
+    results = []
+    for row in rows:
+        entry = {
+            "id": row["id"],
+            "measured_at": row["measured_at"],
+            "angle_deg": row["angle_deg"],
+        }
+        if row["details_json"]:
+            entry["details"] = json.loads(row["details_json"])
+        results.append(entry)
+    return results
+
+
+# ---------------------------------------------------------------------------
+# Session Queries (for history / exercise summary)
+# ---------------------------------------------------------------------------
+
+def get_session_dates() -> list[str]:
+    """Return distinct dates (YYYY-MM-DD) that have completed sessions or KTW measurements."""
+    conn = _get_connection()
+    rows = conn.execute(
+        "SELECT DISTINCT date_str FROM ("
+        "  SELECT substr(start_time, 1, 10) AS date_str "
+        "  FROM sessions "
+        "  WHERE analysis_json IS NOT NULL "
+        "  AND analysis_json LIKE '%rep_counts%' "
+        "  UNION "
+        "  SELECT substr(measured_at, 1, 10) AS date_str "
+        "  FROM ktw_measurements"
+        ") ORDER BY date_str"
+    ).fetchall()
+    conn.close()
+    return [r[0] for r in rows]
+
+
+def get_ktw_measurements_by_date(date_str: str) -> list[dict]:
+    """Return KTW measurements for a given date (YYYY-MM-DD)."""
+    conn = _get_connection()
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute(
+        "SELECT id, measured_at, angle_deg, details_json "
+        "FROM ktw_measurements "
+        "WHERE substr(measured_at, 1, 10) = ? "
+        "ORDER BY measured_at",
+        (date_str,),
+    ).fetchall()
+    conn.close()
+
+    results = []
+    for row in rows:
+        entry = {
+            "id": row["id"],
+            "measured_at": row["measured_at"],
+            "angle_deg": row["angle_deg"],
+        }
+        if row["details_json"]:
+            entry["details"] = json.loads(row["details_json"])
+        results.append(entry)
+    return results
+
+
+def get_sessions_by_date(date_str: str) -> list[dict]:
+    """Return sessions with parsed analysis for a given date (YYYY-MM-DD).
+
+    Only includes sessions that completed with real analysis data
+    (i.e. have rep_counts, not just an error or empty dict).
+    """
+    conn = _get_connection()
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute(
+        "SELECT session_id, start_time, end_time, duration_s, analysis_json "
+        "FROM sessions "
+        "WHERE substr(start_time, 1, 10) = ? "
+        "AND analysis_json IS NOT NULL "
+        "AND analysis_json LIKE '%rep_counts%' "
+        "ORDER BY start_time",
+        (date_str,),
+    ).fetchall()
+    conn.close()
+
+    results = []
+    for row in rows:
+        entry = {
+            "session_id": row["session_id"],
+            "start_time": row["start_time"],
+            "end_time": row["end_time"],
+            "duration_s": row["duration_s"],
+        }
+        if row["analysis_json"]:
+            entry["analysis"] = json.loads(row["analysis_json"])
+        results.append(entry)
+    return results
