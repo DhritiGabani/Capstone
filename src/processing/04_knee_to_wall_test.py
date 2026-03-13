@@ -12,19 +12,19 @@ from pathlib import Path
 REST_ANGLE_THRESHOLD = -65.0
 
 # Smoothing window for ankle angle signal (moving average)
-SMOOTHING_WINDOW = 10
+SMOOTHING_WINDOW = 10  
 
 # Rolling window for variance calculation to detect hold phases
-VARIANCE_WINDOW = 50
+VARIANCE_WINDOW = 50  
 
 # Maximum variance allowed for a position to be considered a hold
-HOLD_VARIANCE_THRESHOLD = 1.0
+HOLD_VARIANCE_THRESHOLD = 1.0  
 
 # Minimum duration for a hold phase to be counted
-MIN_HOLD_DURATION = 50
+MIN_HOLD_DURATION = 50  
 
 # Tolerance around peak angle to determine how long peak was held
-PEAK_HOLD_TOLERANCE = 2.0
+PEAK_HOLD_TOLERANCE = 2.0  
 
 
 # ---------------------------------------------------------------------------
@@ -50,13 +50,13 @@ def analyze(signals_df: pd.DataFrame) -> dict:
     """
     Run the Knee to Wall test analysis on the preprocessed signals DataFrame
     """
-    foot_df = signals_df[signals_df["sensor_location"] == "foot"].copy()
+    foot_df  = signals_df[signals_df["sensor_location"] == "foot"].copy()
     shank_df = signals_df[signals_df["sensor_location"] == "shank"].copy()
 
     if foot_df.empty or shank_df.empty:
         raise ValueError("Missing foot or shank sensor data.")
 
-    foot_df = foot_df.sort_values("time").reset_index(drop=True)
+    foot_df  = foot_df.sort_values("time").reset_index(drop=True)
     shank_df = shank_df.sort_values("time").reset_index(drop=True)
 
     shank_pitch_interp = np.interp(
@@ -65,10 +65,10 @@ def analyze(signals_df: pd.DataFrame) -> dict:
         shank_df["pitch"].values,
     )
 
-    ankle_angle_raw = foot_df["pitch"].values - shank_pitch_interp
+    ankle_angle_raw    = foot_df["pitch"].values - shank_pitch_interp
     ankle_angle_smooth = _smooth_signal(ankle_angle_raw)
-    ankle_angle_abs = np.abs(ankle_angle_smooth)
-    time = foot_df["time"].values
+    ankle_angle_abs    = np.abs(ankle_angle_smooth)
+    time               = foot_df["time"].values
 
     active_mask = ankle_angle_smooth > REST_ANGLE_THRESHOLD
     if not np.any(active_mask):
@@ -80,14 +80,13 @@ def analyze(signals_df: pd.DataFrame) -> dict:
     smallest_angle = round(float(np.min(ankle_angle_abs[active_mask])), 3)
 
     session_duration = float(time[-1] - time[0])
-    sample_times = np.arange(0, session_duration + 0.5, 0.5)
-    sampled_angles = {}
+    sample_times     = np.arange(0, session_duration + 0.5, 0.5)
+    sampled_angles   = {}
 
     for t in sample_times:
-        abs_t = time[0] + t
-        idx = int(np.argmin(np.abs(time - abs_t)))
-        sampled_angles[round(float(t), 1)] = round(
-            float(ankle_angle_abs[idx]), 3)
+        abs_t   = time[0] + t
+        idx     = int(np.argmin(np.abs(time - abs_t)))
+        sampled_angles[round(float(t), 1)] = round(float(ankle_angle_abs[idx]), 3)
 
     return {
         "smallest_angle_deg":    smallest_angle,
