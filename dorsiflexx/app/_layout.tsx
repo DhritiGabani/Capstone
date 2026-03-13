@@ -46,6 +46,28 @@ export default function RootLayout() {
             gestureEnabled: false,
           }}
         />
+        <Stack.Screen
+          name="exercise-summary"
+          options={{
+            title: "Exercise Summary",
+            headerBackTitle: "Back",
+          }}
+        />
+        <Stack.Screen
+          name="start-kneetowall"
+          options={{
+            title: "Start Knee-to-Wall",
+            headerBackTitle: "Measure",
+          }}
+        />
+        <Stack.Screen
+          name="measure-kneetowall"
+          options={{
+            title: "Measure Knee-to-Wall",
+            headerBackTitle: "Cancel",
+            headerBackButtonMenuEnabled: false,
+          }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

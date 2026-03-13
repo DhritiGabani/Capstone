@@ -126,27 +126,27 @@ def run(signals_df: pd.DataFrame) -> dict:
 # Test entry point
 # ---------------------------------------------------------------------------
 
-if __name__ == "__main__":
-    import json
-    import pprint
-    import importlib
-    preprocessing = importlib.import_module("02_preprocessing")
+# if __name__ == "__main__":
+#     import json
+#     import pprint
+#     import importlib
+#     preprocessing = importlib.import_module("02_preprocessing")
 
-    imu1_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu1_data.json"
-    imu2_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu2_data.json"
-    output_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\ktw_results.json"
+#     imu1_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu1_data.json"
+#     imu2_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\imu2_data.json"
+#     output_path = r"C:\Users\mistr\OneDrive\Documents\Rohan\University\4A\BME 461\model\Capstone\output\ktw_results.json"
 
-    with open(imu1_path) as f:
-        imu1_json = json.load(f)
-    with open(imu2_path) as f:
-        imu2_json = json.load(f)
+#     with open(imu1_path) as f:
+#         imu1_json = json.load(f)
+#     with open(imu2_path) as f:
+#         imu2_json = json.load(f)
 
-    # IMPORTANT: Do not run segmentation when calling preprocessing just the following functions
-    signals_df = preprocessing.wrangle(imu1_json, imu2_json)
-    signals_df = preprocessing.filter_signals(signals_df)
-    signals_df = preprocessing.extract_features(signals_df)
+#     # IMPORTANT: Do not run segmentation when calling preprocessing just the following functions
+#     signals_df = preprocessing.wrangle(imu1_json, imu2_json)
+#     signals_df = preprocessing.filter_signals(signals_df)
+#     signals_df = preprocessing.extract_features(signals_df)
 
-    results = run(signals_df)
+#     results = run(signals_df)
 
-    pprint.pprint(results)
-    save_results_json(results, output_path)
+#     pprint.pprint(results)
+#     save_results_json(results, output_path)

@@ -127,13 +127,26 @@ def classify_reps(
 
 
 def _smooth_classifications(classifications_df: pd.DataFrame) -> pd.DataFrame:
-    """Apply majority-vote smoothing to correct isolated misclassifications."""
-    smoothed = classifications_df.copy()
-    labels = smoothed["predicted_exercise"].values
+    """
+    Apply majority-vote smoothing to correct isolated misclassifications.
 
-    for i in range(1, len(labels) - 1):
-        if labels[i - 1] == labels[i + 1] and labels[i] != labels[i - 1]:
-            smoothed.loc[smoothed.index[i], "predicted_exercise"] = labels[i - 1]
+    Runs two passes to catch edge cases. The first rep and last rep are
+    also checked against their single neighbour.
+    """
+    smoothed = classifications_df.copy()
+
+    for _ in range(2):
+        labels = smoothed["predicted_exercise"].values.copy()
+
+        if len(labels) >= 2 and labels[0] != labels[1]:
+            smoothed.loc[smoothed.index[0], "predicted_exercise"] = labels[1]
+
+        for i in range(1, len(labels) - 1):
+            if labels[i - 1] == labels[i + 1] and labels[i] != labels[i - 1]:
+                smoothed.loc[smoothed.index[i], "predicted_exercise"] = labels[i - 1]
+
+        if len(labels) >= 2 and labels[-1] != labels[-2]:
+            smoothed.loc[smoothed.index[-1], "predicted_exercise"] = labels[-2]
 
     return smoothed
 
@@ -222,6 +235,55 @@ def calculate_rep_durations(blocks: list[dict]) -> dict[str, dict]:
         }
         for exercise in exercise_rep_map
     }
+
+
+# ---------------------------------------------------------------------------
+# ROM Consistency (Ankle Rotation and Calf Raises only)
+# ---------------------------------------------------------------------------
+
+def calculate_rom_consistency(blocks: list[dict]) -> dict[str, dict] | None:
+    """Calculate per-rep ROM as a fraction of the maximum ROM rep in the session."""
+    exercise_foot_data: dict[str, pd.DataFrame] = {}
+
+    for block in blocks:
+        exercise = block["exercise"]
+        if exercise not in CONSISTENCY_EXERCISES:
+            continue
+        if exercise not in exercise_foot_data:
+            exercise_foot_data[exercise] = block["foot_data"]
+        else:
+            exercise_foot_data[exercise] = pd.concat(
+                [exercise_foot_data[exercise], block["foot_data"]], ignore_index=True
+            )
+
+    if not exercise_foot_data:
+        return None
+
+    results = {}
+
+    for exercise, foot_data in exercise_foot_data.items():
+        signal_col = "roll" if exercise == "Ankle Rotation" else "pitch"
+
+        rom_per_rep = {}
+        for _, row in foot_data.iterrows():
+            rep = int(row["rep"])
+            signal = row[signal_col]
+            rom_per_rep[rep] = float(np.max(signal) - np.min(signal))
+
+        max_rom = max(rom_per_rep.values())
+        max_rom_rep = max(rom_per_rep, key=rom_per_rep.get)
+
+        rom_fractions = {
+            rep: round(rom / max_rom, 4)
+            for rep, rom in rom_per_rep.items()
+        }
+
+        results[exercise] = {
+            "rep_rom_fraction": rom_fractions,
+            "max_rom_rep": max_rom_rep,
+        }
+
+    return results
 
 
 # ---------------------------------------------------------------------------
@@ -433,7 +495,7 @@ def calculate_ankle_angles(blocks: list[dict]) -> dict | None:
         )
         ankle_angle = foot_pitch - shank_pitch_interp
 
-        rep_max_angles[rep] = round(float(np.max(ankle_angle)), 3)
+        rep_max_angles[rep] = round(float(np.max(ankle_angle)) + 90.0, 3)
 
     if not rep_max_angles:
         return None
@@ -479,4 +541,5 @@ def analyze_session(
         "rep_durations": calculate_rep_durations(blocks),
         "consistency_scores": calculate_consistency(blocks),
         "ankle_angles": calculate_ankle_angles(blocks),
+        "rom_consistency": calculate_rom_consistency(blocks),
     }

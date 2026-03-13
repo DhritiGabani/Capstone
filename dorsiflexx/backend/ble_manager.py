@@ -138,6 +138,11 @@ class BLEManager:
     def sample_counts(self) -> dict[str, int]:
         return dict(self._sample_counts)
 
+    def clear_readings(self) -> None:
+        """Discard all buffered readings so the next stop only returns new data."""
+        self._readings = []
+        self._sample_counts = {"imu1": 0, "imu2": 0}
+
     async def connect(self) -> None:
         """Scan for and connect to both IMU sensors (60s timeout)."""
         try:

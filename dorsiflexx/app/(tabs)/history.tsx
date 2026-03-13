@@ -1,88 +1,165 @@
-import { Image } from "expo-image";
-import { Link } from "expo-router";
-import { Platform } from "react-native";
+import BackendService from "@/src/services/api/BackendService";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useMemo, useState } from "react";
+import { Pressable, SafeAreaView, View, useColorScheme } from "react-native";
+import { Calendar, DateData } from "react-native-calendars";
 
-import { HelloWave } from "@/components/hello-wave";
-import ParallaxScrollView from "@/components/parallax-scroll-view";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
+type MarkedDate = {
+  disableTouchEvent?: boolean;
+  customStyles?: {
+    container?: Record<string, any>;
+    text?: Record<string, any>;
+  };
+};
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          className="h-[178px] w-[290px] absolute bottom-0 left-0"
-        />
+function toLocalDateString(date: Date) {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function isPastDate(dateString: string, todayString: string) {
+  return dateString < todayString;
+}
+
+export default function HistoryCalendarScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
+  const today = new Date();
+  const todayString = toLocalDateString(today);
+
+  const [completedExerciseDates, setCompletedExerciseDates] = useState<string[]>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      BackendService.getSessionDates()
+        .then((dates) => {
+          console.log("Fetched session dates:", dates);
+          setCompletedExerciseDates(dates);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch session dates:", err);
+          setCompletedExerciseDates([]);
+        });
+    }, []),
+  );
+
+  const colors = {
+    bg: isDark ? "#151718" : "#F5F1F8",
+    text: isDark ? "#ECEDEE" : "#11181C",
+    purple: "#8d44bc",
+  };
+
+  const markedDates = useMemo<Record<string, MarkedDate>>(() => {
+    const marks: Record<string, MarkedDate> = {};
+
+    for (const date of completedExerciseDates) {
+      if (isPastDate(date, todayString) || date === todayString) {
+        marks[date] = {
+          customStyles: {
+            container: {
+              backgroundColor: colors.purple,
+              borderRadius: 999,
+              width: 38,
+              height: 38,
+              alignItems: "center",
+              justifyContent: "center",
+            },
+            text: {
+              color: "#fff",
+              fontSize: 18,
+              fontWeight: "500",
+            },
+          },
+        };
       }
-    >
-      <ThemedView className="flex-row items-center gap-2">
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView className="gap-2 mb-2">
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
-          to see changes. Press{" "}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: "cmd + d",
-              android: "cmd + m",
-              web: "F12",
-            })}
-          </ThemedText>{" "}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView className="gap-2 mb-2">
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction
-              title="Action"
-              icon="cube"
-              onPress={() => alert("Action pressed")}
-            />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert("Share pressed")}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert("Delete pressed")}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    }
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView className="gap-2 mb-2">
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">
-            npm run reset-project
-          </ThemedText>{" "}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{" "}
-          directory. This will move the current{" "}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    const didExerciseToday = completedExerciseDates.includes(todayString);
+
+    marks[todayString] = {
+      customStyles: {
+        container: {
+          backgroundColor: didExerciseToday ? colors.purple : "transparent",
+          borderWidth: 3,
+          borderColor: colors.text,
+          borderRadius: 999,
+          width: 38,
+          height: 38,
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        text: {
+          color: didExerciseToday ? "#fff" : colors.text,
+          fontSize: 18,
+          fontWeight: "500",
+        },
+      },
+    };
+
+    return marks;
+  }, [completedExerciseDates, todayString, colors.purple, colors.text]);
+
+  const handleDayPress = (day: DateData) => {
+    if (!completedExerciseDates.includes(day.dateString)) return;
+
+    // TODO: go to exercise session for this date
+    router.push({
+      pathname: "/exercise-summary",
+      params: { date: day.dateString },
+    });
+  };
+
+  return (
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
+      <Pressable
+        onPress={() => console.log("Export history")}
+        className="absolute right-6 top-16 p-2"
+      >
+        <Ionicons name="share-outline" size={36} color={colors.text} />
+      </Pressable>
+      <View className="flex-1 px-6 pt-36">
+        <View className="rounded-none">
+          <Calendar
+            initialDate={todayString}
+            onDayPress={handleDayPress}
+            enableSwipeMonths
+            hideExtraDays
+            markingType="custom"
+            markedDates={markedDates}
+            renderArrow={(direction) => (
+              <Ionicons
+                name={direction === "left" ? "chevron-back" : "chevron-forward"}
+                size={26}
+                color={colors.text}
+              />
+            )}
+            style={{
+              backgroundColor: "transparent",
+            }}
+            theme={{
+              calendarBackground: "transparent",
+              backgroundColor: "transparent",
+
+              monthTextColor: colors.text,
+              textMonthFontSize: 22,
+              textMonthFontWeight: "700",
+
+              textSectionTitleColor: colors.text,
+              textDayHeaderFontSize: 15,
+              textDayFontSize: 18,
+              dayTextColor: colors.text,
+              textDisabledColor: "transparent",
+
+              todayTextColor: colors.text,
+              arrowColor: colors.text,
+            }}
+          />
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }

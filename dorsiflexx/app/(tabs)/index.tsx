@@ -23,6 +23,7 @@ export default function HomeScreen() {
     { label: "Fri", completedCount: 0 },
     { label: "Sat", completedCount: 0 },
   ];
+  const mostRecentSessionDate = "2026-03-06";
   ////////////////////////////////////////////////////
 
   const goalText = `${goalPerDay}x per day`;
@@ -84,7 +85,12 @@ export default function HomeScreen() {
           <View className="w-4/5 gap-3.5 self-center max-w-[420px]">
             <PillButton
               title={"View most recent\nexercise session"}
-              onPress={() => {}}
+              onPress={() =>
+                router.push({
+                  pathname: "/exercise-summary",
+                  params: { date: mostRecentSessionDate },
+                })
+              }
             />
             <PillButton
               title={"Start new\nexercise session"}

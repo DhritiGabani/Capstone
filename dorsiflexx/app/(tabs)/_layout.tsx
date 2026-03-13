@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -10,9 +10,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
-  const [bluetoothOn, setBluetoothOn] = useState(false);
 
-  const iconColor = colorScheme === "dark" ? "#9BA1A6" : "#687076";
   const tintColor = colorScheme === "dark" ? "#fff" : "#8d44bc";
   const tabBgColor = colorScheme === "dark" ? "#151718" : "#fff";
 
