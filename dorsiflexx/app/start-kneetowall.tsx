@@ -1,7 +1,8 @@
 import PillButton from "@/components/PillButton";
+import BackendService from "@/src/services/api/BackendService";
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { Image, SafeAreaView, Text, useColorScheme, View } from "react-native";
+import { Alert, Image, SafeAreaView, Text, useColorScheme, View } from "react-native";
 
 type BtState = "disconnected" | "connecting" | "connected";
 
@@ -31,10 +32,11 @@ export default function StartKneeToWall() {
 
     try {
       setBtState("connecting");
-      await new Promise((res) => setTimeout(res, 1000));
+      await BackendService.startKTW();
       setBtState("connected");
-    } catch (e) {
+    } catch (e: any) {
       setBtState("disconnected");
+      Alert.alert("Connection Failed", e.message || "Could not connect to device.");
     }
   }
 

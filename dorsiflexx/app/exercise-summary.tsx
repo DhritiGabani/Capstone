@@ -1,13 +1,18 @@
+import BackendService, {
+  KTWMeasurement,
+  SessionByDate,
+} from "@/src/services/api/BackendService";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    Text,
-    View,
-    useColorScheme,
+  ActivityIndicator,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  View,
+  useColorScheme,
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import Svg, { Line, Text as SvgText } from "react-native-svg";
@@ -29,6 +34,7 @@ type AnkleCirclesExercise = BaseExercise & {
   repetitions: number;
   averageSpeed: number;
   percentMaxROM: number[];
+  consistencyScore?: number | null;
 };
 
 type CalfRaisesExercise = BaseExercise & {
@@ -36,6 +42,7 @@ type CalfRaisesExercise = BaseExercise & {
   repetitions: number;
   averageSpeed: number;
   percentMaxROM: number[];
+  consistencyScore?: number | null;
 };
 
 type HeelWalksExercise = BaseExercise & {
@@ -43,6 +50,7 @@ type HeelWalksExercise = BaseExercise & {
   duration: number;
   numberOfSteps: number;
   percentMaxROM: number[];
+  meanAngleDeg?: number | null;
 };
 
 type ExerciseEntry =
@@ -67,6 +75,87 @@ type MiniLineChartProps = {
   referenceLabel?: string;
   referenceValue?: number;
 };
+
+function heelWalkRomFractions(analysis: Record<string, any>): number[] {
+  const ankleAngles = analysis.ankle_angles;
+  if (!ankleAngles?.rep_max_angle_deg) return [];
+
+  const angles: number[] = Object.values(ankleAngles.rep_max_angle_deg);
+  if (angles.length === 0) return [];
+
+  const maxAngle = Math.max(...angles);
+  if (maxAngle === 0) return angles.map(() => 0);
+
+  return angles.map((a) => Math.round((a / maxAngle) * 10000) / 10000);
+}
+
+function mapBackendToExercises(analysis: Record<string, any>): ExerciseEntry[] {
+  const repCounts = analysis.rep_counts ?? {};
+  const repDurations = analysis.rep_durations ?? {};
+  const romConsistency = analysis.rom_consistency ?? {};
+  const consistencyScores = analysis.consistency_scores ?? {};
+  const ankleAngles = analysis.ankle_angles;
+
+  const exercises: ExerciseEntry[] = [];
+  let idx = 0;
+
+  for (const [exerciseType, repCount] of Object.entries(repCounts)) {
+    idx += 1;
+    const durations = repDurations[exerciseType] ?? {};
+    const romData = romConsistency[exerciseType] ?? {};
+    const romFractions: number[] = romData.rep_rom_fraction
+      ? Object.values(romData.rep_rom_fraction)
+      : [];
+
+    if (exerciseType === "Ankle Rotation") {
+      exercises.push({
+        id: `ex-${idx}`,
+        type: "ankle_circles_cw",
+        displayName: "ANKLE ROTATIONS",
+        repetitions: repCount as number,
+        averageSpeed: durations.mean_duration_s ?? 0,
+        percentMaxROM: romFractions,
+        consistencyScore: consistencyScores[exerciseType] ?? null,
+      });
+    } else if (exerciseType === "Calf Raises") {
+      exercises.push({
+        id: `ex-${idx}`,
+        type: "calf_raises_on_step",
+        displayName: "CALF RAISES",
+        repetitions: repCount as number,
+        averageSpeed: durations.mean_duration_s ?? 0,
+        percentMaxROM: romFractions,
+        consistencyScore: consistencyScores[exerciseType] ?? null,
+      });
+    } else if (exerciseType === "Heel Walk") {
+      const repDurMap = durations.rep_durations_s ?? {};
+      const totalDuration = Object.values(repDurMap).reduce(
+        (sum: number, d: any) => sum + (d as number),
+        0,
+      );
+      exercises.push({
+        id: `ex-${idx}`,
+        type: "heel_walks",
+        displayName: "HEEL WALKING",
+        duration: Math.round(totalDuration as number),
+        numberOfSteps: repCount as number,
+        percentMaxROM: heelWalkRomFractions(analysis),
+        meanAngleDeg: ankleAngles?.mean_max_angle_deg ?? null,
+      });
+    }
+  }
+
+  return exercises;
+}
+
+function formatTimeLabel(isoString: string): string {
+  const d = new Date(isoString);
+  return d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
 
 function formatDateLabel(dateString?: string | string[]) {
   if (!dateString || Array.isArray(dateString)) return "";
@@ -226,6 +315,13 @@ function AnkleCirclesDetails({
         {exercise.averageSpeed.toFixed(1)} seconds/circle
       </Text>
 
+      {exercise.consistencyScore != null && (
+        <Text className="mt-1 text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+          <Text className="font-semibold">Consistency:</Text>{" "}
+          {exercise.consistencyScore.toFixed(1)}%
+        </Text>
+      )}
+
       <MiniLineChart
         values={exercise.percentMaxROM}
         isDark={isDark}
@@ -252,6 +348,13 @@ function CalfRaisesDetails({
         {exercise.averageSpeed.toFixed(1)} seconds/rep
       </Text>
 
+      {exercise.consistencyScore != null && (
+        <Text className="mt-1 text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+          <Text className="font-semibold">Consistency:</Text>{" "}
+          {exercise.consistencyScore.toFixed(1)}%
+        </Text>
+      )}
+
       <MiniLineChart
         values={exercise.percentMaxROM}
         isDark={isDark}
@@ -276,6 +379,13 @@ function HeelWalksDetails({
         <Text className="font-semibold">Number of steps:</Text>{" "}
         {exercise.numberOfSteps} steps
       </Text>
+
+      {exercise.meanAngleDeg != null && (
+        <Text className="mt-1 text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+          <Text className="font-semibold">Mean ankle angle:</Text>{" "}
+          {exercise.meanAngleDeg.toFixed(1)}°
+        </Text>
+      )}
 
       <MiniLineChart
         values={exercise.percentMaxROM}
@@ -351,72 +461,31 @@ export default function HistorySingleScreen() {
 
   const selectedDateLabel = useMemo(() => formatDateLabel(date), [date]);
 
-  // TODO: replace this hardcoded data with real data for sessions on this date
-  const sessions: SessionEntry[] = useMemo(
-    () => [
-      {
-        id: "session-1",
-        timeLabel: "10:24 AM",
-        exercises: [
-          {
-            id: "ex-1",
-            type: "ankle_circles_cw",
-            displayName: "ANKLE CIRCLES (CW)",
-            repetitions: 10,
-            averageSpeed: 1.2,
-            percentMaxROM: [
-              0.925, 0.8787, 0.3598, 0.7938, 0.568, 0.6378, 0.5205, 0.7988, 1.0,
-              0.8012,
-            ],
-          },
-          {
-            id: "ex-2",
-            type: "ankle_circles_ccw",
-            displayName: "ANKLE CIRCLES (CCW)",
-            repetitions: 10,
-            averageSpeed: 1.4,
-            percentMaxROM: [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0],
-          },
-          {
-            id: "ex-3",
-            type: "calf_raises_on_step",
-            displayName: "CALF RAISES ON STEP",
-            repetitions: 12,
-            averageSpeed: 1.1,
-            percentMaxROM: [
-              0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.97, 0.98, 0.99, 0.99,
-              1,
-            ],
-          },
-        ],
-      },
-      {
-        id: "session-2",
-        timeLabel: "6:33 PM",
-        exercises: [
-          {
-            id: "ex-4",
-            type: "heel_walks",
-            displayName: "HEEL WALKS",
-            duration: 22,
-            numberOfSteps: 13,
-            percentMaxROM: [
-              0.8, 0.9, 0.6, 0.75, 0.78, 1, 0.2, 0.3, 0.4, 0.5, 0.3, 0.42, 0.41,
-            ],
-          },
-          {
-            id: "ex-5",
-            type: "calf_raises_on_step",
-            displayName: "CALF RAISES ON STEP",
-            repetitions: 8,
-            averageSpeed: 0.8,
-            percentMaxROM: [1, 0.88, 0.9, 0.93, 0.4, 0.55, 0.69, 0.97],
-          },
-        ],
-      },
-    ],
-    [],
-  );
+  const [sessions, setSessions] = useState<SessionEntry[]>([]);
+  const [ktwMeasurements, setKtwMeasurements] = useState<KTWMeasurement[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!date) return;
+    setLoading(true);
+    Promise.all([
+      BackendService.getSessionsByDate(date)
+        .then((backendSessions) =>
+          backendSessions.map((s) => ({
+            id: s.session_id,
+            timeLabel: formatTimeLabel(s.start_time),
+            exercises: s.analysis ? mapBackendToExercises(s.analysis) : [],
+          })),
+        )
+        .catch(() => [] as SessionEntry[]),
+      BackendService.getKTWByDate(date).catch(() => [] as KTWMeasurement[]),
+    ])
+      .then(([mapped, ktw]) => {
+        setSessions(mapped);
+        setKtwMeasurements(ktw);
+      })
+      .finally(() => setLoading(false));
+  }, [date]);
 
   const [expandedById, setExpandedById] = useState<Record<string, boolean>>({});
 
@@ -444,6 +513,20 @@ export default function HistorySingleScreen() {
           </Text>
         </View>
 
+        {loading && (
+          <View className="items-center mt-8">
+            <ActivityIndicator size="large" />
+          </View>
+        )}
+
+        {!loading && sessions.length === 0 && ktwMeasurements.length === 0 && (
+          <View className="items-center mt-8">
+            <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE] opacity-60">
+              No exercise sessions found for this date.
+            </Text>
+          </View>
+        )}
+
         {sessions.map((session) => (
           <View key={session.id} className="mb-8">
             <View className="mb-3 min-w-[50px] self-start rounded-full bg-[#8d44bc] px-4 py-2">
@@ -463,6 +546,45 @@ export default function HistorySingleScreen() {
                 isDark={isDark}
               />
             ))}
+          </View>
+        ))}
+
+        {ktwMeasurements.map((m) => (
+          <View key={`ktw-${m.id}`} className="mb-8">
+            <View className="mb-3 min-w-[50px] self-start rounded-full bg-[#8d44bc] px-4 py-2">
+              <Text className="text-[16px] font-semibold text-[#fff]">
+                {formatTimeLabel(m.measured_at)}
+              </Text>
+            </View>
+
+            <View className="mb-1 h-[1px] w-full bg-[#8C8C8C] dark:bg-[#6C6C6C]" />
+
+            <View className="w-full">
+              <Pressable
+                onPress={() => toggleExercise(`ktw-${m.id}`)}
+                className="flex-row items-center justify-between py-2"
+              >
+                <Text className="text-[18px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
+                  KNEE-TO-WALL TEST
+                </Text>
+                <Ionicons
+                  name={expandedById[`ktw-${m.id}`] ? "remove" : "add"}
+                  size={26}
+                  color={isDark ? "#ECEDEE" : "#11181C"}
+                />
+              </Pressable>
+
+              {expandedById[`ktw-${m.id}`] && (
+                <View className="bg-[#eee] px-3 py-3 dark:bg-[#2B2D31]">
+                  <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+                    <Text className="font-semibold">Ankle angle:</Text>{" "}
+                    {m.angle_deg.toFixed(1)}°
+                  </Text>
+                </View>
+              )}
+
+              <View className="h-[1px] w-full bg-[#8C8C8C] dark:bg-[#6C6C6C]" />
+            </View>
           </View>
         ))}
       </ScrollView>

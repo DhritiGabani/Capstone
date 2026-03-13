@@ -22,9 +22,14 @@ log = logging.getLogger(__name__)
 
 from ble_manager import BLEManager
 from classifier import ExerciseClassifier
-from database import init_db, create_session, save_raw_data, complete_session, save_feedback
-from pipeline import preprocess_session, sensor_readings_to_imu_json
+from database import (
+    init_db, create_session, save_raw_data, complete_session, save_feedback,
+    save_ktw_measurement, get_ktw_measurements, get_ktw_measurements_by_date,
+    get_session_dates, get_sessions_by_date,
+)
+from pipeline import preprocess_session, sensor_readings_to_imu_json, wrangle, filter_signals, extract_features
 from analysis import analyze_session
+import ktw_analysis
 
 # ---------------------------------------------------------------------------
 # Application state
@@ -36,6 +41,7 @@ classifier: ExerciseClassifier | None = None
 _session_id: str | None = None
 _start_time: str | None = None
 _start_ts: float | None = None
+_ktw_active: bool = False
 
 
 @asynccontextmanager
@@ -192,3 +198,116 @@ class FeedbackBody(BaseModel):
 async def session_feedback(session_id: str, body: FeedbackBody):
     save_feedback(session_id, body.rating, body.comments)
     return {"status": "saved"}
+
+
+# ---------------------------------------------------------------------------
+# POST /ktw/start
+# ---------------------------------------------------------------------------
+
+@app.post("/ktw/start")
+async def ktw_start():
+    global _ktw_active
+
+    # If already streaming in KTW mode, clear buffered readings so only
+    # data from the upcoming countdown window is captured.
+    if ble.is_streaming and _ktw_active:
+        ble.clear_readings()
+        return {"status": "streaming", "mode": "ktw"}
+
+    if ble.is_streaming:
+        raise HTTPException(400, "A session is already in progress.")
+
+    await ble.connect()
+    await ble.start_streaming()
+    _ktw_active = True
+
+    return {"status": "streaming", "mode": "ktw"}
+
+
+# ---------------------------------------------------------------------------
+# POST /ktw/stop
+# ---------------------------------------------------------------------------
+
+@app.post("/ktw/stop")
+async def ktw_stop():
+    global _ktw_active
+
+    if not ble.is_streaming or not _ktw_active:
+        raise HTTPException(400, "No active KTW session to stop.")
+
+    readings = await ble.stop_streaming()
+    _ktw_active = False
+
+    imu1_json = sensor_readings_to_imu_json(readings, "imu1")
+    imu2_json = sensor_readings_to_imu_json(readings, "imu2")
+
+    imu1_count = len(imu1_json.get("samples", []))
+    imu2_count = len(imu2_json.get("samples", []))
+    log.info("KTW stopped: %d readings (imu1=%d, imu2=%d)", len(readings), imu1_count, imu2_count)
+
+    if imu1_count == 0 or imu2_count == 0:
+        raise HTTPException(400, "No sensor data received from one or both IMUs.")
+
+    try:
+        # Run pipeline stages 0-3 only (wrangle, filter, features — NO segmentation)
+        signals_df = wrangle(imu1_json, imu2_json)
+        filtered_df = filter_signals(signals_df)
+        featured_df = extract_features(filtered_df)
+
+        result = ktw_analysis.analyze(featured_df)
+        log.info("KTW analysis done: smallest_angle=%.3f", result["smallest_angle_deg"])
+        return result
+    except Exception as e:
+        log.error("KTW analysis failed: %s\n%s", e, traceback.format_exc())
+        raise HTTPException(500, f"KTW analysis failed: {e}")
+
+
+# ---------------------------------------------------------------------------
+# POST /ktw/save
+# ---------------------------------------------------------------------------
+
+class KTWSaveBody(BaseModel):
+    angle_deg: float
+    details: dict | None = None
+
+
+@app.post("/ktw/save")
+async def ktw_save(body: KTWSaveBody):
+    row_id = save_ktw_measurement(body.angle_deg, body.details)
+    return {"status": "saved", "id": row_id}
+
+
+# ---------------------------------------------------------------------------
+# GET /ktw/history
+# ---------------------------------------------------------------------------
+
+@app.get("/ktw/history")
+async def ktw_history():
+    return get_ktw_measurements()
+
+
+# ---------------------------------------------------------------------------
+# GET /ktw/by-date/{date}
+# ---------------------------------------------------------------------------
+
+@app.get("/ktw/by-date/{date}")
+async def ktw_by_date(date: str):
+    return get_ktw_measurements_by_date(date)
+
+
+# ---------------------------------------------------------------------------
+# GET /sessions/dates
+# ---------------------------------------------------------------------------
+
+@app.get("/sessions/dates")
+async def sessions_dates():
+    return get_session_dates()
+
+
+# ---------------------------------------------------------------------------
+# GET /sessions/by-date/{date}
+# ---------------------------------------------------------------------------
+
+@app.get("/sessions/by-date/{date}")
+async def sessions_by_date(date: str):
+    return get_sessions_by_date(date)

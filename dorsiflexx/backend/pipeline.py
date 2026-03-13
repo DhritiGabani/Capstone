@@ -44,12 +44,12 @@ FEATURES_TO_NORMALIZE = [
 ]
 
 # Lowpass filter parameters
-FILTER_CUTOFF_HZ = 5
+FILTER_CUTOFF_HZ = 2
 FILTER_ORDER = 2
 
 # Rep boundary detection parameters
 PEAK_MIN_DISTANCE = 30
-PEAK_MIN_PROMINENCE = 30
+PEAK_MIN_PROMINENCE = 15
 
 # Per-rep normalization baseline window
 BASELINE_SAMPLES = 5

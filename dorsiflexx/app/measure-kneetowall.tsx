@@ -1,4 +1,5 @@
 import PillButton from "@/components/PillButton";
+import BackendService from "@/src/services/api/BackendService";
 import { router, Stack } from "expo-router";
 import {
     default as React,
@@ -24,7 +25,8 @@ export default function MeasureKneeToWall() {
 
   const [measureState, setMeasureState] = useState<MeasureState>("idle");
   const [countdown, setCountdown] = useState<number>(5);
-  const [resultCm, setResultCm] = useState<number | null>(null);
+  const [resultAngle, setResultAngle] = useState<number | null>(null);
+  const [angleOverTime, setAngleOverTime] = useState<Record<string, number> | null>(null);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -38,7 +40,7 @@ export default function MeasureKneeToWall() {
   );
 
   const isMeasuring = measureState === "measuring";
-  const hasResult = measureState === "done" && resultCm !== null;
+  const hasResult = measureState === "done" && resultAngle !== null;
 
   const confirmLeave = useCallback((onConfirm: () => void) => {
     Alert.alert(
@@ -71,21 +73,38 @@ export default function MeasureKneeToWall() {
 
     // reset state for new measurement
     clearTimer();
-    setResultCm(null);
+    setResultAngle(null);
+    setAngleOverTime(null);
     setMeasureState("measuring");
     setCountdown(5);
 
-    // countdown 5 -> 1 over 5 seconds
+    // Restart BLE streaming for this measurement (needed for redo)
+    try {
+      await BackendService.startKTW();
+    } catch (e: any) {
+      Alert.alert("Connection Failed", e.message || "Could not start KTW session.");
+      setMeasureState("idle");
+      return;
+    }
+
+    // countdown 5 -> 1 over 5 seconds, then call backend
     intervalRef.current = setInterval(() => {
       setCountdown((c) => {
         if (c <= 1) {
           clearTimer();
 
-          // TODO: Replace with real device measurement
-          const fakeMeasurement = Number((5 + Math.random() * 5).toFixed(1)); // 5.0–10.0 cm
+          // Call backend to stop streaming and get real measurement
+          BackendService.stopKTW()
+            .then((result) => {
+              setResultAngle(result.smallest_angle_deg);
+              setAngleOverTime(result.angle_over_time);
+              setMeasureState("done");
+            })
+            .catch((e) => {
+              Alert.alert("Measurement Failed", e.message || "Could not get measurement.");
+              setMeasureState("idle");
+            });
 
-          setResultCm(fakeMeasurement);
-          setMeasureState("done");
           return 1;
         }
         return c - 1;
@@ -180,13 +199,13 @@ export default function MeasureKneeToWall() {
               )}
 
               {/* Result (after measurement) */}
-              {resultCm !== null && (
+              {resultAngle !== null && (
                 <View className="items-center mt-6">
                   <Text className="text-[#11181C] dark:text-[#ECEDEE] text-lg">
                     Your measurement:
                   </Text>
                   <Text className="text-[#11181C] dark:text-[#ECEDEE] text-5xl font-extrabold mt-2">
-                    {resultCm} cm
+                    {resultAngle.toFixed(1)}°
                   </Text>
                 </View>
               )}
@@ -195,9 +214,13 @@ export default function MeasureKneeToWall() {
                 <View className="mt-8">
                   <PillButton
                     title="Save"
-                    onPress={() => {
-                      // TODO: save resultCm to database
-                      router.replace("/measure");
+                    onPress={async () => {
+                      try {
+                        await BackendService.saveKTW(resultAngle!, angleOverTime ?? undefined);
+                        router.replace("/measure");
+                      } catch (e: any) {
+                        Alert.alert("Save Failed", e.message || "Could not save measurement.");
+                      }
                     }}
                   />
                 </View>
