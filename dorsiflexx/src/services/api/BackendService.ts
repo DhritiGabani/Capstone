@@ -9,15 +9,27 @@ import Constants from "expo-constants";
  * On the iOS simulator, localhost works fine.
  */
 function getBackendUrl(): string {
+  // Allow explicit override via EXPO_PUBLIC_BACKEND_URL (e.g. when using --tunnel)
+  const envUrl = process.env.EXPO_PUBLIC_BACKEND_URL;
+  if (envUrl) {
+    console.log("[BackendService] Using env backend URL:", envUrl);
+    return envUrl;
+  }
+
   const debuggerHost =
     Constants.expoGoConfig?.debuggerHost ??
     (Constants as any).manifest?.debuggerHost ??
     (Constants as any).manifest2?.extra?.expoGo?.debuggerHost;
   if (debuggerHost) {
     const ip = debuggerHost.split(":")[0];
-    const url = `http://${ip}:8000`;
-    console.log("[BackendService] Resolved backend URL:", url);
-    return url;
+    // If the host looks like a tunnel URL (contains dots beyond a plain IP), skip it
+    const isIp = /^\d{1,3}(\.\d{1,3}){3}$/.test(ip);
+    if (isIp) {
+      const url = `http://${ip}:8000`;
+      console.log("[BackendService] Resolved backend URL:", url);
+      return url;
+    }
+    console.log("[BackendService] debuggerHost appears to be a tunnel host, ignoring:", ip);
   }
   console.log("[BackendService] No debuggerHost found, falling back to localhost");
   console.log("[BackendService] Constants keys:", JSON.stringify(Object.keys(Constants)));
@@ -146,11 +158,12 @@ class BackendService {
   async saveKTW(
     angleDeg: number,
     details?: Record<string, any>,
+    name?: string,
   ): Promise<{ status: string; id: number }> {
     const res = await fetch(`${BACKEND_URL}/ktw/save`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ angle_deg: angleDeg, details: details ?? null }),
+      body: JSON.stringify({ angle_deg: angleDeg, details: details ?? null, name: name ?? "Anonymous" }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
