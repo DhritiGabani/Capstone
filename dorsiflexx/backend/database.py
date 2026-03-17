@@ -49,6 +49,14 @@ def init_db() -> None:
         );
     """)
     conn.commit()
+
+    # Migration: add player_name column if it doesn't exist yet
+    try:
+        conn.execute("ALTER TABLE ktw_measurements ADD COLUMN player_name TEXT")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+
     conn.close()
 
 
@@ -118,18 +126,44 @@ def save_feedback(session_id: str, rating: str, comments: str) -> None:
 # KTW Measurements
 # ---------------------------------------------------------------------------
 
-def save_ktw_measurement(angle_deg: float, details: dict | None = None) -> int:
-    """Save a KTW measurement and return the new row id."""
+def save_ktw_measurement(angle_deg: float, details: dict | None = None, player_name: str | None = None) -> int:
+    """Save a KTW measurement and return the new row id.
+
+    Uses a two-step approach so it works regardless of whether the player_name
+    column has been migrated yet:
+      1. INSERT with only the original columns (always succeeds).
+      2. Ensure the column exists, then UPDATE the name on that row.
+    """
     measured_at = datetime.now(timezone.utc).isoformat()
     details_str = json.dumps(details) if details else None
+    name = (player_name or "").strip() or "Anonymous"
 
     conn = _get_connection()
+
+    # Step 1 — insert core data using the original schema (never fails)
     cursor = conn.execute(
         "INSERT INTO ktw_measurements (measured_at, angle_deg, details_json) VALUES (?, ?, ?)",
         (measured_at, angle_deg, details_str),
     )
     row_id = cursor.lastrowid
     conn.commit()
+
+    # Step 2 — add column if missing, then stamp the player name
+    try:
+        conn.execute("ALTER TABLE ktw_measurements ADD COLUMN player_name TEXT")
+        conn.commit()
+    except Exception:
+        pass  # column already exists
+
+    try:
+        conn.execute(
+            "UPDATE ktw_measurements SET player_name = ? WHERE id = ?",
+            (name, row_id),
+        )
+        conn.commit()
+    except Exception as e:
+        log.warning("Could not persist player_name (non-fatal): %s", e)
+
     conn.close()
     return row_id
 
@@ -137,9 +171,14 @@ def save_ktw_measurement(angle_deg: float, details: dict | None = None) -> int:
 def get_ktw_measurements() -> list[dict]:
     """Return all KTW measurements ordered by date."""
     conn = _get_connection()
+    try:
+        conn.execute("ALTER TABLE ktw_measurements ADD COLUMN player_name TEXT")
+        conn.commit()
+    except Exception:
+        pass
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
-        "SELECT id, measured_at, angle_deg, details_json FROM ktw_measurements ORDER BY measured_at"
+        "SELECT id, measured_at, angle_deg, details_json, player_name FROM ktw_measurements ORDER BY measured_at"
     ).fetchall()
     conn.close()
 
@@ -149,11 +188,39 @@ def get_ktw_measurements() -> list[dict]:
             "id": row["id"],
             "measured_at": row["measured_at"],
             "angle_deg": row["angle_deg"],
+            "player_name": row["player_name"] or "Anonymous",
         }
         if row["details_json"]:
             entry["details"] = json.loads(row["details_json"])
         results.append(entry)
     return results
+
+
+def get_ktw_leaderboard() -> list[dict]:
+    """Return all KTW measurements sorted by best (highest) angle for the leaderboard."""
+    conn = _get_connection()
+    try:
+        conn.execute("ALTER TABLE ktw_measurements ADD COLUMN player_name TEXT")
+        conn.commit()
+    except Exception:
+        pass
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute(
+        "SELECT id, player_name, measured_at, angle_deg "
+        "FROM ktw_measurements "
+        "ORDER BY angle_deg DESC"
+    ).fetchall()
+    conn.close()
+
+    return [
+        {
+            "id": row["id"],
+            "player_name": row["player_name"] or "Anonymous",
+            "measured_at": row["measured_at"],
+            "angle_deg": row["angle_deg"],
+        }
+        for row in rows
+    ]
 
 
 # ---------------------------------------------------------------------------

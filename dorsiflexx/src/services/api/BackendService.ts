@@ -146,11 +146,12 @@ class BackendService {
   async saveKTW(
     angleDeg: number,
     details?: Record<string, any>,
+    name?: string,
   ): Promise<{ status: string; id: number }> {
     const res = await fetch(`${BACKEND_URL}/ktw/save`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ angle_deg: angleDeg, details: details ?? null }),
+      body: JSON.stringify({ angle_deg: angleDeg, details: details ?? null, name: name ?? "Anonymous" }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));

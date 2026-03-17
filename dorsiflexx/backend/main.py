@@ -7,15 +7,18 @@ Endpoints:
   GET  /status         - return streaming state and sample counts
 """
 
+import asyncio
 import logging
+import os
 import time
 import traceback
 from contextlib import asynccontextmanager
 
 logging.basicConfig(level=logging.INFO)
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from pydantic import BaseModel
 
 log = logging.getLogger(__name__)
@@ -25,7 +28,7 @@ from classifier import ExerciseClassifier
 from database import (
     init_db, create_session, save_raw_data, complete_session, save_feedback,
     save_ktw_measurement, get_ktw_measurements, get_ktw_measurements_by_date,
-    get_session_dates, get_sessions_by_date,
+    get_ktw_leaderboard, get_session_dates, get_sessions_by_date,
 )
 from pipeline import preprocess_session, sensor_readings_to_imu_json, wrangle, filter_signals, extract_features
 from analysis import analyze_session
@@ -42,6 +45,20 @@ _session_id: str | None = None
 _start_time: str | None = None
 _start_ts: float | None = None
 _ktw_active: bool = False
+
+# SSE clients waiting for leaderboard updates
+_sse_clients: set[asyncio.Queue] = set()
+
+
+def _broadcast_leaderboard_update() -> None:
+    """Push a notification to all connected leaderboard SSE clients."""
+    dead: set[asyncio.Queue] = set()
+    for q in list(_sse_clients):
+        try:
+            q.put_nowait("update")
+        except asyncio.QueueFull:
+            dead.add(q)
+    _sse_clients -= dead
 
 
 @asynccontextmanager
@@ -269,11 +286,20 @@ async def ktw_stop():
 class KTWSaveBody(BaseModel):
     angle_deg: float
     details: dict | None = None
+    name: str = "Anonymous"
 
 
 @app.post("/ktw/save")
 async def ktw_save(body: KTWSaveBody):
-    row_id = save_ktw_measurement(body.angle_deg, body.details)
+    try:
+        row_id = save_ktw_measurement(body.angle_deg, body.details, body.name)
+    except Exception as e:
+        log.error("ktw_save failed: %s\n%s", e, traceback.format_exc())
+        raise HTTPException(500, f"Could not save measurement: {e}")
+    try:
+        _broadcast_leaderboard_update()
+    except Exception as e:
+        log.warning("SSE broadcast failed (non-fatal): %s", e)
     return {"status": "saved", "id": row_id}
 
 
@@ -311,3 +337,64 @@ async def sessions_dates():
 @app.get("/sessions/by-date/{date}")
 async def sessions_by_date(date: str):
     return get_sessions_by_date(date)
+
+
+# ---------------------------------------------------------------------------
+# GET /ktw/leaderboard/stream  (SSE — push update when new row is saved)
+# ---------------------------------------------------------------------------
+
+@app.get("/ktw/leaderboard/stream")
+async def leaderboard_stream(request: Request):
+    queue: asyncio.Queue = asyncio.Queue(maxsize=5)
+    _sse_clients.add(queue)
+
+    async def event_generator():
+        try:
+            while True:
+                if await request.is_disconnected():
+                    break
+                try:
+                    await asyncio.wait_for(queue.get(), timeout=25.0)
+                    yield "data: update\n\n"
+                except asyncio.TimeoutError:
+                    yield ": ping\n\n"   # keep-alive comment, ignored by client
+        finally:
+            _sse_clients.discard(queue)
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /ktw/leaderboard  (JSON data)
+# ---------------------------------------------------------------------------
+
+@app.get("/ktw/leaderboard")
+async def ktw_leaderboard():
+    return get_ktw_leaderboard()
+
+
+# ---------------------------------------------------------------------------
+# GET /logo.png  (brand logo for leaderboard page)
+# ---------------------------------------------------------------------------
+
+@app.get("/logo.png")
+async def serve_logo():
+    logo_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "assets", "images", "logo.png")
+    )
+    return FileResponse(logo_path, media_type="image/png")
+
+
+# ---------------------------------------------------------------------------
+# GET /leaderboard  (HTML page)
+# ---------------------------------------------------------------------------
+
+@app.get("/leaderboard", response_class=HTMLResponse)
+async def leaderboard_page():
+    html_path = os.path.join(os.path.dirname(__file__), "leaderboard.html")
+    with open(html_path, encoding="utf-8") as f:
+        return f.read()
