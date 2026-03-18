@@ -1,5 +1,7 @@
 import PillButton from "@/components/PillButton";
-import BackendService, { KTWMeasurement } from "@/src/services/api/BackendService";
+import BackendService, {
+  KTWMeasurement,
+} from "@/src/services/api/BackendService";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
 import { SafeAreaView, Text, useColorScheme, View } from "react-native";
@@ -7,13 +9,33 @@ import Svg, { Circle, Line, Polyline, Text as SvgText } from "react-native-svg";
 
 type Measurement = {
   date: string;
-  dateLabel: string;
+  dateKey: string; // unique calendar day key
+  dateLabel: string; // display label
   angleDeg: number;
 };
 
 function formatDateLabel(isoDate: string): string {
   const d = new Date(isoDate);
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function formatDateKey(isoDate: string): string {
+  const d = new Date(isoDate);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+
+  if (sorted.length % 2 === 0) {
+    return (sorted[mid - 1] + sorted[mid]) / 2;
+  }
+  return sorted[mid];
 }
 
 export default function MeasurementsScreen() {
@@ -33,6 +55,7 @@ export default function MeasurementsScreen() {
     () =>
       ktwData.map((m) => ({
         date: m.measured_at,
+        dateKey: formatDateKey(m.measured_at),
         dateLabel: formatDateLabel(m.measured_at),
         angleDeg: m.angle_deg,
       })),
@@ -57,35 +80,89 @@ export default function MeasurementsScreen() {
     const yMin = 0;
     const yMax = 60;
 
-    const parseTime = (isoDate: string) => new Date(isoDate).getTime();
+    const groupedMap = new Map<
+      string,
+      {
+        dateKey: string;
+        dateLabel: string;
+        timestamp: number;
+        measurements: Measurement[];
+        medianAngle: number;
+      }
+    >();
 
-    const times = measurements.map((m) => parseTime(m.date));
+    for (const m of measurements) {
+      const d = new Date(m.date);
+      const dayTimestamp = new Date(
+        d.getFullYear(),
+        d.getMonth(),
+        d.getDate(),
+      ).getTime();
+
+      if (!groupedMap.has(m.dateKey)) {
+        groupedMap.set(m.dateKey, {
+          dateKey: m.dateKey,
+          dateLabel: m.dateLabel,
+          timestamp: dayTimestamp,
+          measurements: [],
+          medianAngle: 0,
+        });
+      }
+
+      groupedMap.get(m.dateKey)!.measurements.push(m);
+    }
+
+    const groupedDates = Array.from(groupedMap.values())
+      .sort((a, b) => a.timestamp - b.timestamp)
+      .map((group) => ({
+        ...group,
+        medianAngle: median(group.measurements.map((m) => m.angleDeg)),
+      }));
+
+    groupedDates.forEach((group) => {
+      const angles = group.measurements.map((m) => m.angleDeg);
+
+      console.log(
+        `${group.dateKey} | angles: [${angles.join(", ")}] | median: ${group.medianAngle}`,
+      );
+    });
+
+    const times = groupedDates.map((g) => g.timestamp);
     const tMin = Math.min(...times);
     const tMax = Math.max(...times);
 
-    const xForMeasurement = (m: Measurement) => {
-      // If all dates are same, center
+    const xForTimestamp = (timestamp: number) => {
       if (tMax === tMin) return padL + innerW / 2;
 
-      const edgePadding = 12; // keeps first point off the y-axis and last off right edge
+      const edgePadding = 12;
       const usableWidth = innerW - edgePadding * 2;
+      const t = (timestamp - tMin) / (tMax - tMin);
 
-      const t = (parseTime(m.date) - tMin) / (tMax - tMin); // 0..1
       return padL + edgePadding + t * usableWidth;
     };
+
+    const xByDateKey = new Map<string, number>();
+    groupedDates.forEach((group) => {
+      xByDateKey.set(group.dateKey, xForTimestamp(group.timestamp));
+    });
+
+    const xForMeasurement = (m: Measurement) =>
+      xByDateKey.get(m.dateKey) ?? padL;
 
     const yForValue = (v: number) => {
       const t = (v - yMin) / (yMax - yMin);
       return padT + (1 - t) * innerH;
     };
 
-    const points = measurements
-      .map((m) => `${xForMeasurement(m)},${yForValue(m.angleDeg)}`)
+    const medianPoints = groupedDates
+      .map(
+        (group) =>
+          `${xByDateKey.get(group.dateKey)},${yForValue(group.medianAngle)}`,
+      )
       .join(" ");
 
     const goalY = yForValue(goalAngle);
 
-    // y-axis ticks (every 5 degrees)
     const ticks = Array.from({ length: 13 }).map((_, i) => {
       const v = i * 5;
       return {
@@ -104,9 +181,10 @@ export default function MeasurementsScreen() {
       padB,
       innerW,
       innerH,
-      points,
+      groupedDates,
       xForMeasurement,
       yForValue,
+      medianPoints,
       goalY,
       ticks,
     };
@@ -114,15 +192,13 @@ export default function MeasurementsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
-      <View className="flex-1 px-[22px] justify-center gap-8">
-        {/* Title */}
+      <View className="flex-1 justify-center gap-8 px-[22px]">
         <View className="items-center">
-          <Text className="text-[26px] pb-2 text-[#11181C] text-center dark:text-[#ECEDEE]">
+          <Text className="pb-2 text-center text-[26px] text-[#11181C] dark:text-[#ECEDEE]">
             KNEE-TO-WALL{"\n"}MEASUREMENTS
           </Text>
         </View>
 
-        {/* Chart card */}
         <View className="items-center">
           <View className="w-full max-w-[420px] px-4 py-5">
             <View className="items-center">
@@ -145,7 +221,7 @@ export default function MeasurementsScreen() {
                   strokeWidth={1.5}
                 />
 
-                {/* 20° label */}
+                {/* Y labels */}
                 <SvgText
                   x={chart.padL - 20}
                   y={chart.yForValue(20)}
@@ -157,7 +233,6 @@ export default function MeasurementsScreen() {
                   20°
                 </SvgText>
 
-                {/* 40° label */}
                 <SvgText
                   x={chart.padL - 20}
                   y={chart.yForValue(40)}
@@ -169,13 +244,14 @@ export default function MeasurementsScreen() {
                   40°
                 </SvgText>
 
-                {measurements.map((m, i) => {
-                  const x = chart.xForMeasurement(m);
+                {/* One x tick per unique date */}
+                {chart.groupedDates.map((group, i) => {
+                  const x = chart.xForMeasurement(group.measurements[0]);
                   const yAxis = chart.H - chart.padB;
 
                   return (
                     <Line
-                      key={`xtick-${m.dateLabel}-${i}`}
+                      key={`xtick-${group.dateKey}-${i}`}
                       x1={x}
                       y1={yAxis}
                       x2={x}
@@ -186,7 +262,7 @@ export default function MeasurementsScreen() {
                   );
                 })}
 
-                {/* Y ticks + labels */}
+                {/* Y ticks */}
                 {chart.ticks.map((t) => (
                   <React.Fragment key={`tick-${t.v}`}>
                     <Line
@@ -200,7 +276,7 @@ export default function MeasurementsScreen() {
                   </React.Fragment>
                 ))}
 
-                {/* Goal dashed line + label */}
+                {/* Goal line */}
                 <Line
                   x1={chart.padL}
                   y1={chart.goalY}
@@ -220,15 +296,15 @@ export default function MeasurementsScreen() {
                   GOAL
                 </SvgText>
 
-                {/* Line path */}
+                {/* Line through medians */}
                 <Polyline
-                  points={chart.points}
+                  points={chart.medianPoints}
                   fill="none"
                   stroke={textColor}
                   strokeWidth={2}
                 />
 
-                {/* Points */}
+                {/* All points, stacked on same x if same date */}
                 {measurements.map((m, i) => {
                   const cx = chart.xForMeasurement(m);
                   const cy = chart.yForValue(m.angleDeg);
@@ -243,13 +319,14 @@ export default function MeasurementsScreen() {
                   );
                 })}
 
-                {/* X labels */}
-                {measurements.map((m, i) => {
-                  const x = chart.xForMeasurement(m) + 5;
+                {/* One x label per unique date */}
+                {chart.groupedDates.map((group, i) => {
+                  const x = chart.xForMeasurement(group.measurements[0]) + 5;
                   const y = chart.H - chart.padB + 18;
+
                   return (
                     <SvgText
-                      key={`xlabel-${m.date}-${i}`}
+                      key={`xlabel-${group.dateKey}-${i}`}
                       x={x}
                       y={y}
                       fontSize={14}
@@ -257,7 +334,7 @@ export default function MeasurementsScreen() {
                       textAnchor="end"
                       transform={`rotate(-90, ${x}, ${y})`}
                     >
-                      {m.dateLabel}
+                      {group.dateLabel}
                     </SvgText>
                   );
                 })}
@@ -266,9 +343,8 @@ export default function MeasurementsScreen() {
           </View>
         </View>
 
-        {/* Button */}
         <View className="items-center">
-          <View className="w-4/5 self-center max-w-[420px]">
+          <View className="w-4/5 max-w-[420px] self-center">
             <PillButton
               title="Add measurement"
               onPress={() => router.push("/start-kneetowall")}

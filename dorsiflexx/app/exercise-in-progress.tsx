@@ -1,7 +1,7 @@
 import PillButton from "@/components/PillButton";
 import BackendService from "@/src/services/api/BackendService";
 import { Stack, router, useLocalSearchParams } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -11,10 +11,31 @@ import {
   View,
 } from "react-native";
 
+function formatElapsedTime(totalSeconds: number) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
 export default function ExerciseInProgress() {
   const { session_id } = useLocalSearchParams<{ session_id: string }>();
   const [isPaused, setIsPaused] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+  useEffect(() => {
+    if (isPaused || isProcessing) return;
+
+    const interval = setInterval(() => {
+      setElapsedSeconds((prev) => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isPaused, isProcessing]);
 
   const confirmLeave = useCallback((onConfirm: () => void) => {
     Alert.alert(
@@ -84,9 +105,9 @@ export default function ExerciseInProgress() {
       />
 
       <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
-        <View className="flex-1 px-6 py-8 justify-center gap-14">
+        <View className="flex-1 justify-center gap-14 px-6 py-8">
           <View className="items-center">
-            <Text className="text-4xl font-semibold text-[#11181C] dark:text-[#ECEDEE] text-center">
+            <Text className="text-center text-4xl font-semibold text-[#11181C] dark:text-[#ECEDEE]">
               {isProcessing
                 ? "Processing\nSession..."
                 : "Exercise Session\nIn Progress"}
@@ -111,11 +132,17 @@ export default function ExerciseInProgress() {
                   ? "Paused"
                   : "Collecting data"}
             </Text>
+
+            {!isProcessing && (
+              <Text className="mt-4 text-2xl font-bold text-[#11181C] dark:text-[#ECEDEE]">
+                Time Elapsed: {formatElapsedTime(elapsedSeconds)}
+              </Text>
+            )}
           </View>
 
           {!isProcessing && (
             <View className="items-center">
-              <View className="w-full px-4 flex-row gap-8">
+              <View className="w-full flex-row gap-8 px-4">
                 <View className="flex-1">
                   <PillButton
                     title={isPaused ? "Continue" : "Pause"}
