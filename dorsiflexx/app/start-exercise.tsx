@@ -29,9 +29,8 @@ export default function StartExercise() {
   const instructions = useMemo(
     () => [
       //TODO: update with real instructions and add images
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      "Ut enim ad minim veniam, quis nostrud exercitation.",
-      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      "Wrap the foot sensor around the middle of your foot, facing upwards. Ensure the arrow is pointed towards you.",
+      "Wrap the shank sensor around the middle of your calf, facing outwards. Ensure the arrow is pointed towards you.",
     ],
     [],
   );
