@@ -1,6 +1,5 @@
 import BackendService, {
-  KTWMeasurement,
-  SessionByDate,
+  KTWMeasurement
 } from "@/src/services/api/BackendService";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
@@ -89,7 +88,10 @@ function heelWalkRomFractions(analysis: Record<string, any>): number[] {
   return angles.map((a) => Math.round((a / maxAngle) * 10000) / 10000);
 }
 
-function mapBackendToExercises(analysis: Record<string, any>): ExerciseEntry[] {
+function mapBackendToExercises(
+  analysis: Record<string, any>,
+  idPrefix: string,
+): ExerciseEntry[] {
   const repCounts = analysis.rep_counts ?? {};
   const repDurations = analysis.rep_durations ?? {};
   const romConsistency = analysis.rom_consistency ?? {};
@@ -109,7 +111,7 @@ function mapBackendToExercises(analysis: Record<string, any>): ExerciseEntry[] {
 
     if (exerciseType === "Ankle Rotation") {
       exercises.push({
-        id: `ex-${idx}`,
+        id: `${idPrefix}-ex-${idx}`,
         type: "ankle_circles_cw",
         displayName: "ANKLE ROTATIONS",
         repetitions: repCount as number,
@@ -119,7 +121,7 @@ function mapBackendToExercises(analysis: Record<string, any>): ExerciseEntry[] {
       });
     } else if (exerciseType === "Calf Raises") {
       exercises.push({
-        id: `ex-${idx}`,
+        id: `${idPrefix}-ex-${idx}`,
         type: "calf_raises_on_step",
         displayName: "CALF RAISES",
         repetitions: repCount as number,
@@ -133,8 +135,9 @@ function mapBackendToExercises(analysis: Record<string, any>): ExerciseEntry[] {
         (sum: number, d: any) => sum + (d as number),
         0,
       );
+
       exercises.push({
-        id: `ex-${idx}`,
+        id: `${idPrefix}-ex-${idx}`,
         type: "heel_walks",
         displayName: "HEEL WALKING",
         duration: Math.round(totalDuration as number),
@@ -474,7 +477,9 @@ export default function HistorySingleScreen() {
           backendSessions.map((s) => ({
             id: s.session_id,
             timeLabel: formatTimeLabel(s.start_time),
-            exercises: s.analysis ? mapBackendToExercises(s.analysis) : [],
+            exercises: s.analysis
+              ? mapBackendToExercises(s.analysis, s.session_id)
+              : [],
           })),
         )
         .catch(() => [] as SessionEntry[]),
