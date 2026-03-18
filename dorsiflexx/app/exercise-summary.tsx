@@ -2,7 +2,7 @@ import BackendService, {
   KTWMeasurement
 } from "@/src/services/api/BackendService";
 import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
+import { Stack, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -503,6 +503,28 @@ export default function HistorySingleScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
+      <Stack.Screen
+        options={{
+          headerLeft: () => (
+            <Pressable
+              onPress={() => {
+                if (router.canGoBack()) {
+                  router.back();
+                } else {
+                  router.replace("/(tabs)");
+                }
+              }}
+              style={{ paddingLeft: 4 }}
+            >
+              <Ionicons
+                name="chevron-back"
+                size={28}
+                color={isDark ? "#ECEDEE" : "#11181C"}
+              />
+            </Pressable>
+          ),
+        }}
+      />
       <ScrollView
         className="flex-1"
         contentContainerStyle={{

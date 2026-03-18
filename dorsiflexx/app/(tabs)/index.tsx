@@ -1,7 +1,8 @@
 import PillButton from "@/components/PillButton";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { router } from "expo-router";
-import React from "react";
+import BackendService from "@/src/services/api/BackendService";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 import { SafeAreaView, ScrollView, Text, View } from "react-native";
 
 type Day = {
@@ -24,7 +25,18 @@ export default function HomeScreen() {
     { label: "Sat", completedCount: 0 },
   ];
 
-  const mostRecentSessionDate = "2026-03-06";
+  const [mostRecentSessionDate, setMostRecentSessionDate] = useState<string | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      BackendService.getSessionDates()
+        .then((dates) => {
+          setMostRecentSessionDate(dates.length > 0 ? dates[dates.length - 1] : null);
+        })
+        .catch(() => {});
+    }, []),
+  );
+
   const goalText = `${goalPerDay}x per day`;
 
   return (
@@ -92,10 +104,11 @@ export default function HomeScreen() {
             <View className="w-4/5 gap-3.5 self-center max-w-[420px]">
               <PillButton
                 title={"View most recent\nexercise session"}
+                disabled={!mostRecentSessionDate}
                 onPress={() =>
                   router.push({
                     pathname: "/exercise-summary",
-                    params: { date: mostRecentSessionDate },
+                    params: { date: mostRecentSessionDate! },
                   })
                 }
               />
