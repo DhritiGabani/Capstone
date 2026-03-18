@@ -1,29 +1,26 @@
 import PillButton from "@/components/PillButton";
+import {
+  ExerciseAccordionRow,
+  mapBackendToExercises,
+} from "@/components/ExerciseCards";
 import BackendService from "@/src/services/api/BackendService";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useRef, useMemo, useState } from "react";
 import {
-    Alert,
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    Text,
-    TextInput,
-    View,
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+  useColorScheme,
 } from "react-native";
 
 type Rating = "good" | "okay" | "bad";
-
-interface ExerciseResult {
-  exercise_type: string;
-  rep_count: number;
-  rom: number;
-  tempo_consistency: number;
-  movement_consistency: number;
-}
 
 function EmojiFace({
   emoji,
@@ -50,24 +47,41 @@ function EmojiFace({
 }
 
 export default function EndExercise() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
   const params = useLocalSearchParams<{
     session_id?: string;
     duration_seconds?: string;
     total_samples?: string;
     exercises?: string;
+    analysis?: string;
   }>();
 
   const scrollRef = useRef<ScrollView>(null);
   const [rating, setRating] = useState<Rating | null>(null);
   const [comments, setComments] = useState("");
+  const [expandedById, setExpandedById] = useState<Record<string, boolean>>({});
 
-  const exercises: ExerciseResult[] = useMemo(() => {
+  const toggleExercise = (id: string) => {
+    setExpandedById((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const analysis: Record<string, any> = useMemo(() => {
     try {
-      return params.exercises ? JSON.parse(params.exercises) : [];
+      return params.analysis ? JSON.parse(params.analysis) : {};
     } catch {
-      return [];
+      return {};
     }
-  }, [params.exercises]);
+  }, [params.analysis]);
+
+  const exercises = useMemo(
+    () =>
+      Object.keys(analysis).length > 0
+        ? mapBackendToExercises(analysis, params.session_id ?? "session")
+        : [],
+    [analysis, params.session_id],
+  );
 
   const durationSeconds = Number(params.duration_seconds) || 0;
   const durationMin = Math.floor(durationSeconds / 60);
@@ -89,7 +103,7 @@ export default function EndExercise() {
             <View className="flex-1 px-6 py-8 justify-center gap-12">
               {/* Session summary */}
               {exercises.length > 0 && (
-                <View className="items-center gap-4">
+                <View className="gap-4">
                   <Text className="text-2xl font-bold text-[#11181C] dark:text-[#ECEDEE] text-center">
                     Session Summary
                   </Text>
@@ -98,21 +112,16 @@ export default function EndExercise() {
                     Duration: {durationMin}m {durationSec}s
                   </Text>
 
-                  {exercises.map((ex, idx) => (
-                    <View
-                      key={idx}
-                      className="w-full rounded-2xl bg-[#F1F3F5] dark:bg-[#1E2022] px-5 py-4"
-                    >
-                      <Text className="text-lg font-semibold text-[#11181C] dark:text-[#ECEDEE]">
-                        {ex.exercise_type}
-                      </Text>
-                      <Text className="text-base text-[#687076] dark:text-[#9BA1A6] mt-1">
-                        Reps: {ex.rep_count}
-                        {ex.movement_consistency > 0 &&
-                          `  |  Consistency: ${ex.movement_consistency.toFixed(0)}%`}
-                        {ex.rom > 0 && `  |  ROM: ${ex.rom.toFixed(1)}`}
-                      </Text>
-                    </View>
+                  <View className="h-[1px] w-full bg-[#8C8C8C] dark:bg-[#6C6C6C]" />
+
+                  {exercises.map((exercise) => (
+                    <ExerciseAccordionRow
+                      key={exercise.id}
+                      exercise={exercise}
+                      expanded={!!expandedById[exercise.id]}
+                      onToggle={() => toggleExercise(exercise.id)}
+                      isDark={isDark}
+                    />
                   ))}
                 </View>
               )}
@@ -148,7 +157,12 @@ export default function EndExercise() {
                   <TextInput
                     value={comments}
                     onChangeText={setComments}
-                    onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100)}
+                    onFocus={() =>
+                      setTimeout(
+                        () => scrollRef.current?.scrollToEnd({ animated: true }),
+                        100,
+                      )
+                    }
                     placeholder="Optional Comments"
                     placeholderTextColor="#6B7280"
                     multiline
@@ -190,7 +204,9 @@ export default function EndExercise() {
                         } catch (e) {
                           Alert.alert(
                             "Save Failed",
-                            e instanceof Error ? e.message : "Could not save feedback.",
+                            e instanceof Error
+                              ? e.message
+                              : "Could not save feedback.",
                           );
                         }
                       }}

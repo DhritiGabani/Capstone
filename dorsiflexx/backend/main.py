@@ -162,7 +162,7 @@ async def session_stop():
                 ex = {
                     "exercise_type": exercise_type,
                     "rep_count": rep_count,
-                    "rom": ankle.get("mean_max_angle_deg", 0) if ankle and exercise_type == "Heel Walk" else 0,
+                    "rom": ankle.get("mean_min_angle_deg", 0) if ankle and exercise_type == "Heel Walk" else 0,
                     "tempo_consistency": durations.get(exercise_type, {}).get("mean_duration_s", 0),
                     "movement_consistency": consistency.get(exercise_type, 0) or 0,
                 }
@@ -292,7 +292,7 @@ async def ktw_stop():
         featured_df = extract_features(filtered_df)
 
         result = ktw_analysis.analyze(featured_df)
-        log.info("KTW analysis done: smallest_angle=%.3f", result["smallest_angle_deg"])
+        log.info("KTW analysis done: largest_angle=%.3f", result["largest_angle_deg"])
         return result
     except Exception as e:
         log.error("KTW analysis failed: %s\n%s", e, traceback.format_exc())

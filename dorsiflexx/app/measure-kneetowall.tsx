@@ -87,7 +87,7 @@ export default function MeasureKneeToWall() {
           clearTimer();
           BackendService.stopKTW()
             .then((result) => {
-              setResultAngle(result.smallest_angle_deg);
+              setResultAngle(result.largest_angle_deg);
               setAngleOverTime(result.angle_over_time);
               setMeasureState("done");
             })

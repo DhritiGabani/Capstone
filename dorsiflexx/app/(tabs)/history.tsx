@@ -37,7 +37,6 @@ export default function HistoryCalendarScreen() {
     useCallback(() => {
       BackendService.getSessionDates()
         .then((dates) => {
-          console.log("Fetched session dates:", dates);
           setCompletedExerciseDates(dates);
         })
         .catch((err) => {
@@ -104,9 +103,8 @@ export default function HistoryCalendarScreen() {
   }, [completedExerciseDates, todayString, colors.purple, colors.text]);
 
   const handleDayPress = (day: DateData) => {
-    if (!completedExerciseDates.includes(day.dateString)) return;
+    if (day.dateString !== todayString && !completedExerciseDates.includes(day.dateString)) return;
 
-    // TODO: go to exercise session for this date
     router.push({
       pathname: "/exercise-summary",
       params: { date: day.dateString },

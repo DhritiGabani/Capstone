@@ -16,7 +16,11 @@ type Measurement = {
 
 function formatDateLabel(isoDate: string): string {
   const d = new Date(isoDate);
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: "America/New_York",
+  });
 }
 
 function formatDateKey(isoDate: string): string {
@@ -118,14 +122,6 @@ export default function MeasurementsScreen() {
         ...group,
         medianAngle: median(group.measurements.map((m) => m.angleDeg)),
       }));
-
-    groupedDates.forEach((group) => {
-      const angles = group.measurements.map((m) => m.angleDeg);
-
-      console.log(
-        `${group.dateKey} | angles: [${angles.join(", ")}] | median: ${group.medianAngle}`,
-      );
-    });
 
     const times = groupedDates.map((g) => g.timestamp);
     const tMin = Math.min(...times);
