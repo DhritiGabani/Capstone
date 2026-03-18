@@ -479,7 +479,7 @@ def calculate_ankle_angles(blocks: list[dict]) -> dict | None:
     foot_df = pd.concat(heel_walk_foot, ignore_index=True)
     shank_df = pd.concat(heel_walk_shank, ignore_index=True)
 
-    rep_max_angles = {}
+    rep_min_angles = {}
 
     for _, foot_row in foot_df.iterrows():
         rep = int(foot_row["rep"])
@@ -495,15 +495,15 @@ def calculate_ankle_angles(blocks: list[dict]) -> dict | None:
         )
         ankle_angle = foot_pitch - shank_pitch_interp
 
-        rep_max_angles[rep] = round(float(np.max(ankle_angle)) + 90.0, 3)
+        rep_min_angles[rep] = round(float(np.min(ankle_angle)) + 90.0, 3)
 
-    if not rep_max_angles:
+    if not rep_min_angles:
         return None
 
     return {
-        "rep_max_angle_deg": rep_max_angles,
-        "mean_max_angle_deg": round(
-            float(np.mean(list(rep_max_angles.values()))), 3
+        "rep_min_angle_deg": rep_min_angles,
+        "mean_min_angle_deg": round(
+            float(np.mean(list(rep_min_angles.values()))), 3
         ),
     }
 

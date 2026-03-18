@@ -82,9 +82,9 @@ type MiniLineChartProps = {
 
 function heelWalkRomFractions(analysis: Record<string, any>): number[] {
   const ankleAngles = analysis.ankle_angles;
-  if (!ankleAngles?.rep_max_angle_deg) return [];
+  if (!ankleAngles?.rep_min_angle_deg) return [];
 
-  const angles: number[] = Object.values(ankleAngles.rep_max_angle_deg);
+  const angles: number[] = Object.values(ankleAngles.rep_min_angle_deg);
   if (angles.length === 0) return [];
 
   const maxAngle = Math.max(...angles);
@@ -148,7 +148,7 @@ function mapBackendToExercises(
         duration: Math.round(totalDuration as number),
         numberOfSteps: repCount as number,
         percentMaxROM: heelWalkRomFractions(analysis),
-        meanAngleDeg: ankleAngles?.mean_max_angle_deg ?? null,
+        meanAngleDeg: ankleAngles?.mean_min_angle_deg ?? null,
       });
     }
   }
