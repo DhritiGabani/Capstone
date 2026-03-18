@@ -22,8 +22,8 @@ UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
 UART_TX_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
 DEVICE_ID_CHAR_UUID = "12345678-1234-1234-1234-1234567890ac"
 
-EXPECTED_ID_1 = "IMU_3"
-EXPECTED_ID_2 = "IMU_4"
+EXPECTED_ID_1 = "IMU_1"
+EXPECTED_ID_2 = "IMU_2"
 
 SCAN_SECONDS = 6.0
 
@@ -135,6 +135,10 @@ class BLEManager:
         return self._is_streaming
 
     @property
+    def is_connected(self) -> bool:
+        return self._client1 is not None and self._client2 is not None
+
+    @property
     def sample_counts(self) -> dict[str, int]:
         return dict(self._sample_counts)
 
@@ -222,7 +226,10 @@ class BLEManager:
         return handler
 
     async def stop_streaming(self) -> list[SensorReading]:
-        """Stop notifications, drain in-flight callbacks, then return all buffered readings."""
+        """Stop notifications and drain in-flight callbacks, then return all buffered readings.
+
+        Sensors remain connected after this call. Call disconnect() separately when done.
+        """
         log.info("stop_streaming: sample_counts before stop = %s, total readings = %d", self._sample_counts, len(self._readings))
 
         # 1. Stop notifications first (while _is_streaming is still True so
@@ -242,10 +249,13 @@ class BLEManager:
         self._readings = []
         log.info("stop_streaming: returning %d readings", len(readings))
 
-        # 4. Mark streaming as stopped
+        # 4. Mark streaming as stopped (clients remain connected)
         self._is_streaming = False
 
-        # 5. Disconnect clients
+        return readings
+
+    async def disconnect(self) -> None:
+        """Disconnect from both sensors."""
         for client in (self._client1, self._client2):
             if client is not None:
                 try:
@@ -255,5 +265,4 @@ class BLEManager:
 
         self._client1 = None
         self._client2 = None
-
-        return readings
+        log.info("BLE disconnected")
