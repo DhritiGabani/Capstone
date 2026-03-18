@@ -76,8 +76,10 @@ function Stepper({
         <Text className="text-lg font-semibold text-white">−</Text>
       </Pressable>
 
-      <View className="flex-1 items-center justify-center bg-white">
-        <Text className="text-base text-[#2B2B2B]">{value}</Text>
+      <View className="flex-1 items-center justify-center bg-white dark:bg-[#151718]">
+        <Text className="text-base text-[#2B2B2B] dark:text-[#ECEDEE]">
+          {value}
+        </Text>
       </View>
 
       <Pressable
@@ -102,6 +104,12 @@ function SectionTitle({ children }: SectionTitleProps) {
   );
 }
 
+type NotificationItem = {
+  id: number;
+  day: string;
+  time: string;
+};
+
 export default function ProfileSettingsScreen() {
   const [name, setName] = useState("Jane");
   const [height, setHeight] = useState("165");
@@ -115,10 +123,30 @@ export default function ProfileSettingsScreen() {
   const [goalFrequency, setGoalFrequency] = useState(2);
   const [goalPeriod, setGoalPeriod] = useState("Day");
 
-  const [notification1Day, setNotification1Day] = useState("Every day");
-  const [notification1Time, setNotification1Time] = useState("8:15 AM");
-  const [notification2Day, setNotification2Day] = useState("Every day");
-  const [notification2Time, setNotification2Time] = useState("6:30 PM");
+  const [notifications, setNotifications] = useState<NotificationItem[]>([
+    { id: 1, day: "Every day", time: "8:15 AM" },
+    { id: 2, day: "Every day", time: "6:30 PM" },
+  ]);
+
+  const [nextNotificationId, setNextNotificationId] = useState(3);
+
+  const addNotification = () => {
+    setNotifications((prev) => [
+      ...prev,
+      {
+        id: nextNotificationId,
+        day: "Every day",
+        time: "12:00 PM",
+      },
+    ]);
+    setNextNotificationId((prev) => prev + 1);
+  };
+
+  const removeNotification = (id: number) => {
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== id),
+    );
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
@@ -220,7 +248,7 @@ export default function ProfileSettingsScreen() {
           <Text className="text-center text-[20px] font-medium tracking-wide text-[#11181C] dark:text-[#ECEDEE]">
             NOTIFICATIONS
           </Text>
-          <Pressable className="ml-3">
+          <Pressable className="ml-3" onPress={addNotification}>
             <Text className="text-[26px] font-medium text-[#11181C] dark:text-[#ECEDEE]">
               +
             </Text>
@@ -228,43 +256,37 @@ export default function ProfileSettingsScreen() {
         </View>
 
         <View className="mb-2 items-center gap-2">
-          <View className="flex-row items-center gap-2">
-            <Pressable className="h-9 w-[110px] flex-row items-center justify-between rounded-md border border-[#565656] px-3">
-              <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
-                {notification1Day}
-              </Text>
-              <Text className="text-[13px] text-[#11181C] dark:text-[#ECEDEE]">
-                ▼
-              </Text>
-            </Pressable>
-            <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
-              at
-            </Text>
-            <Pressable className="h-9 w-[114px] items-center justify-center rounded-md border border-[#565656] px-3">
-              <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
-                {notification1Time}
-              </Text>
-            </Pressable>
-          </View>
+          {notifications.map((notification) => (
+            <View key={notification.id} className="flex-row items-center gap-2">
+              <Pressable className="h-9 w-[110px] flex-row items-center justify-between rounded-md border border-[#565656] px-3">
+                <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
+                  {notification.day}
+                </Text>
+                <Text className="text-[13px] text-[#11181C] dark:text-[#ECEDEE]">
+                  ▼
+                </Text>
+              </Pressable>
 
-          <View className="flex-row items-center gap-2">
-            <Pressable className="h-9 w-[110px] flex-row items-center justify-between rounded-md border border-[#565656] px-3">
               <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
-                {notification2Day}
+                at
               </Text>
-              <Text className="text-[13px] text-[#11181C] dark:text-[#ECEDEE]">
-                ▼
-              </Text>
-            </Pressable>
-            <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
-              at
-            </Text>
-            <Pressable className="h-9 w-[114px] items-center justify-center rounded-md border border-[#565656] px-3">
-              <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
-                {notification2Time}
-              </Text>
-            </Pressable>
-          </View>
+
+              <Pressable className="h-9 w-[114px] items-center justify-center rounded-md border border-[#565656] px-3">
+                <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
+                  {notification.time}
+                </Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => removeNotification(notification.id)}
+                className="h-9 w-9 items-center justify-center rounded-md border border-[#8D44BC]"
+              >
+                <Text className="text-[22px] font-medium text-[#8D44BC]">
+                  −
+                </Text>
+              </Pressable>
+            </View>
+          ))}
         </View>
 
         <View className="mt-6 flex-row justify-between px-4">
