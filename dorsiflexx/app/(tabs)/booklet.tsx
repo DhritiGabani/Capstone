@@ -1,88 +1,72 @@
-import { Image } from "expo-image";
-import { Link } from "expo-router";
-import { Platform } from "react-native";
+import React from "react";
+import { Image, SafeAreaView, Text, View } from "react-native";
 
-import { HelloWave } from "@/components/hello-wave";
-import ParallaxScrollView from "@/components/parallax-scroll-view";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-
-export default function BookletScreen() {
+export default function ExercisesScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          className="h-[178px] w-[290px] absolute bottom-0 left-0"
-        />
-      }
-    >
-      <ThemedView className="flex-row items-center gap-2">
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView className="gap-2 mb-2">
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
-          to see changes. Press{" "}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: "cmd + d",
-              android: "cmd + m",
-              web: "F12",
-            })}
-          </ThemedText>{" "}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView className="gap-2 mb-2">
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction
-              title="Action"
-              icon="cube"
-              onPress={() => alert("Action pressed")}
-            />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert("Share pressed")}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert("Delete pressed")}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
+      {/* Title */}
+      <Text className="pb-2 text-center mt-8 mb-8 text-[26px] text-[#11181C] dark:text-[#ECEDEE]">
+        EXERCISES
+      </Text>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView className="gap-2 mb-2">
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">
-            npm run reset-project
-          </ThemedText>{" "}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{" "}
-          directory. This will move the current{" "}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      {/* Card 1 */}
+      <View className="mx-6 mb-8 h-36 flex-row overflow-hidden border border-[#11181C] dark:border-[#ECEDEE]">
+        <Image
+          source={require("@/assets/images/ankle-circles.jpg")}
+          className="h-full w-36"
+          resizeMode="cover"
+        />
+        <View className="flex-1 p-3">
+          <Text className="font-bold text-base mb-1 text-[#11181C] dark:text-[#ECEDEE]">
+            ANKLE CIRCLES
+          </Text>
+          <Text className="text-sm text-[#11181C] dark:text-[#ECEDEE]">
+            Turn your ankle slowly in circles. Move just your foot and ankle,
+            not your leg.
+          </Text>
+        </View>
+      </View>
+
+      {/* Card 2 */}
+      <View className="mx-6 mb-8 h-36 flex-row overflow-hidden border border-[#11181C] dark:border-[#ECEDEE]">
+        <Image
+          source={require("@/assets/images/calf-raises.jpg")}
+          className="h-full w-36"
+          resizeMode="cover"
+        />
+        <View className="flex-1 p-3">
+          <Text className="mb-1 text-base font-bold text-[#11181C] dark:text-[#ECEDEE]">
+            CALF RAISES ON A STEP
+          </Text>
+          <Text className="text-sm text-[#11181C] dark:text-[#ECEDEE]">
+            Stand on a step with your heels hanging off the step. Raise up onto
+            your toes and then slowly lower your feet.
+          </Text>
+        </View>
+      </View>
+
+      {/* Card 3 */}
+      <View className="mx-6 mb-8 h-36 flex-row overflow-hidden border border-[#11181C] dark:border-[#ECEDEE]">
+        <Image
+          source={require("@/assets/images/heel-walks.jpg")}
+          className="h-full w-36"
+          resizeMode="cover"
+        />
+        <View className="flex-1 p-3">
+          <Text className="font-bold text-base mb-1 text-[#11181C] dark:text-[#ECEDEE]">
+            HEEL WALKS
+          </Text>
+          <Text className="text-sm text-[#11181C] dark:text-[#ECEDEE]">
+            Walk around on your heels, keeping your toes as high off the ground
+            as possible.
+          </Text>
+        </View>
+      </View>
+
+      {/* Footer */}
+      <Text className="pb-2 text-center text-xl mt-4 text-[#11181C] dark:text-[#ECEDEE]">
+        More exercises coming soon!
+      </Text>
+    </SafeAreaView>
   );
 }
