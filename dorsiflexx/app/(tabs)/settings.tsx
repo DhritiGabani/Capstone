@@ -1,112 +1,282 @@
-import { Image } from "expo-image";
-import { Platform } from "react-native";
+import PillButton from "@/components/PillButton";
+import React, { useState } from "react";
+import {
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
-import { ExternalLink } from "@/components/external-link";
-import ParallaxScrollView from "@/components/parallax-scroll-view";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Collapsible } from "@/components/ui/collapsible";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Fonts } from "@/constants/theme";
-import { View } from "react-native";
+type ToggleOptionProps = {
+  options: string[];
+  selected: string;
+  onSelect: (value: string) => void;
+  className?: string;
+};
 
-export default function TabTwoScreen() {
+function ToggleOption({
+  options,
+  selected,
+  onSelect,
+  className = "",
+}: ToggleOptionProps) {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
-      headerImage={
-        <View className="absolute -bottom-[90px] -left-[35px]">
-          <IconSymbol
-            size={310}
-            color="#808080"
-            name="chevron.left.forwardslash.chevron.right"
+    <View
+      className={`self-start flex-row overflow-hidden rounded-md border border-[#8D44BC] ${className}`}
+    >
+      {options.map((option, index) => {
+        const isSelected = selected === option;
+        return (
+          <Pressable
+            key={option}
+            onPress={() => onSelect(option)}
+            className={`px-4 py-2 ${
+              isSelected ? "bg-[#8D44BC]" : "bg-transparent"
+            } ${index !== options.length - 1 ? "border-r border-[#8D44BC]" : ""}`}
+          >
+            <Text
+              className={`text-base ${
+                isSelected
+                  ? "font-semibold text-white"
+                  : "text-[#333333] dark:text-[#AAAAAA]"
+              }`}
+            >
+              {option}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+type StepperProps = {
+  value: number;
+  onDecrease: () => void;
+  onIncrease: () => void;
+  widthClassName?: string;
+};
+
+function Stepper({
+  value,
+  onDecrease,
+  onIncrease,
+  widthClassName = "w-[128px]",
+}: StepperProps) {
+  return (
+    <View
+      className={`h-10 flex-row overflow-hidden rounded-md border border-[#8D44BC] ${widthClassName}`}
+    >
+      <Pressable
+        onPress={onDecrease}
+        className="w-10 items-center justify-center bg-[#8D44BC]"
+      >
+        <Text className="text-xl font-semibold text-white">−</Text>
+      </Pressable>
+
+      <View className="flex-1 items-center justify-center bg-white">
+        <Text className="text-base text-[#2B2B2B]">{value}</Text>
+      </View>
+
+      <Pressable
+        onPress={onIncrease}
+        className="w-10 items-center justify-center bg-[#8D44BC]"
+      >
+        <Text className="text-xl font-semibold text-white">+</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+type SectionTitleProps = {
+  children: React.ReactNode;
+};
+
+function SectionTitle({ children }: SectionTitleProps) {
+  return (
+    <Text className="mb-4 text-center text-[20px] font-medium tracking-wide text-[#11181C] dark:text-[#ECEDEE]">
+      {children}
+    </Text>
+  );
+}
+
+export default function ProfileSettingsScreen() {
+  const [name, setName] = useState("Jane");
+  const [height, setHeight] = useState("165");
+  const [heightUnit, setHeightUnit] = useState("cm");
+
+  const [shoeGender, setShoeGender] = useState("Women’s");
+  const [shoeSize, setShoeSize] = useState(7);
+
+  const [ankle, setAnkle] = useState("Right");
+
+  const [goalFrequency, setGoalFrequency] = useState(2);
+  const [goalPeriod, setGoalPeriod] = useState("Day");
+
+  const [notification1Day, setNotification1Day] = useState("Every day");
+  const [notification1Time, setNotification1Time] = useState("8:15 AM");
+  const [notification2Day, setNotification2Day] = useState("Every day");
+  const [notification2Time, setNotification2Time] = useState("6:30 PM");
+
+  return (
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          paddingHorizontal: 14,
+          paddingTop: 12,
+          paddingBottom: 28,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <SectionTitle>PROFILE</SectionTitle>
+
+        <View className="mb-3">
+          <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
+            Name
+          </Text>
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            placeholder="Enter name"
+            placeholderTextColor="#7A7A7A"
+            className="h-11 rounded-md border border-[#565656] bg-transparent px-3 text-[16px] text-[#11181C] dark:text-[#ECEDEE]"
           />
         </View>
-      }
-    >
-      <ThemedView className="flex-row gap-2">
-        <ThemedText type="title" style={{ fontFamily: Fonts.rounded }}>
-          Explore
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>
-        This app includes example code to help you get started.
-      </ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
-          and{" "}
-          <ThemedText type="defaultSemiBold">
-            app/(tabs)/settings.tsx
-          </ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{" "}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the
-          web version, press <ThemedText type="defaultSemiBold">w</ThemedText>{" "}
-          in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the{" "}
-          <ThemedText type="defaultSemiBold">@2x</ThemedText> and{" "}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to
-          provide files for different screen densities
-        </ThemedText>
-        <Image
-          source={require("@/assets/images/react-logo.png")}
-          className="w-[100px] h-[100px] self-center"
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{" "}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook
-          lets you inspect what the user&apos;s current color scheme is, and so
-          you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{" "}
-          <ThemedText type="defaultSemiBold">
-            components/HelloWave.tsx
-          </ThemedText>{" "}
-          component uses the powerful{" "}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{" "}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The{" "}
-              <ThemedText type="defaultSemiBold">
-                components/ParallaxScrollView.tsx
-              </ThemedText>{" "}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+
+        <View className="mb-3">
+          <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
+            Height
+          </Text>
+          <View className="flex-row items-center gap-4">
+            <TextInput
+              value={height}
+              onChangeText={setHeight}
+              keyboardType="numeric"
+              className="h-11 flex-1 rounded-md border border-[#565656] bg-transparent px-3 text-[16px] text-[#11181C] dark:text-[#ECEDEE]"
+            />
+            <ToggleOption
+              options={["cm", "in"]}
+              selected={heightUnit}
+              onSelect={setHeightUnit}
+            />
+          </View>
+        </View>
+
+        <View className="mb-3">
+          <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
+            Shoe Size
+          </Text>
+          <View className="flex-row items-center gap-4">
+            <ToggleOption
+              options={["Men’s", "Women’s"]}
+              selected={shoeGender}
+              onSelect={setShoeGender}
+            />
+            <Stepper
+              value={shoeSize}
+              onDecrease={() => setShoeSize((prev) => Math.max(1, prev - 1))}
+              onIncrease={() => setShoeSize((prev) => prev + 1)}
+              widthClassName="w-[104px]"
+            />
+          </View>
+        </View>
+
+        <View className="mb-12">
+          <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
+            Ankle
+          </Text>
+          <View className="items-start">
+            <ToggleOption
+              options={["Left", "Right"]}
+              selected={ankle}
+              onSelect={setAnkle}
+            />
+          </View>
+        </View>
+
+        <SectionTitle>GOAL SETTING</SectionTitle>
+
+        <View className="mb-12 flex-row items-center justify-center gap-2">
+          <Stepper
+            value={goalFrequency}
+            onDecrease={() => setGoalFrequency((prev) => Math.max(1, prev - 1))}
+            onIncrease={() => setGoalFrequency((prev) => prev + 1)}
+            widthClassName="w-[102px]"
+          />
+          <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+            times per
+          </Text>
+          <ToggleOption
+            options={["Day", "Week"]}
+            selected={goalPeriod}
+            onSelect={setGoalPeriod}
+          />
+        </View>
+
+        <View className="mb-4 flex-row items-center justify-center">
+          <Text className="text-center text-[20px] font-medium tracking-wide text-[#11181C] dark:text-[#ECEDEE]">
+            NOTIFICATIONS
+          </Text>
+          <Pressable className="ml-3">
+            <Text className="text-[28px] font-medium text-[#11181C] dark:text-[#ECEDEE]">
+              +
+            </Text>
+          </Pressable>
+        </View>
+
+        <View className="mb-3 items-center gap-3">
+          <View className="flex-row items-center gap-2">
+            <Pressable className="h-11 w-[110px] flex-row items-center justify-between rounded-md border border-[#565656] px-3">
+              <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+                {notification1Day}
+              </Text>
+              <Text className="text-[14px] text-[#11181C] dark:text-[#ECEDEE]">
+                ▼
+              </Text>
+            </Pressable>
+            <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+              at
+            </Text>
+            <Pressable className="h-11 w-[114px] items-center justify-center rounded-md border border-[#565656] px-3">
+              <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+                {notification1Time}
+              </Text>
+            </Pressable>
+          </View>
+
+          <View className="flex-row items-center gap-2">
+            <Pressable className="h-11 w-[110px] flex-row items-center justify-between rounded-md border border-[#565656] px-3">
+              <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+                {notification2Day}
+              </Text>
+              <Text className="text-[14px] text-[#11181C] dark:text-[#ECEDEE]">
+                ▼
+              </Text>
+            </Pressable>
+            <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+              at
+            </Text>
+            <Pressable className="h-11 w-[114px] items-center justify-center rounded-md border border-[#565656] px-3">
+              <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+                {notification2Time}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+
+        <View className="mt-10 flex-row justify-between px-4">
+          <View className="w-[48%]">
+            <PillButton title="Cancel" onPress={() => {}} />
+          </View>
+
+          <View className="w-[48%]">
+            <PillButton title="Save" onPress={() => {}} />
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
