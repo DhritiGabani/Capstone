@@ -68,7 +68,7 @@ export interface StatusResponse {
 }
 
 export interface KTWStopResponse {
-  smallest_angle_deg: number;
+  largest_angle_deg: number;
   angle_over_time: Record<string, number>;
 }
 
