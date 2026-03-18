@@ -9,8 +9,8 @@ from bleak import BleakClient, BleakScanner
 UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
 UART_TX_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
 
-EXPECTED_ID_1 = "IMU_3"
-EXPECTED_ID_2 = "IMU_4"
+EXPECTED_ID_1 = "IMU_1"
+EXPECTED_ID_2 = "IMU_2"
 
 # ---------------------------------------------------------
 # ✅ Custom Device-ID characteristic UUIDs (YOU set in FW)

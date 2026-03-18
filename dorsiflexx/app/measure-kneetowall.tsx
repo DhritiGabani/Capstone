@@ -48,11 +48,7 @@ export default function MeasureKneeToWall() {
       "Are you sure you want to cancel this measurement? Any data will be lost.",
       [
         { text: "Close", style: "cancel" },
-        {
-          text: "Cancel measurement",
-          style: "destructive",
-          onPress: onConfirm,
-        },
+        { text: "Cancel measurement", style: "destructive", onPress: onConfirm },
       ],
     );
   }, []);
@@ -71,14 +67,12 @@ export default function MeasureKneeToWall() {
   async function handleMeasure() {
     if (isMeasuring) return;
 
-    // reset state for new measurement
     clearTimer();
     setResultAngle(null);
     setAngleOverTime(null);
     setMeasureState("measuring");
     setCountdown(5);
 
-    // Restart BLE streaming for this measurement (needed for redo)
     try {
       await BackendService.startKTW();
     } catch (e: any) {
@@ -87,13 +81,10 @@ export default function MeasureKneeToWall() {
       return;
     }
 
-    // countdown 5 -> 1 over 5 seconds, then call backend
     intervalRef.current = setInterval(() => {
       setCountdown((c) => {
         if (c <= 1) {
           clearTimer();
-
-          // Call backend to stop streaming and get real measurement
           BackendService.stopKTW()
             .then((result) => {
               setResultAngle(result.smallest_angle_deg);
@@ -104,12 +95,35 @@ export default function MeasureKneeToWall() {
               Alert.alert("Measurement Failed", e.message || "Could not get measurement.");
               setMeasureState("idle");
             });
-
           return 1;
         }
         return c - 1;
       });
     }, 1000);
+  }
+
+  function handleSave(angle: number, aot: Record<string, number> | null) {
+    Alert.prompt(
+      "Enter Your Name",
+      "Your name will appear on the leaderboard!",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "OK",
+          onPress: (name?: string) => {
+            // Fire-and-forget — navigate away immediately, never surface errors
+            BackendService.saveKTW(
+              angle,
+              aot ?? undefined,
+              name?.trim() || "Anonymous",
+            ).catch(() => {});
+            BackendService.bleDisconnect();
+            router.replace("/measure");
+          },
+        },
+      ],
+      "plain-text",
+    );
   }
 
   const buttonTitle =
@@ -125,7 +139,6 @@ export default function MeasureKneeToWall() {
         options={{
           headerBackVisible: false,
           gestureEnabled: false,
-
           headerLeft: () => (
             <Pressable
               onPress={onPressCancel}
@@ -149,7 +162,6 @@ export default function MeasureKneeToWall() {
 
           {/* Middle section */}
           <View className="w-full relative">
-            {/* Image — top right, no padding */}
             <Image
               source={require("@/assets/images/KneeToWallImage.png")}
               style={{
@@ -162,8 +174,6 @@ export default function MeasureKneeToWall() {
               }}
               resizeMode="contain"
             />
-
-            {/* Instructions */}
             {instructions.map((line, idx) => {
               const isTopSection = idx === 0 || idx === 1;
               return (
@@ -191,14 +201,14 @@ export default function MeasureKneeToWall() {
                 disabled={isMeasuring}
               />
 
-              {/* Countdown (only while measuring) */}
+              {/* Countdown */}
               {isMeasuring && (
                 <Text className="text-center mt-8 text-5xl font-extrabold text-[#11181C] dark:text-[#ECEDEE]">
                   {countdown}
                 </Text>
               )}
 
-              {/* Result (after measurement) */}
+              {/* Result */}
               {resultAngle !== null && (
                 <View className="items-center mt-6">
                   <Text className="text-[#11181C] dark:text-[#ECEDEE] text-lg">
@@ -209,19 +219,13 @@ export default function MeasureKneeToWall() {
                   </Text>
                 </View>
               )}
-              {/* Save / Cancel buttons (only after measurement) */}
+
+              {/* Save button */}
               {hasResult && (
                 <View className="mt-8">
                   <PillButton
                     title="Save"
-                    onPress={async () => {
-                      try {
-                        await BackendService.saveKTW(resultAngle!, angleOverTime ?? undefined);
-                        router.replace("/measure");
-                      } catch (e: any) {
-                        Alert.alert("Save Failed", e.message || "Could not save measurement.");
-                      }
-                    }}
+                    onPress={() => handleSave(resultAngle!, angleOverTime)}
                   />
                 </View>
               )}
@@ -229,7 +233,7 @@ export default function MeasureKneeToWall() {
 
             {measureState === "idle" && (
               <Text className="text-center mt-4 text-[#11181C] dark:text-[#ECEDEE] opacity-70">
-                Press MEASURE when you’re ready.
+                Press MEASURE when you're ready.
               </Text>
             )}
           </View>

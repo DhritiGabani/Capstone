@@ -1,7 +1,7 @@
 import PillButton from "@/components/PillButton";
 import BackendService from "@/src/services/api/BackendService";
 import { router } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Image, SafeAreaView, Text, useColorScheme, View } from "react-native";
 
 type BtState = "disconnected" | "connecting" | "connected";
@@ -19,6 +19,12 @@ export default function StartExercise() {
 
   const isConnected = btState === "connected";
   const isConnecting = btState === "connecting";
+
+  useEffect(() => {
+    BackendService.getStatus()
+      .then((s) => { if (s.is_connected) handleConnectBluetooth(); })
+      .catch(() => {});
+  }, []);
 
   const instructions = useMemo(
     () => [
