@@ -123,10 +123,6 @@ export default function MeasurementsScreen() {
         medianAngle: median(group.measurements.map((m) => m.angleDeg)),
       }));
 
-    groupedDates.forEach((group) => {
-      const angles = group.measurements.map((m) => m.angleDeg);
-    });
-
     const times = groupedDates.map((g) => g.timestamp);
     const tMin = Math.min(...times);
     const tMax = Math.max(...times);

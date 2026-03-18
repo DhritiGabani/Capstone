@@ -70,6 +70,7 @@ export default function ExerciseInProgress() {
           duration_seconds: String(results.duration_seconds),
           total_samples: String(results.total_samples),
           exercises: JSON.stringify(results.exercises),
+          analysis: JSON.stringify(results.analysis ?? {}),
         },
       });
     } catch (e) {
