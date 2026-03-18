@@ -64,6 +64,17 @@ export default function MeasureKneeToWall() {
     }
   }
 
+  async function handleSensorDisconnected(message: string) {
+    clearTimer();
+    setMeasureState("idle");
+    await BackendService.bleDisconnect();
+    Alert.alert(
+      "Sensor Disconnected",
+      message,
+      [{ text: "OK", onPress: () => router.replace({ pathname: "/start-kneetowall", params: { forceDisconnected: "1" } }) }],
+    );
+  }
+
   async function handleMeasure() {
     if (isMeasuring) return;
 
@@ -76,8 +87,7 @@ export default function MeasureKneeToWall() {
     try {
       await BackendService.startKTW();
     } catch (e: any) {
-      Alert.alert("Connection Failed", e.message || "Could not start KTW session.");
-      setMeasureState("idle");
+      handleSensorDisconnected(e.message || "One or more sensors disconnected. Please reconnect and try again.");
       return;
     }
 
@@ -92,8 +102,7 @@ export default function MeasureKneeToWall() {
               setMeasureState("done");
             })
             .catch((e) => {
-              Alert.alert("Measurement Failed", e.message || "Could not get measurement.");
-              setMeasureState("idle");
+              handleSensorDisconnected(e.message || "One or more sensors disconnected. Please reconnect and try again.");
             });
           return 1;
         }
@@ -132,6 +141,11 @@ export default function MeasureKneeToWall() {
       : measureState === "measuring"
         ? "Measuring,\nhold still..."
         : "Redo measurement";
+
+  function handleRedo() {
+    clearTimer();
+    router.back();
+  }
 
   return (
     <>
@@ -197,7 +211,7 @@ export default function MeasureKneeToWall() {
             <View className="w-4/5 self-center max-w-[420px]">
               <PillButton
                 title={buttonTitle}
-                onPress={handleMeasure}
+                onPress={measureState === "done" ? handleRedo : handleMeasure}
                 disabled={isMeasuring}
               />
 

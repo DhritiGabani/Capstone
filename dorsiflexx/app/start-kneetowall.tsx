@@ -1,6 +1,6 @@
 import PillButton from "@/components/PillButton";
 import BackendService from "@/src/services/api/BackendService";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Image, SafeAreaView, Text, useColorScheme, View } from "react-native";
 
@@ -8,6 +8,8 @@ type BtState = "disconnected" | "connecting" | "connected";
 
 export default function StartKneeToWall() {
   const scheme = useColorScheme();
+
+  const { forceDisconnected } = useLocalSearchParams<{ forceDisconnected?: string }>();
 
   const [btState, setBtState] = useState<BtState>("disconnected");
 
@@ -20,10 +22,11 @@ export default function StartKneeToWall() {
   const isConnecting = btState === "connecting";
 
   useEffect(() => {
+    if (forceDisconnected === "1") return;
     BackendService.getStatus()
       .then((s) => { if (s.is_connected) setBtState("connected"); })
       .catch(() => {});
-  }, []);
+  }, [forceDisconnected]);
 
   const instructions = useMemo(
     () => [
@@ -106,7 +109,7 @@ export default function StartKneeToWall() {
             />
 
             <PillButton
-              title={isConnected ? "Next" : "Waiting for device connection..."}
+              title={isConnected ? "Continue" : "Waiting for device connection..."}
               onPress={handleStart}
               disabled={!isConnected}
             />

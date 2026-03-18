@@ -125,8 +125,8 @@ def _build_imu_dataframe(imu_json: dict, sensor_location: str) -> pd.DataFrame:
 
 def wrangle(imu1_json: dict, imu2_json: dict) -> pd.DataFrame:
     """Convert imu1 and imu2 JSON structures into a single signals DataFrame."""
-    foot_df = _build_imu_dataframe(imu1_json, "foot")
-    shank_df = _build_imu_dataframe(imu2_json, "shank")
+    foot_df = _build_imu_dataframe(imu2_json, "foot")
+    shank_df = _build_imu_dataframe(imu1_json, "shank")
 
     min_rows = min(len(foot_df), len(shank_df))
     foot_df = foot_df.iloc[:min_rows].reset_index(drop=True)
