@@ -59,9 +59,14 @@ type ExerciseEntry =
 
 type SessionEntry = {
   id: string;
+  sortTime: string;
   timeLabel: string;
   exercises: ExerciseEntry[];
 };
+
+type TimelineItem =
+  | { type: "session"; sortTime: string; data: SessionEntry }
+  | { type: "ktw"; sortTime: string; data: KTWMeasurement };
 
 type RendererProps<T extends ExerciseEntry> = {
   exercise: T;
@@ -157,6 +162,7 @@ function formatTimeLabel(isoString: string): string {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
+    timeZone: "America/New_York",
   });
 }
 
@@ -464,8 +470,7 @@ export default function HistorySingleScreen() {
 
   const selectedDateLabel = useMemo(() => formatDateLabel(date), [date]);
 
-  const [sessions, setSessions] = useState<SessionEntry[]>([]);
-  const [ktwMeasurements, setKtwMeasurements] = useState<KTWMeasurement[]>([]);
+  const [timeline, setTimeline] = useState<TimelineItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -475,19 +480,34 @@ export default function HistorySingleScreen() {
       BackendService.getSessionsByDate(date)
         .then((backendSessions) =>
           backendSessions.map((s) => ({
-            id: s.session_id,
-            timeLabel: formatTimeLabel(s.start_time),
-            exercises: s.analysis
-              ? mapBackendToExercises(s.analysis, s.session_id)
-              : [],
+            type: "session" as const,
+            sortTime: s.start_time,
+            data: {
+              id: s.session_id,
+              sortTime: s.start_time,
+              timeLabel: formatTimeLabel(s.start_time),
+              exercises: s.analysis
+                ? mapBackendToExercises(s.analysis, s.session_id)
+                : [],
+            },
           })),
         )
-        .catch(() => [] as SessionEntry[]),
-      BackendService.getKTWByDate(date).catch(() => [] as KTWMeasurement[]),
+        .catch(() => [] as TimelineItem[]),
+      BackendService.getKTWByDate(date)
+        .then((ktw) =>
+          ktw.map((m) => ({
+            type: "ktw" as const,
+            sortTime: m.measured_at,
+            data: m,
+          })),
+        )
+        .catch(() => [] as TimelineItem[]),
     ])
-      .then(([mapped, ktw]) => {
-        setSessions(mapped);
-        setKtwMeasurements(ktw);
+      .then(([sessionItems, ktwItems]) => {
+        const merged = [...sessionItems, ...ktwItems].sort((a, b) =>
+          a.sortTime.localeCompare(b.sortTime),
+        );
+        setTimeline(merged);
       })
       .finally(() => setLoading(false));
   }, [date]);
@@ -546,7 +566,7 @@ export default function HistorySingleScreen() {
           </View>
         )}
 
-        {!loading && sessions.length === 0 && ktwMeasurements.length === 0 && (
+        {!loading && timeline.length === 0 && (
           <View className="items-center mt-8">
             <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE] opacity-60">
               No exercise sessions found for this date.
@@ -554,29 +574,34 @@ export default function HistorySingleScreen() {
           </View>
         )}
 
-        {sessions.map((session) => (
-          <View key={session.id} className="mb-8">
-            <View className="mb-3 min-w-[50px] self-start rounded-full bg-[#8d44bc] px-4 py-2">
-              <Text className="text-[16px] font-semibold text-[#fff]">
-                {session.timeLabel}
-              </Text>
-            </View>
+        {timeline.map((item) => {
+          if (item.type === "session") {
+            const session = item.data;
+            return (
+              <View key={session.id} className="mb-8">
+                <View className="mb-3 min-w-[50px] self-start rounded-full bg-[#8d44bc] px-4 py-2">
+                  <Text className="text-[16px] font-semibold text-[#fff]">
+                    {session.timeLabel}
+                  </Text>
+                </View>
 
-            <View className="mb-1 h-[1px] w-full bg-[#8C8C8C] dark:bg-[#6C6C6C]" />
+                <View className="mb-1 h-[1px] w-full bg-[#8C8C8C] dark:bg-[#6C6C6C]" />
 
-            {session.exercises.map((exercise) => (
-              <ExerciseAccordionRow
-                key={exercise.id}
-                exercise={exercise}
-                expanded={!!expandedById[exercise.id]}
-                onToggle={() => toggleExercise(exercise.id)}
-                isDark={isDark}
-              />
-            ))}
-          </View>
-        ))}
+                {session.exercises.map((exercise) => (
+                  <ExerciseAccordionRow
+                    key={exercise.id}
+                    exercise={exercise}
+                    expanded={!!expandedById[exercise.id]}
+                    onToggle={() => toggleExercise(exercise.id)}
+                    isDark={isDark}
+                  />
+                ))}
+              </View>
+            );
+          }
 
-        {ktwMeasurements.map((m) => (
+          const m = item.data;
+          return (
           <View key={`ktw-${m.id}`} className="mb-8">
             <View className="mb-3 min-w-[50px] self-start rounded-full bg-[#8d44bc] px-4 py-2">
               <Text className="text-[16px] font-semibold text-[#fff]">
@@ -613,7 +638,8 @@ export default function HistorySingleScreen() {
               <View className="h-[1px] w-full bg-[#8C8C8C] dark:bg-[#6C6C6C]" />
             </View>
           </View>
-        ))}
+          );
+        })}
       </ScrollView>
     </SafeAreaView>
   );
