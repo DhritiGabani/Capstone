@@ -62,6 +62,7 @@ export interface SessionStopResponse {
 export interface StatusResponse {
   status: string;
   is_streaming: boolean;
+  is_connected: boolean;
   session_id: string | null;
   stats: Record<string, any> | null;
 }
@@ -126,6 +127,10 @@ class BackendService {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
       throw new Error(err.detail || "Failed to save feedback");
     }
+  }
+
+  async bleDisconnect(): Promise<void> {
+    await fetch(`${BACKEND_URL}/ble/disconnect`, { method: "POST" }).catch(() => {});
   }
 
   async getStatus(): Promise<StatusResponse> {

@@ -90,7 +90,8 @@ async def session_start():
     if ble.is_streaming:
         raise HTTPException(400, "A session is already in progress.")
 
-    await ble.connect()
+    if not ble.is_connected:
+        await ble.connect()
     await ble.start_streaming()
 
     _session_id, _start_time = create_session()
@@ -197,6 +198,7 @@ async def status():
     return {
         "status": "streaming" if ble.is_streaming else "idle",
         "is_streaming": ble.is_streaming,
+        "is_connected": ble.is_connected,
         "session_id": _session_id,
         "stats": ble.sample_counts if ble.is_streaming else None,
     }
@@ -218,6 +220,21 @@ async def session_feedback(session_id: str, body: FeedbackBody):
 
 
 # ---------------------------------------------------------------------------
+# POST /ble/disconnect
+# ---------------------------------------------------------------------------
+
+@app.post("/ble/disconnect")
+async def ble_disconnect():
+    """Disconnect from sensors. Called by the frontend after the user saves their results."""
+    global _ktw_active
+    if ble.is_streaming:
+        await ble.stop_streaming()
+    await ble.disconnect()
+    _ktw_active = False
+    return {"status": "disconnected"}
+
+
+# ---------------------------------------------------------------------------
 # POST /ktw/start
 # ---------------------------------------------------------------------------
 
@@ -234,7 +251,10 @@ async def ktw_start():
     if ble.is_streaming:
         raise HTTPException(400, "A session is already in progress.")
 
-    await ble.connect()
+    # Sensors may still be connected from a previous measurement (redo case).
+    # Only scan/connect if not already connected.
+    if not ble.is_connected:
+        await ble.connect()
     await ble.start_streaming()
     _ktw_active = True
 

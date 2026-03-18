@@ -1,9 +1,10 @@
 import PillButton from "@/components/PillButton";
 import BackendService from "@/src/services/api/BackendService";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useRef, useMemo, useState } from "react";
 import {
     Alert,
+    Keyboard,
     KeyboardAvoidingView,
     Platform,
     Pressable,
@@ -56,6 +57,7 @@ export default function EndExercise() {
     exercises?: string;
   }>();
 
+  const scrollRef = useRef<ScrollView>(null);
   const [rating, setRating] = useState<Rating | null>(null);
   const [comments, setComments] = useState("");
 
@@ -79,8 +81,10 @@ export default function EndExercise() {
           className="flex-1"
         >
           <ScrollView
+            ref={scrollRef}
             contentContainerStyle={{ flexGrow: 1 }}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
           >
             <View className="flex-1 px-6 py-8 justify-center gap-12">
               {/* Session summary */}
@@ -144,6 +148,7 @@ export default function EndExercise() {
                   <TextInput
                     value={comments}
                     onChangeText={setComments}
+                    onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100)}
                     placeholder="Optional Comments"
                     placeholderTextColor="#6B7280"
                     multiline
@@ -159,6 +164,8 @@ export default function EndExercise() {
                     <PillButton
                       title="Skip"
                       onPress={() => {
+                        Keyboard.dismiss();
+                        BackendService.bleDisconnect();
                         router.replace("/");
                       }}
                     />
@@ -169,6 +176,7 @@ export default function EndExercise() {
                       title="Save"
                       disabled={!rating}
                       onPress={async () => {
+                        Keyboard.dismiss();
                         try {
                           if (params.session_id && rating) {
                             await BackendService.saveFeedback(
@@ -177,6 +185,7 @@ export default function EndExercise() {
                               comments,
                             );
                           }
+                          BackendService.bleDisconnect();
                           router.replace("/");
                         } catch (e) {
                           Alert.alert(

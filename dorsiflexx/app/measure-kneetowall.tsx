@@ -117,6 +117,7 @@ export default function MeasureKneeToWall() {
               aot ?? undefined,
               name?.trim() || "Anonymous",
             ).catch(() => {});
+            BackendService.bleDisconnect();
             router.replace("/measure");
           },
         },
