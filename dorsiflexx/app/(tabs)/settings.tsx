@@ -32,7 +32,7 @@ function ToggleOption({
           <Pressable
             key={option}
             onPress={() => onSelect(option)}
-            className={`px-4 py-2 ${
+            className={`px-4 py-1.5 ${
               isSelected ? "bg-[#8D44BC]" : "bg-transparent"
             } ${index !== options.length - 1 ? "border-r border-[#8D44BC]" : ""}`}
           >
@@ -67,13 +67,13 @@ function Stepper({
 }: StepperProps) {
   return (
     <View
-      className={`h-10 flex-row overflow-hidden rounded-md border border-[#8D44BC] ${widthClassName}`}
+      className={`h-9 flex-row overflow-hidden rounded-md border border-[#8D44BC] ${widthClassName}`}
     >
       <Pressable
         onPress={onDecrease}
-        className="w-10 items-center justify-center bg-[#8D44BC]"
+        className="w-9 items-center justify-center bg-[#8D44BC]"
       >
-        <Text className="text-xl font-semibold text-white">−</Text>
+        <Text className="text-lg font-semibold text-white">−</Text>
       </Pressable>
 
       <View className="flex-1 items-center justify-center bg-white">
@@ -82,9 +82,9 @@ function Stepper({
 
       <Pressable
         onPress={onIncrease}
-        className="w-10 items-center justify-center bg-[#8D44BC]"
+        className="w-9 items-center justify-center bg-[#8D44BC]"
       >
-        <Text className="text-xl font-semibold text-white">+</Text>
+        <Text className="text-lg font-semibold text-white">+</Text>
       </Pressable>
     </View>
   );
@@ -96,7 +96,7 @@ type SectionTitleProps = {
 
 function SectionTitle({ children }: SectionTitleProps) {
   return (
-    <Text className="mb-4 text-center text-[20px] font-medium tracking-wide text-[#11181C] dark:text-[#ECEDEE]">
+    <Text className="mb-3 text-center text-[20px] font-medium tracking-wide text-[#11181C] dark:text-[#ECEDEE]">
       {children}
     </Text>
   );
@@ -126,14 +126,14 @@ export default function ProfileSettingsScreen() {
         className="flex-1"
         contentContainerStyle={{
           paddingHorizontal: 14,
-          paddingTop: 12,
-          paddingBottom: 28,
+          paddingTop: 10,
+          paddingBottom: 20,
         }}
         showsVerticalScrollIndicator={false}
       >
         <SectionTitle>PROFILE</SectionTitle>
 
-        <View className="mb-3">
+        <View className="mb-2">
           <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
             Name
           </Text>
@@ -142,20 +142,20 @@ export default function ProfileSettingsScreen() {
             onChangeText={setName}
             placeholder="Enter name"
             placeholderTextColor="#7A7A7A"
-            className="h-11 rounded-md border border-[#565656] bg-transparent px-3 text-[16px] text-[#11181C] dark:text-[#ECEDEE]"
+            className="h-9 rounded-md border border-[#565656] bg-transparent px-3 text-[16px] text-[#11181C] dark:text-[#ECEDEE]"
           />
         </View>
 
-        <View className="mb-3">
+        <View className="mb-2">
           <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
             Height
           </Text>
-          <View className="flex-row items-center gap-4">
+          <View className="flex-row items-center gap-3">
             <TextInput
               value={height}
               onChangeText={setHeight}
               keyboardType="numeric"
-              className="h-11 flex-1 rounded-md border border-[#565656] bg-transparent px-3 text-[16px] text-[#11181C] dark:text-[#ECEDEE]"
+              className="h-9 flex-1 rounded-md border border-[#565656] bg-transparent px-3 text-[16px] text-[#11181C] dark:text-[#ECEDEE]"
             />
             <ToggleOption
               options={["cm", "in"]}
@@ -165,11 +165,11 @@ export default function ProfileSettingsScreen() {
           </View>
         </View>
 
-        <View className="mb-3">
+        <View className="mb-2">
           <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
             Shoe Size
           </Text>
-          <View className="flex-row items-center gap-4">
+          <View className="flex-row items-center gap-3">
             <ToggleOption
               options={["Men’s", "Women’s"]}
               selected={shoeGender}
@@ -179,12 +179,12 @@ export default function ProfileSettingsScreen() {
               value={shoeSize}
               onDecrease={() => setShoeSize((prev) => Math.max(1, prev - 1))}
               onIncrease={() => setShoeSize((prev) => prev + 1)}
-              widthClassName="w-[104px]"
+              widthClassName="w-[100px]"
             />
           </View>
         </View>
 
-        <View className="mb-12">
+        <View className="mb-8">
           <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
             Ankle
           </Text>
@@ -199,12 +199,12 @@ export default function ProfileSettingsScreen() {
 
         <SectionTitle>GOAL SETTING</SectionTitle>
 
-        <View className="mb-12 flex-row items-center justify-center gap-2">
+        <View className="mb-8 flex-row items-center justify-center gap-2">
           <Stepper
             value={goalFrequency}
             onDecrease={() => setGoalFrequency((prev) => Math.max(1, prev - 1))}
             onIncrease={() => setGoalFrequency((prev) => prev + 1)}
-            widthClassName="w-[102px]"
+            widthClassName="w-[98px]"
           />
           <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
             times per
@@ -216,58 +216,58 @@ export default function ProfileSettingsScreen() {
           />
         </View>
 
-        <View className="mb-4 flex-row items-center justify-center">
+        <View className="mb-3 flex-row items-center justify-center">
           <Text className="text-center text-[20px] font-medium tracking-wide text-[#11181C] dark:text-[#ECEDEE]">
             NOTIFICATIONS
           </Text>
           <Pressable className="ml-3">
-            <Text className="text-[28px] font-medium text-[#11181C] dark:text-[#ECEDEE]">
+            <Text className="text-[26px] font-medium text-[#11181C] dark:text-[#ECEDEE]">
               +
             </Text>
           </Pressable>
         </View>
 
-        <View className="mb-3 items-center gap-3">
+        <View className="mb-2 items-center gap-2">
           <View className="flex-row items-center gap-2">
-            <Pressable className="h-11 w-[110px] flex-row items-center justify-between rounded-md border border-[#565656] px-3">
-              <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+            <Pressable className="h-9 w-[110px] flex-row items-center justify-between rounded-md border border-[#565656] px-3">
+              <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
                 {notification1Day}
               </Text>
-              <Text className="text-[14px] text-[#11181C] dark:text-[#ECEDEE]">
+              <Text className="text-[13px] text-[#11181C] dark:text-[#ECEDEE]">
                 ▼
               </Text>
             </Pressable>
-            <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+            <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
               at
             </Text>
-            <Pressable className="h-11 w-[114px] items-center justify-center rounded-md border border-[#565656] px-3">
-              <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+            <Pressable className="h-9 w-[114px] items-center justify-center rounded-md border border-[#565656] px-3">
+              <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
                 {notification1Time}
               </Text>
             </Pressable>
           </View>
 
           <View className="flex-row items-center gap-2">
-            <Pressable className="h-11 w-[110px] flex-row items-center justify-between rounded-md border border-[#565656] px-3">
-              <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+            <Pressable className="h-9 w-[110px] flex-row items-center justify-between rounded-md border border-[#565656] px-3">
+              <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
                 {notification2Day}
               </Text>
-              <Text className="text-[14px] text-[#11181C] dark:text-[#ECEDEE]">
+              <Text className="text-[13px] text-[#11181C] dark:text-[#ECEDEE]">
                 ▼
               </Text>
             </Pressable>
-            <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+            <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
               at
             </Text>
-            <Pressable className="h-11 w-[114px] items-center justify-center rounded-md border border-[#565656] px-3">
-              <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
+            <Pressable className="h-9 w-[114px] items-center justify-center rounded-md border border-[#565656] px-3">
+              <Text className="text-[15px] text-[#11181C] dark:text-[#ECEDEE]">
                 {notification2Time}
               </Text>
             </Pressable>
           </View>
         </View>
 
-        <View className="mt-10 flex-row justify-between px-4">
+        <View className="mt-6 flex-row justify-between px-4">
           <View className="w-[48%]">
             <PillButton title="Cancel" onPress={() => {}} />
           </View>
