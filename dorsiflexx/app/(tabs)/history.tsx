@@ -264,7 +264,7 @@ export default function HistoryCalendarScreen() {
               className="mb-5 text-center text-2xl font-bold"
               style={{ color: colors.text }}
             >
-              Export History
+              Share Exercise History
             </Text>
 
             <View className="mb-5">
@@ -333,7 +333,7 @@ export default function HistoryCalendarScreen() {
                 style={{ borderColor: colors.purple }}
               >
                 <Text
-                  className="text-base font-semibold"
+                  className="text-xl font-semibold"
                   style={{ color: colors.purple }}
                 >
                   Cancel
@@ -345,9 +345,7 @@ export default function HistoryCalendarScreen() {
                 className="flex-1 items-center rounded-full py-3"
                 style={{ backgroundColor: colors.purple }}
               >
-                <Text className="text-base font-semibold text-white">
-                  Share
-                </Text>
+                <Text className="text-xl font-semibold text-white">Share</Text>
               </Pressable>
             </View>
           </Pressable>
