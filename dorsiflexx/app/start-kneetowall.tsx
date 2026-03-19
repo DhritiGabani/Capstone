@@ -2,14 +2,23 @@ import PillButton from "@/components/PillButton";
 import BackendService from "@/src/services/api/BackendService";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
-import { Alert, Image, SafeAreaView, Text, useColorScheme, View } from "react-native";
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  Text,
+  useColorScheme,
+  View,
+} from "react-native";
 
 type BtState = "disconnected" | "connecting" | "connected";
 
 export default function StartKneeToWall() {
   const scheme = useColorScheme();
 
-  const { forceDisconnected } = useLocalSearchParams<{ forceDisconnected?: string }>();
+  const { forceDisconnected } = useLocalSearchParams<{
+    forceDisconnected?: string;
+  }>();
 
   const [btState, setBtState] = useState<BtState>("disconnected");
 
@@ -24,14 +33,22 @@ export default function StartKneeToWall() {
   useEffect(() => {
     if (forceDisconnected === "1") return;
     BackendService.getStatus()
-      .then((s) => { if (s.is_connected) setBtState("connected"); })
+      .then((s) => {
+        if (s.is_connected) setBtState("connected");
+      })
       .catch(() => {});
   }, [forceDisconnected]);
 
   const instructions = useMemo(
     () => [
-      "Wrap the foot sensor around the middle of your foot, facing upwards. Ensure the arrow is pointed towards you.",
-      "Wrap the shank sensor around the middle of your calf, facing outwards. Ensure the arrow is pointed towards you.",
+      {
+        text: "Wrap the foot sensor around the middle of your foot, facing upwards. Ensure the arrow is pointed towards you.",
+        image: require("@/assets/images/FootPlacementImage.png"),
+      },
+      {
+        text: "Wrap the shank sensor around the middle of your calf, facing outwards. Ensure the arrow is pointed towards you.",
+        image: require("@/assets/images/ShankPlacementImage.png"),
+      },
     ],
     [],
   );
@@ -45,7 +62,10 @@ export default function StartKneeToWall() {
       setBtState("connected");
     } catch (e: any) {
       setBtState("disconnected");
-      Alert.alert("Connection Failed", e.message || "Could not connect to device.");
+      Alert.alert(
+        "Connection Failed",
+        e.message || "Could not connect to device.",
+      );
     }
   }
 
@@ -69,28 +89,27 @@ export default function StartKneeToWall() {
         {/* Middle section */}
         <View className="items-center">
           <View className="w-full pl-2 pr-2">
-            {instructions.map((line, idx) => (
-              <View key={idx} className="flex-row mb-1">
-                <Text className="text-lg font-bold text-[#11181C] dark:text-[#ECEDEE] mr-2">
-                  {idx + 1}.
-                </Text>
-                <Text className="text-lg leading-6 text-[#11181C] dark:text-[#ECEDEE] flex-1">
-                  {line}
-                </Text>
+            {instructions.map((item, idx) => (
+              <View key={idx} className="flex-row items-center mb-4">
+                {/* Left side (text) */}
+                <View className="flex-1 flex-row pr-3">
+                  <Text className="text-lg font-bold text-[#11181C] dark:text-[#ECEDEE] mr-2">
+                    {idx + 1}.
+                  </Text>
+                  <Text className="text-lg leading-6 text-[#11181C] dark:text-[#ECEDEE] flex-1">
+                    {item.text}
+                  </Text>
+                </View>
+
+                {/* Right side (image) */}
+                <Image
+                  source={item.image}
+                  className="w-24 h-24"
+                  resizeMode="contain"
+                />
               </View>
             ))}
           </View>
-
-          <Image
-            source={require("@/assets/images/DevicePlacementImage.png")}
-            style={{
-              width: 160,
-              height: 160,
-              tintColor: scheme === "dark" ? "#ECEDEE" : "#11181C",
-              alignSelf: "center",
-            }}
-            resizeMode="contain"
-          />
         </View>
 
         {/* Bottom section */}
@@ -109,7 +128,9 @@ export default function StartKneeToWall() {
             />
 
             <PillButton
-              title={isConnected ? "Continue" : "Waiting for device connection..."}
+              title={
+                isConnected ? "Continue" : "Waiting for device connection..."
+              }
               onPress={handleStart}
               disabled={!isConnected}
             />
