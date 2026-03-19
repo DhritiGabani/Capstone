@@ -123,6 +123,13 @@ def _build_imu_dataframe(imu_json: dict, sensor_location: str) -> pd.DataFrame:
     return df[SIGNAL_COLUMNS + ["time", "sensor_location"]]
 
 
+def wrangle_shank_only(imu1_json: dict) -> pd.DataFrame:
+    """Convert imu1 JSON (shank sensor only) into a signals DataFrame."""
+    shank_df = _build_imu_dataframe(imu1_json, "shank")
+    shank_df["time"] = np.arange(len(shank_df)) * SAMPLE_PERIOD_S
+    return shank_df
+
+
 def wrangle(imu1_json: dict, imu2_json: dict) -> pd.DataFrame:
     """Convert imu1 and imu2 JSON structures into a single signals DataFrame."""
     foot_df = _build_imu_dataframe(imu2_json, "foot")

@@ -30,7 +30,7 @@ from database import (
     save_ktw_measurement, get_ktw_measurements, get_ktw_measurements_by_date,
     get_ktw_leaderboard, get_session_dates, get_sessions_by_date,
 )
-from pipeline import preprocess_session, sensor_readings_to_imu_json, wrangle, filter_signals, extract_features
+from pipeline import preprocess_session, sensor_readings_to_imu_json, wrangle, wrangle_shank_only, filter_signals, extract_features
 from analysis import analyze_session
 import ktw_analysis
 
@@ -276,18 +276,16 @@ async def ktw_stop():
     _ktw_active = False
 
     imu1_json = sensor_readings_to_imu_json(readings, "imu1")
-    imu2_json = sensor_readings_to_imu_json(readings, "imu2")
 
     imu1_count = len(imu1_json.get("samples", []))
-    imu2_count = len(imu2_json.get("samples", []))
-    log.info("KTW stopped: %d readings (imu1=%d, imu2=%d)", len(readings), imu1_count, imu2_count)
+    log.info("KTW stopped: %d readings (imu1=%d)", len(readings), imu1_count)
 
-    if imu1_count == 0 or imu2_count == 0:
-        raise HTTPException(400, "No sensor data received from one or both IMUs.")
+    if imu1_count == 0:
+        raise HTTPException(400, "No sensor data received from the shank IMU.")
 
     try:
         # Run pipeline stages 0-3 only (wrangle, filter, features — NO segmentation)
-        signals_df = wrangle(imu1_json, imu2_json)
+        signals_df = wrangle_shank_only(imu1_json)
         filtered_df = filter_signals(signals_df)
         featured_df = extract_features(filtered_df)
 
