@@ -367,6 +367,7 @@
 
   fetchAndRender();
   connectSSE();
+  setInterval(() => fetchAndRender(true), 5000);
 </script>
 </body>
 </html>

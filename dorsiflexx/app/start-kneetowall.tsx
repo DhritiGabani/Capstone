@@ -42,10 +42,6 @@ export default function StartKneeToWall() {
   const instructions = useMemo(
     () => [
       {
-        text: "Wrap the foot sensor around the middle of your foot, facing upwards. Ensure the arrow is pointed towards you.",
-        image: require("@/assets/images/FootPlacementImage.png"),
-      },
-      {
         text: "Wrap the shank sensor around the middle of your calf, facing outwards. Ensure the arrow is pointed towards you.",
         image: require("@/assets/images/ShankPlacementImage.png"),
       },

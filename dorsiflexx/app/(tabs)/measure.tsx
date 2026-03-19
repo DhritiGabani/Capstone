@@ -3,7 +3,7 @@ import BackendService, {
   KTWMeasurement,
 } from "@/src/services/api/BackendService";
 import { router, useFocusEffect } from "expo-router";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView, Text, useColorScheme, View } from "react-native";
 import Svg, { Circle, Line, Polyline, Text as SvgText } from "react-native-svg";
 
@@ -46,12 +46,24 @@ export default function MeasurementsScreen() {
   const goalAngle = 45;
 
   const [ktwData, setKtwData] = useState<KTWMeasurement[]>([]);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  function fetchData() {
+    BackendService.getKTWHistory()
+      .then(setKtwData)
+      .catch(() => {});
+  }
 
   useFocusEffect(
     useCallback(() => {
-      BackendService.getKTWHistory()
-        .then(setKtwData)
-        .catch(() => setKtwData([]));
+      fetchData();
+      intervalRef.current = setInterval(fetchData, 3000);
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      };
     }, []),
   );
 

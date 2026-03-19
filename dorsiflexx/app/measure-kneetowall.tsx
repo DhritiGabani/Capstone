@@ -27,6 +27,7 @@ export default function MeasureKneeToWall() {
   const [countdown, setCountdown] = useState<number>(5);
   const [resultAngle, setResultAngle] = useState<number | null>(null);
   const [angleOverTime, setAngleOverTime] = useState<Record<string, number> | null>(null);
+  const [sensorConnected, setSensorConnected] = useState(true);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -64,13 +65,17 @@ export default function MeasureKneeToWall() {
     }
   }
 
-  async function handleSensorDisconnected(message: string) {
+  async function handleSensorDisconnected() {
     clearTimer();
     setMeasureState("idle");
-    await BackendService.bleDisconnect();
+    try {
+      await BackendService.bleDisconnect();
+    } catch {
+      // already disconnected, ignore
+    }
     Alert.alert(
       "Sensor Disconnected",
-      message,
+      "The sensor disconnected. Please reconnect and try again.",
       [{ text: "OK", onPress: () => router.replace({ pathname: "/start-kneetowall", params: { forceDisconnected: "1" } }) }],
     );
   }
@@ -82,12 +87,12 @@ export default function MeasureKneeToWall() {
     setResultAngle(null);
     setAngleOverTime(null);
     setMeasureState("measuring");
-    setCountdown(5);
+    setCountdown(3);
 
     try {
       await BackendService.startKTW();
-    } catch (e: any) {
-      handleSensorDisconnected(e.message || "One or more sensors disconnected. Please reconnect and try again.");
+    } catch {
+      await handleSensorDisconnected();
       return;
     }
 
@@ -96,13 +101,19 @@ export default function MeasureKneeToWall() {
         if (c <= 1) {
           clearTimer();
           BackendService.stopKTW()
-            .then((result) => {
+            .then(async (result) => {
               setResultAngle(result.largest_angle_deg);
               setAngleOverTime(result.angle_over_time);
               setMeasureState("done");
+              try {
+                const status = await BackendService.getStatus();
+                setSensorConnected(status.is_connected);
+              } catch {
+                setSensorConnected(false);
+              }
             })
-            .catch((e) => {
-              handleSensorDisconnected(e.message || "One or more sensors disconnected. Please reconnect and try again.");
+            .catch(() => {
+              handleSensorDisconnected();
             });
           return 1;
         }
@@ -140,11 +151,31 @@ export default function MeasureKneeToWall() {
       ? "MEASURE"
       : measureState === "measuring"
         ? "Measuring,\nhold still..."
-        : "Redo measurement";
+        : sensorConnected
+          ? "Redo measurement"
+          : "Connect to Bluetooth";
 
   function handleRedo() {
-    clearTimer();
-    router.back();
+    Alert.alert(
+      "Redo Measurement",
+      "Are you sure you want to redo the measurement?",
+      [
+        { text: "No", style: "cancel" },
+        {
+          text: "Yes",
+          onPress: () => {
+            clearTimer();
+            if (sensorConnected) {
+              setMeasureState("idle");
+              setResultAngle(null);
+              setAngleOverTime(null);
+            } else {
+              router.replace({ pathname: "/start-kneetowall", params: { forceDisconnected: "1" } });
+            }
+          },
+        },
+      ],
+    );
   }
 
   return (
