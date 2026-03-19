@@ -1,8 +1,7 @@
 import PillButton from "@/components/PillButton";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import BackendService from "@/src/services/api/BackendService";
-import { router, useFocusEffect } from "expo-router";
-import React, { useCallback, useState } from "react";
+import { router } from "expo-router";
+import React from "react";
 import { SafeAreaView, ScrollView, Text, View } from "react-native";
 
 type Day = {
@@ -14,6 +13,7 @@ type Day = {
 export default function HomeScreen() {
   const userName = "Jane";
   const goalPerDay = 2;
+  const mostRecentSessionDate = "2026-03-18";
 
   const days: Day[] = [
     { label: "Sun", completedCount: 2 },
@@ -25,18 +25,6 @@ export default function HomeScreen() {
     { label: "Sat", completedCount: 0 },
   ];
 
-  const [mostRecentSessionDate, setMostRecentSessionDate] = useState<string | null>(null);
-
-  useFocusEffect(
-    useCallback(() => {
-      BackendService.getSessionDates()
-        .then((dates) => {
-          setMostRecentSessionDate(dates.length > 0 ? dates[dates.length - 1] : null);
-        })
-        .catch(() => {});
-    }, []),
-  );
-
   const goalText = `${goalPerDay}x per day`;
 
   return (
@@ -45,10 +33,9 @@ export default function HomeScreen() {
         contentContainerStyle={{ paddingVertical: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="px-[22px] gap-12">
-          {/* Top section */}
+        <View className="gap-12 px-[22px]">
           <View className="items-center gap-2">
-            <Text className="text-[26px] pb-2 text-[#11181C] dark:text-[#ECEDEE]">
+            <Text className="pb-2 text-[26px] text-[#11181C] dark:text-[#ECEDEE]">
               Welcome back, {userName}!
             </Text>
 
@@ -59,27 +46,26 @@ export default function HomeScreen() {
             </Text>
           </View>
 
-          {/* Middle section */}
           <View className="items-center">
-            <View className="flex-row gap-4 self-center max-w-[420px]">
+            <View className="max-w-[420px] flex-row gap-4 self-center">
               {days.map((d) => (
                 <View
                   key={d.label}
-                  className={`items-center w-10 py-1.5 rounded-xl ${
+                  className={`w-10 items-center rounded-xl py-1.5 ${
                     d.isToday ? "border-2 border-brand-purple-dark" : ""
                   }`}
                 >
-                  <Text className="text-sm mb-2 text-[#11181C] dark:text-[#ECEDEE]">
+                  <Text className="mb-2 text-sm text-[#11181C] dark:text-[#ECEDEE]">
                     {d.label}
                   </Text>
 
-                  <View className="gap-2 items-center">
+                  <View className="items-center gap-2">
                     {Array.from({ length: goalPerDay }).map((_, i) => {
                       const filled = i < d.completedCount;
                       return (
                         <View
                           key={i}
-                          className={`w-[22px] h-[22px] rounded-md items-center justify-center ${
+                          className={`h-[22px] w-[22px] items-center justify-center rounded-md ${
                             filled ? "bg-brand-purple-dark" : "bg-brand-grey"
                           }`}
                         >
@@ -99,16 +85,14 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Bottom section */}
           <View className="items-center">
-            <View className="w-4/5 gap-3.5 self-center max-w-[420px]">
+            <View className="max-w-[420px] w-4/5 self-center gap-3.5">
               <PillButton
                 title={"View most recent\nexercise session"}
-                disabled={!mostRecentSessionDate}
                 onPress={() =>
                   router.push({
                     pathname: "/exercise-summary",
-                    params: { date: mostRecentSessionDate! },
+                    params: { date: mostRecentSessionDate },
                   })
                 }
               />

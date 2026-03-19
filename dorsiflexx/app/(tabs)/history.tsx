@@ -1,10 +1,9 @@
-import BackendService from "@/src/services/api/BackendService";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import { router, useFocusEffect } from "expo-router";
-import React, { useCallback, useMemo, useState } from "react";
+import { router } from "expo-router";
+import React, { useMemo, useState } from "react";
 import {
   Modal,
   Platform,
@@ -35,11 +34,6 @@ function isPastDate(dateString: string, todayString: string) {
   return dateString < todayString;
 }
 
-function fromDateString(dateString: string) {
-  const [year, month, day] = dateString.split("-").map(Number);
-  return new Date(year, month - 1, day);
-}
-
 function getTwoWeeksAgo(date: Date) {
   const d = new Date(date);
   d.setDate(d.getDate() - 14);
@@ -53,26 +47,30 @@ export default function HistoryCalendarScreen() {
   const today = new Date();
   const todayString = toLocalDateString(today);
 
-  const [completedExerciseDates, setCompletedExerciseDates] = useState<
-    string[]
-  >([]);
+  // HARDCODED DATA /////////////////////////////
+  const completedExerciseDates = [
+    "2026-02-14",
+    "2026-02-15",
+    "2026-02-19",
+    "2026-02-23",
+    "2026-02-25",
+    "2026-02-26",
+    "2026-02-28",
+    "2026-03-01",
+    "2026-03-02",
+    "2026-03-06",
+    "2026-03-11",
+    "2026-03-12",
+    "2026-03-14",
+    "2026-03-15",
+    "2026-03-17",
+    "2026-03-18",
+  ];
+  /////////////////////////////////////////////
 
   const [showShareModal, setShowShareModal] = useState(false);
   const [startDate, setStartDate] = useState<Date>(getTwoWeeksAgo(today));
   const [endDate, setEndDate] = useState<Date>(today);
-
-  useFocusEffect(
-    useCallback(() => {
-      BackendService.getSessionDates()
-        .then((dates) => {
-          setCompletedExerciseDates(dates);
-        })
-        .catch((err) => {
-          console.error("Failed to fetch session dates:", err);
-          setCompletedExerciseDates([]);
-        });
-    }, []),
-  );
 
   const colors = {
     bg: isDark ? "#151718" : "#F5F1F8",
@@ -137,8 +135,9 @@ export default function HistoryCalendarScreen() {
     if (
       day.dateString !== todayString &&
       !completedExerciseDates.includes(day.dateString)
-    )
+    ) {
       return;
+    }
 
     router.push({
       pathname: "/exercise-summary",
@@ -147,8 +146,9 @@ export default function HistoryCalendarScreen() {
   };
 
   const handleOpenShareModal = () => {
-    setStartDate(getTwoWeeksAgo(today));
-    setEndDate(today);
+    const currentToday = new Date();
+    setStartDate(getTwoWeeksAgo(currentToday));
+    setEndDate(currentToday);
     setShowShareModal(true);
   };
 
@@ -184,15 +184,7 @@ export default function HistoryCalendarScreen() {
     const end = toLocalDateString(endDate);
 
     console.log("Share history from", start, "to", end);
-
     setShowShareModal(false);
-
-    // replace this later with actual export/share logic
-    // for example:
-    // router.push({
-    //   pathname: "/export-history",
-    //   params: { start_date: start, end_date: end },
-    // });
   };
 
   return (

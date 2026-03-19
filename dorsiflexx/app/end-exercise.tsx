@@ -1,13 +1,11 @@
-import PillButton from "@/components/PillButton";
 import {
   ExerciseAccordionRow,
   mapBackendToExercises,
 } from "@/components/ExerciseCards";
-import BackendService from "@/src/services/api/BackendService";
+import PillButton from "@/components/PillButton";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useRef, useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
-  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -36,8 +34,7 @@ function EmojiFace({
       onPress={onSelect}
       hitSlop={10}
       className={`
-        items-center justify-center
-        h-24 w-24 rounded-full
+        h-24 w-24 items-center justify-center rounded-full
         ${selected ? "bg-brand-purple-dark" : ""}
       `}
     >
@@ -88,136 +85,115 @@ export default function EndExercise() {
   const durationSec = Math.round(durationSeconds % 60);
 
   return (
-    <>
-      <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          className="flex-1"
+    <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        className="flex-1"
+      >
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
         >
-          <ScrollView
-            ref={scrollRef}
-            contentContainerStyle={{ flexGrow: 1 }}
-            keyboardShouldPersistTaps="handled"
-            keyboardDismissMode="on-drag"
-          >
-            <View className="flex-1 px-6 py-8 justify-center gap-12">
-              {/* Session summary */}
-              {exercises.length > 0 && (
-                <View className="gap-4">
-                  <Text className="text-2xl font-bold text-[#11181C] dark:text-[#ECEDEE] text-center">
-                    Session Summary
-                  </Text>
-
-                  <Text className="text-base text-[#687076] dark:text-[#9BA1A6] text-center">
-                    Duration: {durationMin}m {durationSec}s
-                  </Text>
-
-                  <View className="h-[1px] w-full bg-[#8C8C8C] dark:bg-[#6C6C6C]" />
-
-                  {exercises.map((exercise) => (
-                    <ExerciseAccordionRow
-                      key={exercise.id}
-                      exercise={exercise}
-                      expanded={!!expandedById[exercise.id]}
-                      onToggle={() => toggleExercise(exercise.id)}
-                      isDark={isDark}
-                    />
-                  ))}
-                </View>
-              )}
-
-              <View className="items-center">
-                <Text className="text-4xl font-semibold text-[#11181C] dark:text-[#ECEDEE] text-center">
-                  How was your{"\n"}exercise session?
+          <View className="flex-1 justify-center gap-12 px-6 py-8">
+            {exercises.length > 0 && (
+              <View className="gap-4">
+                <Text className="text-center text-2xl font-bold text-[#11181C] dark:text-[#ECEDEE]">
+                  Session Summary
                 </Text>
-              </View>
 
-              <View className="items-center">
-                <View className="flex-row gap-10">
-                  <EmojiFace
-                    emoji="😀"
-                    selected={rating === "good"}
-                    onSelect={() => setRating("good")}
+                <Text className="text-center text-base text-[#687076] dark:text-[#9BA1A6]">
+                  Duration: {durationMin}m {durationSec}s
+                </Text>
+
+                <View className="h-[1px] w-full bg-[#8C8C8C] dark:bg-[#6C6C6C]" />
+
+                {exercises.map((exercise) => (
+                  <ExerciseAccordionRow
+                    key={exercise.id}
+                    exercise={exercise}
+                    expanded={!!expandedById[exercise.id]}
+                    onToggle={() => toggleExercise(exercise.id)}
+                    isDark={isDark}
                   />
-                  <EmojiFace
-                    emoji="😐"
-                    selected={rating === "okay"}
-                    onSelect={() => setRating("okay")}
-                  />
-                  <EmojiFace
-                    emoji="☹️"
-                    selected={rating === "bad"}
-                    onSelect={() => setRating("bad")}
+                ))}
+              </View>
+            )}
+
+            <View className="items-center">
+              <Text className="text-center text-4xl font-semibold text-[#11181C] dark:text-[#ECEDEE]">
+                How was your{"\n"}exercise session?
+              </Text>
+            </View>
+
+            <View className="items-center">
+              <View className="flex-row gap-10">
+                <EmojiFace
+                  emoji="😀"
+                  selected={rating === "good"}
+                  onSelect={() => setRating("good")}
+                />
+                <EmojiFace
+                  emoji="😐"
+                  selected={rating === "okay"}
+                  onSelect={() => setRating("okay")}
+                />
+                <EmojiFace
+                  emoji="☹️"
+                  selected={rating === "bad"}
+                  onSelect={() => setRating("bad")}
+                />
+              </View>
+            </View>
+
+            <View className="items-center">
+              <View className="w-full max-w-[520px]">
+                <TextInput
+                  value={comments}
+                  onChangeText={setComments}
+                  onFocus={() =>
+                    setTimeout(
+                      () => scrollRef.current?.scrollToEnd({ animated: true }),
+                      100,
+                    )
+                  }
+                  placeholder="Optional Comments"
+                  placeholderTextColor="#6B7280"
+                  multiline
+                  textAlignVertical="top"
+                  className="min-h-[140px] w-full rounded-2xl border border-[#9CA3AF] px-4 py-4 text-base text-[#11181C] dark:border-[#3A3A3A] dark:text-[#ECEDEE]"
+                />
+              </View>
+            </View>
+
+            <View className="items-center">
+              <View className="w-full flex-row gap-8 px-4">
+                <View className="flex-1">
+                  <PillButton
+                    title="Skip"
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      router.replace("/");
+                    }}
                   />
                 </View>
-              </View>
 
-              <View className="items-center">
-                <View className="w-full max-w-[520px]">
-                  <TextInput
-                    value={comments}
-                    onChangeText={setComments}
-                    onFocus={() =>
-                      setTimeout(
-                        () => scrollRef.current?.scrollToEnd({ animated: true }),
-                        100,
-                      )
-                    }
-                    placeholder="Optional Comments"
-                    placeholderTextColor="#6B7280"
-                    multiline
-                    textAlignVertical="top"
-                    className="w-full min-h-[140px] rounded-2xl border border-[#9CA3AF] dark:border-[#3A3A3A] px-4 py-4 text-base text-[#11181C] dark:text-[#ECEDEE]"
+                <View className="flex-1">
+                  <PillButton
+                    title="Save"
+                    disabled={!rating}
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      router.replace("/");
+                    }}
                   />
-                </View>
-              </View>
-
-              <View className="items-center">
-                <View className="w-full px-4 flex-row gap-8">
-                  <View className="flex-1">
-                    <PillButton
-                      title="Skip"
-                      onPress={() => {
-                        Keyboard.dismiss();
-                        BackendService.bleDisconnect();
-                        router.replace("/");
-                      }}
-                    />
-                  </View>
-
-                  <View className="flex-1">
-                    <PillButton
-                      title="Save"
-                      disabled={!rating}
-                      onPress={async () => {
-                        Keyboard.dismiss();
-                        try {
-                          if (params.session_id && rating) {
-                            await BackendService.saveFeedback(
-                              params.session_id,
-                              rating,
-                              comments,
-                            );
-                          }
-                          BackendService.bleDisconnect();
-                          router.replace("/");
-                        } catch (e) {
-                          Alert.alert(
-                            "Save Failed",
-                            e instanceof Error
-                              ? e.message
-                              : "Could not save feedback.",
-                          );
-                        }
-                      }}
-                    />
-                  </View>
                 </View>
               </View>
             </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }

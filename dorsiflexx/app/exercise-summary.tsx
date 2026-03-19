@@ -1,14 +1,11 @@
-import BackendService, { KTWMeasurement } from "@/src/services/api/BackendService";
 import {
   ExerciseAccordionRow,
   ExerciseEntry,
-  mapBackendToExercises,
 } from "@/components/ExerciseCards";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, router, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
-  ActivityIndicator,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -24,19 +21,15 @@ type SessionEntry = {
   exercises: ExerciseEntry[];
 };
 
+type KTWEntry = {
+  id: string;
+  measured_at: string;
+  angle_deg: number;
+};
+
 type TimelineItem =
   | { type: "session"; sortTime: string; data: SessionEntry }
-  | { type: "ktw"; sortTime: string; data: KTWMeasurement };
-
-function formatTimeLabel(isoString: string): string {
-  const d = new Date(isoString);
-  return d.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "America/New_York",
-  });
-}
+  | { type: "ktw"; sortTime: string; data: KTWEntry };
 
 function formatDateLabel(dateString?: string | string[]) {
   if (!dateString || Array.isArray(dateString)) return "";
@@ -58,50 +51,80 @@ export default function HistorySingleScreen() {
   const isDark = colorScheme === "dark";
 
   const { date } = useLocalSearchParams<{ date: string }>();
-
   const selectedDateLabel = useMemo(() => formatDateLabel(date), [date]);
 
-  const [timeline, setTimeline] = useState<TimelineItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!date) return;
-    setLoading(true);
-    Promise.all([
-      BackendService.getSessionsByDate(date)
-        .then((backendSessions) =>
-          backendSessions.map((s) => ({
-            type: "session" as const,
-            sortTime: s.start_time,
-            data: {
-              id: s.session_id,
-              sortTime: s.start_time,
-              timeLabel: formatTimeLabel(s.start_time),
-              exercises: s.analysis
-                ? mapBackendToExercises(s.analysis, s.session_id)
-                : [],
+  const timeline = useMemo<TimelineItem[]>(
+    () => [
+      {
+        type: "session",
+        sortTime: "2026-03-18T09:00:00",
+        data: {
+          id: "session-1",
+          sortTime: "2026-03-18T09:00:00",
+          timeLabel: "9:00 AM",
+          exercises: [
+            {
+              id: "session-1-ankle",
+              displayName: "ANKLE ROTATIONS",
+              type: "ankle_circles_cw",
+              repetitions: 10,
+              averageSpeed: 1.3,
+              percentMaxROM: [0.82, 0.91, 0.95, 0.88, 0.97, 0.93, 0.9, 0.96],
+              consistencyScore: 91.4,
             },
-          })),
-        )
-        .catch(() => [] as TimelineItem[]),
-      BackendService.getKTWByDate(date)
-        .then((ktw) =>
-          ktw.map((m) => ({
-            type: "ktw" as const,
-            sortTime: m.measured_at,
-            data: m,
-          })),
-        )
-        .catch(() => [] as TimelineItem[]),
-    ])
-      .then(([sessionItems, ktwItems]) => {
-        const merged = [...sessionItems, ...ktwItems].sort((a, b) =>
-          a.sortTime.localeCompare(b.sortTime),
-        );
-        setTimeline(merged);
-      })
-      .finally(() => setLoading(false));
-  }, [date]);
+            {
+              id: "session-1-calf",
+              displayName: "CALF RAISES",
+              type: "calf_raises_on_step",
+              repetitions: 12,
+              averageSpeed: 1.1,
+              percentMaxROM: [0.75, 0.8, 0.84, 0.82, 0.88, 0.86, 0.83, 0.89],
+              consistencyScore: 88.2,
+            },
+          ],
+        },
+      },
+      {
+        type: "session",
+        sortTime: "2026-03-18T14:30:00",
+        data: {
+          id: "session-2",
+          sortTime: "2026-03-18T14:30:00",
+          timeLabel: "2:30 PM",
+          exercises: [
+            {
+              id: "session-2-calf",
+              displayName: "CALF RAISES",
+              type: "calf_raises_on_step",
+              repetitions: 15,
+              averageSpeed: 1.0,
+              percentMaxROM: [0.78, 0.83, 0.85, 0.87, 0.86, 0.9, 0.88, 0.91],
+              consistencyScore: 90.1,
+            },
+            {
+              id: "session-2-heel",
+              displayName: "HEEL WALKING",
+              type: "heel_walks",
+              duration: 24,
+              numberOfSteps: 16,
+              repAngles: [8.4, 9.1, 10.3, 9.8, 10.7, 11.2, 10.6, 11.0],
+              meanAngleDeg: 10.1,
+            },
+          ],
+        },
+      },
+      {
+        type: "ktw",
+        sortTime: "2026-03-18T19:15:00",
+        data: {
+          id: "ktw-1",
+          measured_at: "2026-03-18T19:15:00",
+          angle_deg: 28.7,
+        },
+      },
+    ],
+    [],
+  );
 
   const [expandedById, setExpandedById] = useState<Record<string, boolean>>({});
 
@@ -136,6 +159,7 @@ export default function HistorySingleScreen() {
           ),
         }}
       />
+
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
@@ -151,23 +175,10 @@ export default function HistorySingleScreen() {
           </Text>
         </View>
 
-        {loading && (
-          <View className="items-center mt-8">
-            <ActivityIndicator size="large" />
-          </View>
-        )}
-
-        {!loading && timeline.length === 0 && (
-          <View className="items-center mt-8">
-            <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE] opacity-60">
-              No exercise sessions found for this date.
-            </Text>
-          </View>
-        )}
-
         {timeline.map((item) => {
           if (item.type === "session") {
             const session = item.data;
+
             return (
               <View key={session.id} className="mb-8">
                 <View className="mb-3 min-w-[50px] self-start rounded-full bg-[#8d44bc] px-4 py-2">
@@ -192,11 +203,12 @@ export default function HistorySingleScreen() {
           }
 
           const m = item.data;
+
           return (
             <View key={`ktw-${m.id}`} className="mb-8">
               <View className="mb-3 min-w-[50px] self-start rounded-full bg-[#8d44bc] px-4 py-2">
                 <Text className="text-[16px] font-semibold text-[#fff]">
-                  {formatTimeLabel(m.measured_at)}
+                  7:15 PM
                 </Text>
               </View>
 

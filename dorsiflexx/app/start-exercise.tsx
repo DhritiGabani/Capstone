@@ -1,39 +1,21 @@
 import PillButton from "@/components/PillButton";
-import BackendService from "@/src/services/api/BackendService";
 import { router } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Alert,
-  Image,
-  SafeAreaView,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import React, { useMemo, useState } from "react";
+import { Image, SafeAreaView, Text, View } from "react-native";
 
 type BtState = "disconnected" | "connecting" | "connected";
 
 export default function StartExercise() {
-  const scheme = useColorScheme();
-
   const [btState, setBtState] = useState<BtState>("disconnected");
-  const [sessionId, setSessionId] = useState<string | null>(null);
 
   // HARDCODED VARIABLES /////////////////////////////
   const userName = "Jane";
   const deviceName = `${userName}'s DorsiFlexx`;
+  const mockSessionId = "mock-session-123";
   ////////////////////////////////////////////////////
 
   const isConnected = btState === "connected";
   const isConnecting = btState === "connecting";
-
-  useEffect(() => {
-    BackendService.getStatus()
-      .then((s) => {
-        if (s.is_connected) handleConnectBluetooth();
-      })
-      .catch(() => {});
-  }, []);
 
   const instructions = useMemo(
     () => [
@@ -49,61 +31,50 @@ export default function StartExercise() {
     [],
   );
 
-  async function handleConnectBluetooth() {
+  function handleConnectBluetooth() {
     if (btState !== "disconnected") return;
 
-    try {
-      setBtState("connecting");
-      const response = await BackendService.connect();
-      setSessionId(response.session_id);
+    setBtState("connecting");
+
+    setTimeout(() => {
       setBtState("connected");
-    } catch (e) {
-      setBtState("disconnected");
-      Alert.alert(
-        "Connection Failed",
-        e instanceof Error ? e.message : "Could not connect to sensors.",
-      );
-    }
+    }, 500);
   }
 
   function handleStart() {
-    if (!isConnected || !sessionId) return;
+    if (!isConnected) return;
 
     router.push({
       pathname: "/exercise-in-progress",
-      params: { session_id: sessionId },
+      params: { session_id: mockSessionId },
     });
   }
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
-      <View className="flex-1 px-6 justify-center gap-8">
-        {/* Top section */}
+      <View className="flex-1 justify-center gap-8 px-6">
         <View className="items-center">
-          <Text className="text-4xl font-bold text-[#11181C] dark:text-[#ECEDEE] text-center">
+          <Text className="text-center text-4xl font-bold text-[#11181C] dark:text-[#ECEDEE]">
             Instructions for{"\n"}device placement:
           </Text>
         </View>
 
-        {/* Middle section */}
         <View className="items-center">
           <View className="w-full pl-2 pr-2">
             {instructions.map((item, idx) => (
-              <View key={idx} className="flex-row items-center mb-4">
-                {/* Left side (text) */}
+              <View key={idx} className="mb-4 flex-row items-center">
                 <View className="flex-1 flex-row pr-3">
-                  <Text className="text-lg font-bold text-[#11181C] dark:text-[#ECEDEE] mr-2">
+                  <Text className="mr-2 text-lg font-bold text-[#11181C] dark:text-[#ECEDEE]">
                     {idx + 1}.
                   </Text>
-                  <Text className="text-lg leading-6 text-[#11181C] dark:text-[#ECEDEE] flex-1">
+                  <Text className="flex-1 text-lg leading-6 text-[#11181C] dark:text-[#ECEDEE]">
                     {item.text}
                   </Text>
                 </View>
 
-                {/* Right side (image) */}
                 <Image
                   source={item.image}
-                  className="w-24 h-24"
+                  className="h-24 w-24"
                   resizeMode="contain"
                 />
               </View>
@@ -111,9 +82,8 @@ export default function StartExercise() {
           </View>
         </View>
 
-        {/* Bottom section */}
         <View className="items-center">
-          <View className="w-4/5 gap-3.5 self-center max-w-[420px]">
+          <View className="max-w-[420px] w-4/5 self-center gap-3.5">
             <PillButton
               title={
                 isConnected

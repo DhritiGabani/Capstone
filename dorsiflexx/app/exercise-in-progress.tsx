@@ -1,5 +1,4 @@
 import PillButton from "@/components/PillButton";
-import BackendService from "@/src/services/api/BackendService";
 import { Stack, router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -61,26 +60,72 @@ export default function ExerciseInProgress() {
 
   const handleEndSession = useCallback(async () => {
     setIsProcessing(true);
-    try {
-      const results = await BackendService.disconnect();
+
+    const mockAnalysis = {
+      rep_counts: {
+        "Ankle Rotation": 6,
+        "Calf Raises": 6,
+      },
+      rep_durations: {
+        "Ankle Rotation": {
+          mean_duration_s: 1.4,
+        },
+        "Calf Raises": {
+          mean_duration_s: 1.2,
+        },
+      },
+      rom_consistency: {
+        "Ankle Rotation": {
+          rep_rom_fraction: {
+            1: 0.84,
+            2: 0.88,
+            3: 0.91,
+            4: 0.87,
+            5: 0.93,
+            6: 0.9,
+          },
+        },
+        "Calf Raises": {
+          rep_rom_fraction: {
+            1: 0.76,
+            2: 0.8,
+            3: 0.83,
+            4: 0.81,
+            5: 0.85,
+            6: 0.84,
+          },
+        },
+      },
+      consistency_scores: {
+        "Ankle Rotation": 90.5,
+        "Calf Raises": 86.8,
+      },
+    };
+
+    const mockExercises = [
+      {
+        exercise_type: "Ankle Rotation",
+        repetitions: 6,
+      },
+      {
+        exercise_type: "Calf Raises",
+        repetitions: 6,
+      },
+    ];
+
+    setTimeout(() => {
       router.replace({
         pathname: "/end-exercise",
         params: {
-          session_id: results.session_id,
-          duration_seconds: String(results.duration_seconds),
-          total_samples: String(results.total_samples),
-          exercises: JSON.stringify(results.exercises),
-          analysis: JSON.stringify(results.analysis ?? {}),
+          session_id: session_id ?? "mock-session-123",
+          duration_seconds: String(elapsedSeconds),
+          total_samples: "720",
+          exercises: JSON.stringify(mockExercises),
+          analysis: JSON.stringify(mockAnalysis),
         },
       });
-    } catch (e) {
-      setIsProcessing(false);
-      Alert.alert(
-        "Processing Failed",
-        e instanceof Error ? e.message : "Could not process session.",
-      );
-    }
-  }, []);
+    }, 1500);
+  }, [elapsedSeconds, session_id]);
 
   const onPressEndSession = useCallback(() => {
     confirmEndSession(() => handleEndSession());
@@ -92,7 +137,6 @@ export default function ExerciseInProgress() {
         options={{
           headerBackVisible: false,
           gestureEnabled: false,
-
           headerLeft: () => (
             <Pressable
               onPress={onPressCancel}

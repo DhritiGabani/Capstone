@@ -1,21 +1,20 @@
 import PillButton from "@/components/PillButton";
-import BackendService from "@/src/services/api/BackendService";
 import { router, Stack } from "expo-router";
 import {
-    default as React,
-    useCallback,
-    useMemo,
-    useRef,
-    useState,
+  default as React,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import {
-    Alert,
-    Image,
-    Pressable,
-    SafeAreaView,
-    Text,
-    useColorScheme,
-    View,
+  Alert,
+  Image,
+  Pressable,
+  SafeAreaView,
+  Text,
+  useColorScheme,
+  View,
 } from "react-native";
 
 type MeasureState = "idle" | "measuring" | "done";
@@ -26,7 +25,6 @@ export default function MeasureKneeToWall() {
   const [measureState, setMeasureState] = useState<MeasureState>("idle");
   const [countdown, setCountdown] = useState<number>(5);
   const [resultAngle, setResultAngle] = useState<number | null>(null);
-  const [angleOverTime, setAngleOverTime] = useState<Record<string, number> | null>(null);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -48,7 +46,11 @@ export default function MeasureKneeToWall() {
       "Are you sure you want to cancel this measurement? Any data will be lost.",
       [
         { text: "Close", style: "cancel" },
-        { text: "Cancel measurement", style: "destructive", onPress: onConfirm },
+        {
+          text: "Cancel measurement",
+          style: "destructive",
+          onPress: onConfirm,
+        },
       ],
     );
   }, []);
@@ -64,46 +66,24 @@ export default function MeasureKneeToWall() {
     }
   }
 
-  async function handleSensorDisconnected(message: string) {
-    clearTimer();
-    setMeasureState("idle");
-    await BackendService.bleDisconnect();
-    Alert.alert(
-      "Sensor Disconnected",
-      message,
-      [{ text: "OK", onPress: () => router.replace({ pathname: "/start-kneetowall", params: { forceDisconnected: "1" } }) }],
-    );
+  function generateRandomAngle() {
+    return Number((25 + Math.random() * 20).toFixed(1));
   }
 
-  async function handleMeasure() {
+  function handleMeasure() {
     if (isMeasuring) return;
 
     clearTimer();
     setResultAngle(null);
-    setAngleOverTime(null);
     setMeasureState("measuring");
     setCountdown(5);
-
-    try {
-      await BackendService.startKTW();
-    } catch (e: any) {
-      handleSensorDisconnected(e.message || "One or more sensors disconnected. Please reconnect and try again.");
-      return;
-    }
 
     intervalRef.current = setInterval(() => {
       setCountdown((c) => {
         if (c <= 1) {
           clearTimer();
-          BackendService.stopKTW()
-            .then((result) => {
-              setResultAngle(result.largest_angle_deg);
-              setAngleOverTime(result.angle_over_time);
-              setMeasureState("done");
-            })
-            .catch((e) => {
-              handleSensorDisconnected(e.message || "One or more sensors disconnected. Please reconnect and try again.");
-            });
+          setResultAngle(generateRandomAngle());
+          setMeasureState("done");
           return 1;
         }
         return c - 1;
@@ -111,28 +91,15 @@ export default function MeasureKneeToWall() {
     }, 1000);
   }
 
-  function handleSave(angle: number, aot: Record<string, number> | null) {
-    Alert.prompt(
-      "Enter Your Name",
-      "Your name will appear on the leaderboard!",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "OK",
-          onPress: (name?: string) => {
-            // Fire-and-forget — navigate away immediately, never surface errors
-            BackendService.saveKTW(
-              angle,
-              aot ?? undefined,
-              name?.trim() || "Anonymous",
-            ).catch(() => {});
-            BackendService.bleDisconnect();
-            router.replace("/measure");
-          },
-        },
-      ],
-      "plain-text",
-    );
+  function handleSave() {
+    router.replace("/measure");
+  }
+
+  function handleRedo() {
+    clearTimer();
+    setMeasureState("idle");
+    setCountdown(5);
+    setResultAngle(null);
   }
 
   const buttonTitle =
@@ -141,11 +108,6 @@ export default function MeasureKneeToWall() {
       : measureState === "measuring"
         ? "Measuring,\nhold still..."
         : "Redo measurement";
-
-  function handleRedo() {
-    clearTimer();
-    router.back();
-  }
 
   return (
     <>
@@ -166,16 +128,14 @@ export default function MeasureKneeToWall() {
       />
 
       <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
-        <View className="flex-1 px-6 pt-10 gap-8">
-          {/* Top section */}
+        <View className="flex-1 gap-8 px-6 pt-10">
           <View className="items-center">
-            <Text className="text-4xl font-bold text-[#11181C] dark:text-[#ECEDEE] text-center">
+            <Text className="text-center text-4xl font-bold text-[#11181C] dark:text-[#ECEDEE]">
               Instructions for{"\n"}knee-to-wall test:
             </Text>
           </View>
 
-          {/* Middle section */}
-          <View className="w-full relative">
+          <View className="relative w-full">
             <Image
               source={require("@/assets/images/KneeToWallImage.png")}
               style={{
@@ -193,12 +153,12 @@ export default function MeasureKneeToWall() {
               return (
                 <View
                   key={idx}
-                  className={`flex-row mb-2 ${isTopSection ? "pr-[130px]" : ""}`}
+                  className={`mb-2 flex-row ${isTopSection ? "pr-[130px]" : ""}`}
                 >
-                  <Text className="text-lg font-bold text-[#11181C] dark:text-[#ECEDEE] mr-2">
+                  <Text className="mr-2 text-lg font-bold text-[#11181C] dark:text-[#ECEDEE]">
                     {idx + 1}.
                   </Text>
-                  <Text className="text-lg leading-6 text-[#11181C] dark:text-[#ECEDEE] flex-1">
+                  <Text className="flex-1 text-lg leading-6 text-[#11181C] dark:text-[#ECEDEE]">
                     {line}
                   </Text>
                 </View>
@@ -206,47 +166,40 @@ export default function MeasureKneeToWall() {
             })}
           </View>
 
-          {/* Bottom section */}
           <View className="items-center">
-            <View className="w-4/5 self-center max-w-[420px]">
+            <View className="max-w-[420px] w-4/5 self-center">
               <PillButton
                 title={buttonTitle}
                 onPress={measureState === "done" ? handleRedo : handleMeasure}
                 disabled={isMeasuring}
               />
 
-              {/* Countdown */}
               {isMeasuring && (
-                <Text className="text-center mt-8 text-5xl font-extrabold text-[#11181C] dark:text-[#ECEDEE]">
+                <Text className="mt-8 text-center text-5xl font-extrabold text-[#11181C] dark:text-[#ECEDEE]">
                   {countdown}
                 </Text>
               )}
 
-              {/* Result */}
               {resultAngle !== null && (
-                <View className="items-center mt-6">
-                  <Text className="text-[#11181C] dark:text-[#ECEDEE] text-lg">
+                <View className="mt-6 items-center">
+                  <Text className="text-lg text-[#11181C] dark:text-[#ECEDEE]">
                     Your measurement:
                   </Text>
-                  <Text className="text-[#11181C] dark:text-[#ECEDEE] text-5xl font-extrabold mt-2">
+                  <Text className="mt-2 text-5xl font-extrabold text-[#11181C] dark:text-[#ECEDEE]">
                     {resultAngle.toFixed(1)}°
                   </Text>
                 </View>
               )}
 
-              {/* Save button */}
               {hasResult && (
                 <View className="mt-8">
-                  <PillButton
-                    title="Save"
-                    onPress={() => handleSave(resultAngle!, angleOverTime)}
-                  />
+                  <PillButton title="Save" onPress={handleSave} />
                 </View>
               )}
             </View>
 
             {measureState === "idle" && (
-              <Text className="text-center mt-4 text-[#11181C] dark:text-[#ECEDEE] opacity-70">
+              <Text className="mt-4 text-center text-[#11181C] opacity-70 dark:text-[#ECEDEE]">
                 Press MEASURE when you're ready.
               </Text>
             )}

@@ -1,16 +1,13 @@
 import PillButton from "@/components/PillButton";
-import BackendService, {
-  KTWMeasurement,
-} from "@/src/services/api/BackendService";
-import { router, useFocusEffect } from "expo-router";
-import React, { useCallback, useMemo, useState } from "react";
+import { router } from "expo-router";
+import React, { useMemo } from "react";
 import { SafeAreaView, Text, useColorScheme, View } from "react-native";
 import Svg, { Circle, Line, Polyline, Text as SvgText } from "react-native-svg";
 
 type Measurement = {
   date: string;
-  dateKey: string; // unique calendar day key
-  dateLabel: string; // display label
+  dateKey: string;
+  dateLabel: string;
   angleDeg: number;
 };
 
@@ -44,30 +41,26 @@ function median(values: number[]): number {
 
 export default function MeasurementsScreen() {
   const goalAngle = 45;
-
-  const [ktwData, setKtwData] = useState<KTWMeasurement[]>([]);
-
-  useFocusEffect(
-    useCallback(() => {
-      BackendService.getKTWHistory()
-        .then(setKtwData)
-        .catch(() => setKtwData([]));
-    }, []),
-  );
-
-  const measurements: Measurement[] = useMemo(
-    () =>
-      ktwData.map((m) => ({
-        date: m.measured_at,
-        dateKey: formatDateKey(m.measured_at),
-        dateLabel: formatDateLabel(m.measured_at),
-        angleDeg: m.angle_deg,
-      })),
-    [ktwData],
-  );
-
   const colorScheme = useColorScheme();
   const textColor = colorScheme === "dark" ? "#ECEDEE" : "#11181C";
+
+  const measurements: Measurement[] = useMemo(() => {
+    const rawMeasurements = [
+      { date: "2026-02-28T09:13:30", angleDeg: 26.6 },
+      { date: "2026-03-02T08:47:10", angleDeg: 27.1 },
+      { date: "2026-03-05T12:04:15", angleDeg: 33.7 },
+      { date: "2026-03-12T16:41:00", angleDeg: 31.2 },
+      { date: "2026-03-14T09:07:20", angleDeg: 32.9 },
+      { date: "2026-03-17T19:24:00", angleDeg: 35.0 },
+    ];
+
+    return rawMeasurements.map((m) => ({
+      date: m.date,
+      dateKey: formatDateKey(m.date),
+      dateLabel: formatDateLabel(m.date),
+      angleDeg: m.angleDeg,
+    }));
+  }, []);
 
   const chart = useMemo(() => {
     const W = 320;
@@ -199,7 +192,6 @@ export default function MeasurementsScreen() {
           <View className="w-full max-w-[420px] px-4 py-5">
             <View className="items-center">
               <Svg width={chart.W} height={chart.H}>
-                {/* Axes */}
                 <Line
                   x1={chart.padL}
                   y1={chart.padT}
@@ -217,7 +209,6 @@ export default function MeasurementsScreen() {
                   strokeWidth={1.5}
                 />
 
-                {/* Y labels */}
                 <SvgText
                   x={chart.padL - 20}
                   y={chart.yForValue(20)}
@@ -240,7 +231,6 @@ export default function MeasurementsScreen() {
                   40°
                 </SvgText>
 
-                {/* One x tick per unique date */}
                 {chart.groupedDates.map((group, i) => {
                   const x = chart.xForMeasurement(group.measurements[0]);
                   const yAxis = chart.H - chart.padB;
@@ -258,7 +248,6 @@ export default function MeasurementsScreen() {
                   );
                 })}
 
-                {/* Y ticks */}
                 {chart.ticks.map((t) => (
                   <React.Fragment key={`tick-${t.v}`}>
                     <Line
@@ -272,7 +261,6 @@ export default function MeasurementsScreen() {
                   </React.Fragment>
                 ))}
 
-                {/* Goal line */}
                 <Line
                   x1={chart.padL}
                   y1={chart.goalY}
@@ -292,7 +280,6 @@ export default function MeasurementsScreen() {
                   GOAL
                 </SvgText>
 
-                {/* Line through medians */}
                 <Polyline
                   points={chart.medianPoints}
                   fill="none"
@@ -300,7 +287,6 @@ export default function MeasurementsScreen() {
                   strokeWidth={2}
                 />
 
-                {/* All points, stacked on same x if same date */}
                 {measurements.map((m, i) => {
                   const cx = chart.xForMeasurement(m);
                   const cy = chart.yForValue(m.angleDeg);
@@ -315,7 +301,6 @@ export default function MeasurementsScreen() {
                   );
                 })}
 
-                {/* One x label per unique date */}
                 {chart.groupedDates.map((group, i) => {
                   const x = chart.xForMeasurement(group.measurements[0]) + 5;
                   const y = chart.H - chart.padB + 18;
