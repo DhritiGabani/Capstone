@@ -5,39 +5,53 @@ import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { SafeAreaView, ScrollView, Text, View } from "react-native";
 
-type Day = {
-  label: string;
-  completedCount: number;
-  isToday?: boolean;
-};
+const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function HomeScreen() {
-  const userName = "Jane";
-  const goalPerDay = 2;
-
-  const days: Day[] = [
-    { label: "Sun", completedCount: 2 },
-    { label: "Mon", completedCount: 0 },
-    { label: "Tue", completedCount: 2 },
-    { label: "Wed", completedCount: 1 },
-    { label: "Thu", completedCount: 0, isToday: true },
-    { label: "Fri", completedCount: 0 },
-    { label: "Sat", completedCount: 0 },
-  ];
-
+  const [userName, setUserName] = useState("Jane");
+  const [goalFrequency, setGoalFrequency] = useState(2);
+  const [goalPeriod, setGoalPeriod] = useState("Day");
+  const [sessionDates, setSessionDates] = useState<string[]>([]);
   const [mostRecentSessionDate, setMostRecentSessionDate] = useState<string | null>(null);
 
   useFocusEffect(
     useCallback(() => {
+      BackendService.getSettings()
+        .then((s) => {
+          setUserName(s.name);
+          setGoalFrequency(s.goal_frequency);
+          setGoalPeriod(s.goal_period);
+        })
+        .catch(() => {});
+
       BackendService.getSessionDates()
         .then((dates) => {
+          setSessionDates(dates);
           setMostRecentSessionDate(dates.length > 0 ? dates[dates.length - 1] : null);
         })
         .catch(() => {});
     }, []),
   );
 
-  const goalText = `${goalPerDay}x per day`;
+  // Build a 7-day week view centered on today
+  const today = new Date();
+  const todayDow = today.getDay(); // 0=Sun
+
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - todayDow);
+
+  const days = DAY_LABELS.map((label, i) => {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    const dateStr = d.toISOString().slice(0, 10);
+    const completedCount = sessionDates.filter((s) => s === dateStr).length;
+    return { label, completedCount, isToday: i === todayDow };
+  });
+
+  const goalText =
+    goalPeriod === "Day"
+      ? `${goalFrequency}x per day`
+      : `${goalFrequency}x per week`;
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
@@ -74,7 +88,7 @@ export default function HomeScreen() {
                   </Text>
 
                   <View className="gap-2 items-center">
-                    {Array.from({ length: goalPerDay }).map((_, i) => {
+                    {Array.from({ length: goalFrequency }).map((_, i) => {
                       const filled = i < d.completedCount;
                       return (
                         <View

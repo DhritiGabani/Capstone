@@ -79,6 +79,25 @@ export interface KTWMeasurement {
   details?: Record<string, any>;
 }
 
+export interface NotificationSchedule {
+  id: number;
+  days: string[];
+  time_hour: number;
+  time_minute: number;
+}
+
+export interface UserSettings {
+  name: string;
+  height: string;
+  height_unit: string;
+  shoe_gender: string;
+  shoe_size: number;
+  ankle: string;
+  goal_frequency: number;
+  goal_period: string;
+  notifications: NotificationSchedule[];
+}
+
 export interface SessionByDate {
   session_id: string;
   start_time: string;
@@ -163,12 +182,11 @@ class BackendService {
   async saveKTW(
     angleDeg: number,
     details?: Record<string, any>,
-    name?: string,
   ): Promise<{ status: string; id: number }> {
     const res = await fetch(`${BACKEND_URL}/ktw/save`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ angle_deg: angleDeg, details: details ?? null, name: name ?? "Anonymous" }),
+      body: JSON.stringify({ angle_deg: angleDeg, details: details ?? null }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
@@ -211,6 +229,27 @@ class BackendService {
       throw new Error(err.detail || "Failed to get sessions for date");
     }
     return res.json();
+  }
+
+  async getSettings(): Promise<UserSettings> {
+    const res = await fetch(`${BACKEND_URL}/settings`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || "Failed to get settings");
+    }
+    return res.json();
+  }
+
+  async saveSettings(settings: UserSettings): Promise<void> {
+    const res = await fetch(`${BACKEND_URL}/settings`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(settings),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || "Failed to save settings");
+    }
   }
 }
 
