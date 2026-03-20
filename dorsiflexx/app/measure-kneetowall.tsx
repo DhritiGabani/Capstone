@@ -82,7 +82,7 @@ export default function MeasureKneeToWall() {
     setResultAngle(null);
     setAngleOverTime(null);
     setMeasureState("measuring");
-    setCountdown(5);
+    setCountdown(3);
 
     try {
       await BackendService.startKTW();
