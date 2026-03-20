@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, Text } from "react-native";
+import { Animated, Pressable, Text } from "react-native";
 
 type BannerVariant = "success" | "error" | "info";
 
@@ -9,6 +9,7 @@ type NotificationBannerProps = {
   visible: boolean;
   onHide: () => void;
   durationMs?: number;
+  onPress?: () => void;
 };
 
 const VARIANT_COLORS: Record<BannerVariant, string> = {
@@ -23,6 +24,7 @@ export default function NotificationBanner({
   visible,
   onHide,
   durationMs = 2500,
+  onPress,
 }: NotificationBannerProps) {
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(-60)).current;
@@ -72,22 +74,25 @@ export default function NotificationBanner({
         right: 0,
         zIndex: 999,
         backgroundColor: VARIANT_COLORS[variant],
-        paddingVertical: 14,
-        paddingHorizontal: 20,
         opacity,
         transform: [{ translateY }],
       }}
     >
-      <Text
-        style={{
-          color: "#fff",
-          fontSize: 15,
-          fontWeight: "600",
-          textAlign: "center",
-        }}
+      <Pressable
+        onPress={onPress}
+        style={{ paddingVertical: 14, paddingHorizontal: 20 }}
       >
-        {message}
-      </Text>
+        <Text
+          style={{
+            color: "#fff",
+            fontSize: 15,
+            fontWeight: "600",
+            textAlign: "center",
+          }}
+        >
+          {message}
+        </Text>
+      </Pressable>
     </Animated.View>
   );
 }

@@ -1,6 +1,11 @@
+import NotificationBanner from "@/components/NotificationBanner";
 import PillButton from "@/components/PillButton";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import BackendService from "@/src/services/api/BackendService";
+import {
+  consumeCompletedSession,
+  subscribeToSessionComplete,
+} from "@/src/services/SessionProcessing";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { SafeAreaView, ScrollView, Text, View } from "react-native";
@@ -13,6 +18,14 @@ export default function HomeScreen() {
   const [goalPeriod, setGoalPeriod] = useState("Day");
   const [sessionDates, setSessionDates] = useState<string[]>([]);
   const [mostRecentSessionDate, setMostRecentSessionDate] = useState<string | null>(null);
+
+  const [bannerVisible, setBannerVisible] = useState(false);
+  const [completedSessionDate, setCompletedSessionDate] = useState<string | null>(null);
+
+  const showCompletionBanner = useCallback((date: string) => {
+    setCompletedSessionDate(date);
+    setBannerVisible(true);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -30,12 +43,25 @@ export default function HomeScreen() {
           setMostRecentSessionDate(dates.length > 0 ? dates[dates.length - 1] : null);
         })
         .catch(() => {});
-    }, []),
+
+      // If ML finished while we were on another screen, show banner now
+      const already = consumeCompletedSession();
+      if (already) {
+        showCompletionBanner(already.date);
+      }
+
+      // Subscribe for ML completing while we're on this screen
+      const unsub = subscribeToSessionComplete((session) => {
+        showCompletionBanner(session.date);
+      });
+
+      return unsub;
+    }, [showCompletionBanner]),
   );
 
   // Build a 7-day week view centered on today
   const today = new Date();
-  const todayDow = today.getDay(); // 0=Sun
+  const todayDow = today.getDay();
 
   const weekStart = new Date(today);
   weekStart.setDate(today.getDate() - todayDow);
@@ -55,6 +81,25 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
+      <NotificationBanner
+        message="Your exercise results are ready! Tap to view."
+        variant="info"
+        visible={bannerVisible}
+        onHide={() => setBannerVisible(false)}
+        durationMs={6000}
+        onPress={
+          completedSessionDate
+            ? () => {
+                setBannerVisible(false);
+                router.push({
+                  pathname: "/exercise-summary",
+                  params: { date: completedSessionDate },
+                });
+              }
+            : undefined
+        }
+      />
+
       <ScrollView
         contentContainerStyle={{ paddingVertical: 40 }}
         showsVerticalScrollIndicator={false}
