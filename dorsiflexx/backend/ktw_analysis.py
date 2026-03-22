@@ -71,6 +71,7 @@ def analyze(signals_df: pd.DataFrame) -> dict:
         abs_t   = time[0] + t
         idx     = int(np.argmin(np.abs(time - abs_t)))
         sampled_angles[round(float(t), 1)] = round(float(ankle_angle_pos[idx]), 3)
+    
 
     return {
         "largest_angle_deg": largest_angle,
