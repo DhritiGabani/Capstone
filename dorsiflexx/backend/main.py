@@ -104,7 +104,15 @@ async def session_stop():
     session_id = _session_id
     start_ts = _start_ts
 
+    # Snapshot end time now — before the extra collection window —
+    # so duration reflects only the user's active exercise time.
     end_ts = time.time()
+
+    # Continue collecting for 10 s to capture any in-flight sensor data
+    # before stopping the stream and running ML analysis.
+    log.info("End-session requested — collecting for 10 more seconds...")
+    await asyncio.sleep(10)
+
     readings = await ble.stop_streaming()
     duration_s = round(end_ts - start_ts, 2)
 
@@ -166,6 +174,13 @@ async def session_stop():
     _session_id = None
     _start_time = None
     _start_ts = None
+
+    # Disconnect BLE here so the frontend never needs to call /ble/disconnect
+    # for the exercise session flow — avoids racing with the 10-second window.
+    try:
+        await ble.disconnect()
+    except Exception as e:
+        log.warning("BLE disconnect after session failed (non-fatal): %s", e)
 
     return {
         "session_id": session_id,
