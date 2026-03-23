@@ -1,5 +1,6 @@
 import PillButton from "@/components/PillButton";
 import BackendService from "@/src/services/api/BackendService";
+import { setPendingSession } from "@/src/services/SessionProcessing";
 import { Stack, router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -24,18 +25,17 @@ function formatElapsedTime(totalSeconds: number) {
 export default function ExerciseInProgress() {
   const { session_id } = useLocalSearchParams<{ session_id: string }>();
   const [isPaused, setIsPaused] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   useEffect(() => {
-    if (isPaused || isProcessing) return;
+    if (isPaused) return;
 
     const interval = setInterval(() => {
       setElapsedSeconds((prev) => prev + 1);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isPaused, isProcessing]);
+  }, [isPaused]);
 
   const confirmLeave = useCallback((onConfirm: () => void) => {
     Alert.alert(
@@ -59,28 +59,14 @@ export default function ExerciseInProgress() {
     confirmLeave(() => router.back());
   }, [confirmLeave]);
 
-  const handleEndSession = useCallback(async () => {
-    setIsProcessing(true);
-    try {
-      const results = await BackendService.disconnect();
-      router.replace({
-        pathname: "/end-exercise",
-        params: {
-          session_id: results.session_id,
-          duration_seconds: String(results.duration_seconds),
-          total_samples: String(results.total_samples),
-          exercises: JSON.stringify(results.exercises),
-          analysis: JSON.stringify(results.analysis ?? {}),
-        },
-      });
-    } catch (e) {
-      setIsProcessing(false);
-      Alert.alert(
-        "Processing Failed",
-        e instanceof Error ? e.message : "Could not process session.",
-      );
-    }
-  }, []);
+  const handleEndSession = useCallback(() => {
+    const sessionDate = new Date().toISOString().slice(0, 10);
+    setPendingSession(session_id ?? "", sessionDate, BackendService.disconnect());
+    router.replace({
+      pathname: "/end-exercise",
+      params: { session_id: session_id ?? "", date: sessionDate },
+    });
+  }, [session_id]);
 
   const onPressEndSession = useCallback(() => {
     confirmEndSession(() => handleEndSession());
@@ -109,9 +95,7 @@ export default function ExerciseInProgress() {
         <View className="flex-1 justify-center gap-14 px-6 py-8">
           <View className="items-center">
             <Text className="text-center text-4xl font-semibold text-[#11181C] dark:text-[#ECEDEE]">
-              {isProcessing
-                ? "Processing\nSession..."
-                : "Exercise Session\nIn Progress"}
+              Exercise Session{"\n"}In Progress
             </Text>
           </View>
 
@@ -119,7 +103,7 @@ export default function ExerciseInProgress() {
             <View className="h-28 w-28 items-center justify-center">
               <ActivityIndicator
                 size="large"
-                animating={isProcessing || !isPaused}
+                animating={!isPaused}
                 hidesWhenStopped={false}
                 color="#8d44bc"
                 className="scale-[3]"
@@ -127,41 +111,33 @@ export default function ExerciseInProgress() {
             </View>
 
             <Text className="mt-4 text-lg text-[#11181C] dark:text-[#ECEDEE]">
-              {isProcessing
-                ? "Analyzing your exercises..."
-                : isPaused
-                  ? "Paused"
-                  : "Collecting data"}
+              {isPaused ? "Paused" : "Collecting data"}
             </Text>
 
-            {!isProcessing && (
-              <Text className="mt-4 text-2xl font-bold text-[#11181C] dark:text-[#ECEDEE]">
-                Time Elapsed: {formatElapsedTime(elapsedSeconds)}
-              </Text>
-            )}
+            <Text className="mt-4 text-2xl font-bold text-[#11181C] dark:text-[#ECEDEE]">
+              Time Elapsed: {formatElapsedTime(elapsedSeconds)}
+            </Text>
           </View>
 
-          {!isProcessing && (
-            <View className="items-center">
-              <View className="w-full flex-row gap-8 px-4">
-                <View className="flex-1">
-                  <PillButton
-                    title={isPaused ? "Continue" : "Pause"}
-                    variant={isPaused ? "success" : "warning"}
-                    onPress={() => setIsPaused((p) => !p)}
-                  />
-                </View>
+          <View className="items-center">
+            <View className="w-full flex-row gap-8 px-4">
+              <View className="flex-1">
+                <PillButton
+                  title={isPaused ? "Continue" : "Pause"}
+                  variant={isPaused ? "success" : "warning"}
+                  onPress={() => setIsPaused((p) => !p)}
+                />
+              </View>
 
-                <View className="flex-1">
-                  <PillButton
-                    title="END SESSION"
-                    variant="danger"
-                    onPress={onPressEndSession}
-                  />
-                </View>
+              <View className="flex-1">
+                <PillButton
+                  title="END SESSION"
+                  variant="danger"
+                  onPress={onPressEndSession}
+                />
               </View>
             </View>
-          )}
+          </View>
         </View>
       </SafeAreaView>
     </>
