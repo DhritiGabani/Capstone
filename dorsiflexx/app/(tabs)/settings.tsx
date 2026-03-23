@@ -1,8 +1,12 @@
+import NotificationBanner from "@/components/NotificationBanner";
 import PillButton from "@/components/PillButton";
+import BackendService from "@/src/services/api/BackendService";
+import type { UserSettings } from "@/src/services/api/BackendService";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import React, { useState } from "react";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useRef, useState } from "react";
 import {
   Platform,
   Pressable,
@@ -149,45 +153,123 @@ function formatTime(date: Date) {
   });
 }
 
+function settingsToNotificationItems(
+  raw: UserSettings["notifications"],
+): NotificationItem[] {
+  return raw.map((n) => ({
+    id: n.id,
+    days: (n.days as DayAbbrev[]).filter((d): d is DayAbbrev =>
+      DAY_ORDER.includes(d as DayAbbrev),
+    ),
+    time: (() => {
+      const d = new Date();
+      d.setHours(n.time_hour, n.time_minute, 0, 0);
+      return d;
+    })(),
+    isDayPickerOpen: false,
+    isTimePickerOpen: false,
+  }));
+}
+
+function notificationItemsToPayload(
+  items: NotificationItem[],
+): UserSettings["notifications"] {
+  return items.map((n) => ({
+    id: n.id,
+    days: n.days as string[],
+    time_hour: n.time.getHours(),
+    time_minute: n.time.getMinutes(),
+  }));
+}
+
 export default function ProfileSettingsScreen() {
   const [name, setName] = useState("Jane");
   const [height, setHeight] = useState("165");
   const [heightUnit, setHeightUnit] = useState("cm");
-
-  const [shoeGender, setShoeGender] = useState("Women’s");
+  const [shoeGender, setShoeGender] = useState("Women's");
   const [shoeSize, setShoeSize] = useState(7);
-
   const [ankle, setAnkle] = useState("Right");
-
   const [goalFrequency, setGoalFrequency] = useState(2);
   const [goalPeriod, setGoalPeriod] = useState("Day");
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [nextNotificationId, setNextNotificationId] = useState(1);
 
-  const [notifications, setNotifications] = useState<NotificationItem[]>([
-    {
-      id: 1,
-      days: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-      time: new Date(2026, 2, 18, 8, 15),
-      isDayPickerOpen: false,
-      isTimePickerOpen: false,
-    },
-    {
-      id: 2,
-      days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-      time: new Date(2026, 2, 18, 18, 30),
-      isDayPickerOpen: false,
-      isTimePickerOpen: false,
-    },
-  ]);
+  // Track the last-saved snapshot so Cancel can revert
+  const savedSnapshot = useRef<UserSettings | null>(null);
 
-  const [nextNotificationId, setNextNotificationId] = useState(3);
+  // Banner state
+  const [bannerVisible, setBannerVisible] = useState(false);
+  const [bannerMessage, setBannerMessage] = useState("");
+  const [bannerVariant, setBannerVariant] = useState<"success" | "error" | "info">("success");
+
+  const showBanner = (message: string, variant: "success" | "error" | "info" = "success") => {
+    setBannerMessage(message);
+    setBannerVariant(variant);
+    setBannerVisible(true);
+  };
+
+  const applySettings = (s: UserSettings) => {
+    setName(s.name);
+    setHeight(s.height);
+    setHeightUnit(s.height_unit);
+    setShoeGender(s.shoe_gender);
+    setShoeSize(s.shoe_size);
+    setAnkle(s.ankle);
+    setGoalFrequency(s.goal_frequency);
+    setGoalPeriod(s.goal_period);
+    const items = settingsToNotificationItems(s.notifications);
+    setNotifications(items);
+    const maxId = items.reduce((m, n) => Math.max(m, n.id), 0);
+    setNextNotificationId(maxId + 1);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      BackendService.getSettings()
+        .then((s) => {
+          savedSnapshot.current = s;
+          applySettings(s);
+        })
+        .catch(() => {});
+    }, []),
+  );
+
+  const handleSave = async () => {
+    const settings: UserSettings = {
+      name,
+      height,
+      height_unit: heightUnit,
+      shoe_gender: shoeGender,
+      shoe_size: shoeSize,
+      ankle,
+      goal_frequency: goalFrequency,
+      goal_period: goalPeriod,
+      notifications: notificationItemsToPayload(notifications),
+    };
+    try {
+      await BackendService.saveSettings(settings);
+      savedSnapshot.current = settings;
+      showBanner("Settings saved!");
+    } catch {
+      showBanner("Failed to save settings", "error");
+    }
+  };
+
+  const handleCancel = () => {
+    if (savedSnapshot.current) {
+      applySettings(savedSnapshot.current);
+    }
+  };
 
   const addNotification = () => {
+    const now = new Date();
+    now.setHours(12, 0, 0, 0);
     setNotifications((prev) => [
       ...prev,
       {
         id: nextNotificationId,
         days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-        time: new Date(2026, 2, 18, 12, 0),
+        time: now,
         isDayPickerOpen: false,
         isTimePickerOpen: false,
       },
@@ -310,6 +392,13 @@ export default function ProfileSettingsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">
+      <NotificationBanner
+        message={bannerMessage}
+        variant={bannerVariant}
+        visible={bannerVisible}
+        onHide={() => setBannerVisible(false)}
+      />
+
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
@@ -359,7 +448,7 @@ export default function ProfileSettingsScreen() {
           </Text>
           <View className="flex-row items-center gap-3">
             <ToggleOption
-              options={["Men’s", "Women’s"]}
+              options={["Men's", "Women's"]}
               selected={shoeGender}
               onSelect={setShoeGender}
             />
@@ -522,11 +611,11 @@ export default function ProfileSettingsScreen() {
 
         <View className="mt-6 flex-row justify-between px-4">
           <View className="w-[48%]">
-            <PillButton title="Cancel" onPress={() => {}} />
+            <PillButton title="Cancel" onPress={handleCancel} />
           </View>
 
           <View className="w-[48%]">
-            <PillButton title="Save" onPress={() => {}} />
+            <PillButton title="Save" onPress={handleSave} />
           </View>
         </View>
       </ScrollView>

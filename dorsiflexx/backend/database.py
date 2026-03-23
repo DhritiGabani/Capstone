@@ -47,16 +47,13 @@ def init_db() -> None:
             angle_deg     REAL NOT NULL,
             details_json  TEXT
         );
+
+        CREATE TABLE IF NOT EXISTS user_settings (
+            id            INTEGER PRIMARY KEY CHECK (id = 1),
+            settings_json TEXT NOT NULL
+        );
     """)
     conn.commit()
-
-    # Migration: add player_name column if it doesn't exist yet
-    try:
-        conn.execute("ALTER TABLE ktw_measurements ADD COLUMN player_name TEXT")
-        conn.commit()
-    except sqlite3.OperationalError:
-        pass  # Column already exists
-
     conn.close()
 
 
@@ -126,44 +123,18 @@ def save_feedback(session_id: str, rating: str, comments: str) -> None:
 # KTW Measurements
 # ---------------------------------------------------------------------------
 
-def save_ktw_measurement(angle_deg: float, details: dict | None = None, player_name: str | None = None) -> int:
-    """Save a KTW measurement and return the new row id.
-
-    Uses a two-step approach so it works regardless of whether the player_name
-    column has been migrated yet:
-      1. INSERT with only the original columns (always succeeds).
-      2. Ensure the column exists, then UPDATE the name on that row.
-    """
+def save_ktw_measurement(angle_deg: float, details: dict | None = None) -> int:
+    """Save a KTW measurement and return the new row id."""
     measured_at = datetime.now(timezone.utc).isoformat()
     details_str = json.dumps(details) if details else None
-    name = (player_name or "").strip() or "Anonymous"
 
     conn = _get_connection()
-
-    # Step 1 — insert core data using the original schema (never fails)
     cursor = conn.execute(
         "INSERT INTO ktw_measurements (measured_at, angle_deg, details_json) VALUES (?, ?, ?)",
         (measured_at, angle_deg, details_str),
     )
     row_id = cursor.lastrowid
     conn.commit()
-
-    # Step 2 — add column if missing, then stamp the player name
-    try:
-        conn.execute("ALTER TABLE ktw_measurements ADD COLUMN player_name TEXT")
-        conn.commit()
-    except Exception:
-        pass  # column already exists
-
-    try:
-        conn.execute(
-            "UPDATE ktw_measurements SET player_name = ? WHERE id = ?",
-            (name, row_id),
-        )
-        conn.commit()
-    except Exception as e:
-        log.warning("Could not persist player_name (non-fatal): %s", e)
-
     conn.close()
     return row_id
 
@@ -171,14 +142,9 @@ def save_ktw_measurement(angle_deg: float, details: dict | None = None, player_n
 def get_ktw_measurements() -> list[dict]:
     """Return all KTW measurements ordered by date."""
     conn = _get_connection()
-    try:
-        conn.execute("ALTER TABLE ktw_measurements ADD COLUMN player_name TEXT")
-        conn.commit()
-    except Exception:
-        pass
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
-        "SELECT id, measured_at, angle_deg, details_json, player_name FROM ktw_measurements ORDER BY measured_at"
+        "SELECT id, measured_at, angle_deg, details_json FROM ktw_measurements ORDER BY measured_at"
     ).fetchall()
     conn.close()
 
@@ -188,39 +154,11 @@ def get_ktw_measurements() -> list[dict]:
             "id": row["id"],
             "measured_at": row["measured_at"],
             "angle_deg": row["angle_deg"],
-            "player_name": row["player_name"] or "Anonymous",
         }
         if row["details_json"]:
             entry["details"] = json.loads(row["details_json"])
         results.append(entry)
     return results
-
-
-def get_ktw_leaderboard() -> list[dict]:
-    """Return all KTW measurements sorted by best (highest) angle for the leaderboard."""
-    conn = _get_connection()
-    try:
-        conn.execute("ALTER TABLE ktw_measurements ADD COLUMN player_name TEXT")
-        conn.commit()
-    except Exception:
-        pass
-    conn.row_factory = sqlite3.Row
-    rows = conn.execute(
-        "SELECT id, player_name, measured_at, angle_deg "
-        "FROM ktw_measurements "
-        "ORDER BY angle_deg DESC"
-    ).fetchall()
-    conn.close()
-
-    return [
-        {
-            "id": row["id"],
-            "player_name": row["player_name"] or "Anonymous",
-            "measured_at": row["measured_at"],
-            "angle_deg": row["angle_deg"],
-        }
-        for row in rows
-    ]
 
 
 # ---------------------------------------------------------------------------
@@ -269,6 +207,49 @@ def get_ktw_measurements_by_date(date_str: str) -> list[dict]:
             entry["details"] = json.loads(row["details_json"])
         results.append(entry)
     return results
+
+
+# ---------------------------------------------------------------------------
+# User Settings
+# ---------------------------------------------------------------------------
+
+DEFAULT_SETTINGS = {
+    "name": "Jane",
+    "height": "165",
+    "height_unit": "cm",
+    "shoe_gender": "Women's",
+    "shoe_size": 7,
+    "ankle": "Right",
+    "goal_frequency": 2,
+    "goal_period": "Day",
+    "notifications": [
+        {"id": 1, "days": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], "time_hour": 8, "time_minute": 15},
+        {"id": 2, "days": ["Mon", "Tue", "Wed", "Thu", "Fri"], "time_hour": 18, "time_minute": 30},
+    ],
+}
+
+
+def get_settings() -> dict:
+    """Return user settings, seeding defaults if no row exists yet."""
+    conn = _get_connection()
+    conn.row_factory = sqlite3.Row
+    row = conn.execute("SELECT settings_json FROM user_settings WHERE id = 1").fetchone()
+    conn.close()
+    if row is None:
+        return DEFAULT_SETTINGS
+    return json.loads(row["settings_json"])
+
+
+def save_settings(settings: dict) -> None:
+    """Upsert user settings."""
+    conn = _get_connection()
+    conn.execute(
+        "INSERT INTO user_settings (id, settings_json) VALUES (1, ?) "
+        "ON CONFLICT(id) DO UPDATE SET settings_json = excluded.settings_json",
+        (json.dumps(settings),),
+    )
+    conn.commit()
+    conn.close()
 
 
 def get_sessions_by_date(date_str: str) -> list[dict]:

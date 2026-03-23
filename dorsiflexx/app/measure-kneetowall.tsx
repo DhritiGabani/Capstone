@@ -82,7 +82,7 @@ export default function MeasureKneeToWall() {
     setResultAngle(null);
     setAngleOverTime(null);
     setMeasureState("measuring");
-    setCountdown(5);
+    setCountdown(3);
 
     try {
       await BackendService.startKTW();
@@ -112,27 +112,9 @@ export default function MeasureKneeToWall() {
   }
 
   function handleSave(angle: number, aot: Record<string, number> | null) {
-    Alert.prompt(
-      "Enter Your Name",
-      "Your name will appear on the leaderboard!",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "OK",
-          onPress: (name?: string) => {
-            // Fire-and-forget — navigate away immediately, never surface errors
-            BackendService.saveKTW(
-              angle,
-              aot ?? undefined,
-              name?.trim() || "Anonymous",
-            ).catch(() => {});
-            BackendService.bleDisconnect();
-            router.replace("/measure");
-          },
-        },
-      ],
-      "plain-text",
-    );
+    BackendService.saveKTW(angle, aot ?? undefined).catch(() => {});
+    BackendService.bleDisconnect();
+    router.replace("/measure");
   }
 
   const buttonTitle =
