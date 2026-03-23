@@ -9,9 +9,9 @@ from scipy.interpolate import interp1d
 # Constants
 # ---------------------------------------------------------------------------
 
-MODEL_PATH         = Path(__file__).parent.parent / "model" / "mlp_model_v4.pkl"
-SCALER_PATH        = Path(__file__).parent.parent / "model" / "scaler_v4.pkl"
-LABEL_ENCODER_PATH = Path(__file__).parent.parent / "model" / "label_encoder_v4.pkl"
+MODEL_PATH         = Path(__file__).parent.parent / "model" / "mlp_model_v5.pkl"
+SCALER_PATH        = Path(__file__).parent.parent / "model" / "scaler_v5.pkl"
+LABEL_ENCODER_PATH = Path(__file__).parent.parent / "model" / "label_encoder_v5.pkl"
 
 STATISTICAL_FEATURE_COLS = [
     "acc_x_norm", "acc_y_norm", "acc_z_norm",
