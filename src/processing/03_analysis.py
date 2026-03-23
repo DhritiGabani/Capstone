@@ -2,7 +2,9 @@ import pickle
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from scipy.fft import fft
 from scipy.interpolate import interp1d
+from scipy.signal import find_peaks as _find_peaks
 
 
 # ---------------------------------------------------------------------------
@@ -51,12 +53,13 @@ MP_WINDOW_SIZE = 20
 
 def _extract_rep_statistical_features(row: pd.Series) -> np.ndarray:
     """
-    Extract statistical features from a single rep row
+    Extract statistical + frequency-domain + temporal features
     """
     features = []
 
     for col in STATISTICAL_FEATURE_COLS:
         signal = row[col]
+
         features.append(np.mean(signal))
         features.append(np.std(signal))
         features.append(np.min(signal))
@@ -70,6 +73,22 @@ def _extract_rep_statistical_features(row: pd.Series) -> np.ndarray:
         else:
             features.append(0.0)
             features.append(0.0)
+
+        if len(signal) > 4:
+            fft_vals = np.abs(fft(signal))[:len(signal) // 2]
+            freqs    = np.linspace(0, 50, len(fft_vals))
+            features.append(freqs[np.argmax(fft_vals)])                          
+            features.append(np.sum(fft_vals ** 2))                               
+            features.append(np.sum(fft_vals[:3]) / (np.sum(fft_vals) + 1e-8))
+        else:
+            features += [0.0, 0.0, 0.0]
+
+        zero_crossings = np.sum(np.diff(np.sign(signal - np.mean(signal))) != 0)
+        features.append(float(zero_crossings))
+
+        peaks, _ = _find_peaks(signal)
+        features.append(float(len(peaks)))
+        features.append(float(np.mean(np.diff(peaks))) if len(peaks) > 1 else 0.0)
 
     return np.array(features)
 
