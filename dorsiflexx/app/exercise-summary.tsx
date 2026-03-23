@@ -21,12 +21,21 @@ type SessionEntry = {
   id: string;
   sortTime: string;
   timeLabel: string;
+  durationS: number | null;
   exercises: ExerciseEntry[];
 };
 
 type TimelineItem =
   | { type: "session"; sortTime: string; data: SessionEntry }
   | { type: "ktw"; sortTime: string; data: KTWMeasurement };
+
+function formatDuration(seconds: number | null): string {
+  if (seconds == null || seconds <= 0) return "";
+  const m = Math.floor(seconds / 60);
+  const s = Math.round(seconds % 60);
+  if (m === 0) return `${s}s`;
+  return s === 0 ? `${m}m` : `${m}m ${s}s`;
+}
 
 function formatTimeLabel(isoString: string): string {
   const d = new Date(isoString);
@@ -77,6 +86,7 @@ export default function HistorySingleScreen() {
               id: s.session_id,
               sortTime: s.start_time,
               timeLabel: formatTimeLabel(s.start_time),
+              durationS: s.duration_s,
               exercises: s.analysis
                 ? mapBackendToExercises(s.analysis, s.session_id)
                 : [],
@@ -170,10 +180,17 @@ export default function HistorySingleScreen() {
             const session = item.data;
             return (
               <View key={session.id} className="mb-8">
-                <View className="mb-3 min-w-[50px] self-start rounded-full bg-[#8d44bc] px-4 py-2">
-                  <Text className="text-[16px] font-semibold text-[#fff]">
-                    {session.timeLabel}
-                  </Text>
+                <View className="mb-3 flex-row items-center gap-3">
+                  <View className="min-w-[50px] self-start rounded-full bg-[#8d44bc] px-4 py-2">
+                    <Text className="text-[16px] font-semibold text-[#fff]">
+                      {session.timeLabel}
+                    </Text>
+                  </View>
+                  {!!formatDuration(session.durationS) && (
+                    <Text className="text-[15px] text-[#11181C] opacity-60 dark:text-[#ECEDEE]">
+                      {formatDuration(session.durationS)}
+                    </Text>
+                  )}
                 </View>
 
                 <View className="mb-1 h-[1px] w-full bg-[#8C8C8C] dark:bg-[#6C6C6C]" />

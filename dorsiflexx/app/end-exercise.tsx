@@ -113,7 +113,6 @@ export default function EndExercise() {
                     title="Skip"
                     onPress={() => {
                       Keyboard.dismiss();
-                      BackendService.bleDisconnect();
                       router.replace("/");
                     }}
                   />
@@ -132,7 +131,6 @@ export default function EndExercise() {
                           comments,
                         ).catch(() => {});
                       }
-                      BackendService.bleDisconnect();
                       router.replace("/");
                     }}
                   />

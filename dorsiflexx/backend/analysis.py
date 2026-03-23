@@ -464,46 +464,31 @@ def calculate_consistency(blocks: list[dict]) -> dict[str, float | None]:
 # ---------------------------------------------------------------------------
 
 def calculate_ankle_angles(blocks: list[dict]) -> dict | None:
-    """Calculate max dorsiflexion ankle angle per rep and session mean for Heel Walk."""
+    """Calculate peak dorsiflexion angle per rep and session mean for Heel Walk using foot pitch only."""
     heel_walk_foot = []
-    heel_walk_shank = []
 
     for block in blocks:
         if block["exercise"] == HEEL_WALK_EXERCISE:
             heel_walk_foot.append(block["foot_data"])
-            heel_walk_shank.append(block["shank_data"])
 
     if not heel_walk_foot:
         return None
 
     foot_df = pd.concat(heel_walk_foot, ignore_index=True)
-    shank_df = pd.concat(heel_walk_shank, ignore_index=True)
 
-    rep_min_angles = {}
+    rep_max_angles = {}
 
     for _, foot_row in foot_df.iterrows():
         rep = int(foot_row["rep"])
+        rep_max_angles[rep] = round(float(np.max(foot_row["pitch"])), 3)
 
-        shank_rows = shank_df[shank_df["rep"] == rep]
-        if shank_rows.empty:
-            continue
-        shank_row = shank_rows.iloc[0]
-
-        foot_pitch = foot_row["pitch"]
-        shank_pitch_interp = np.interp(
-            foot_row["time"], shank_row["time"], shank_row["pitch"]
-        )
-        ankle_angle = foot_pitch - shank_pitch_interp
-
-        rep_min_angles[rep] = round(float(np.min(ankle_angle)) + 90.0, 3)
-
-    if not rep_min_angles:
+    if not rep_max_angles:
         return None
 
     return {
-        "rep_min_angle_deg": rep_min_angles,
-        "mean_min_angle_deg": round(
-            float(np.mean(list(rep_min_angles.values()))), 3
+        "rep_max_dorsiflexion_deg": rep_max_angles,
+        "mean_max_dorsiflexion_deg": round(
+            float(np.mean(list(rep_max_angles.values()))), 3
         ),
     }
 
