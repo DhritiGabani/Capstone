@@ -1,7 +1,7 @@
 import NotificationBanner from "@/components/NotificationBanner";
 import PillButton from "@/components/PillButton";
-import BackendService from "@/src/services/api/BackendService";
 import type { UserSettings } from "@/src/services/api/BackendService";
+import BackendService from "@/src/services/api/BackendService";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
@@ -189,20 +189,24 @@ export default function ProfileSettingsScreen() {
   const [shoeGender, setShoeGender] = useState("Women's");
   const [shoeSize, setShoeSize] = useState(7);
   const [ankle, setAnkle] = useState("Right");
+  const [ptEmail, setPtEmail] = useState("xiesophia7@gmail.com");
   const [goalFrequency, setGoalFrequency] = useState(2);
   const [goalPeriod, setGoalPeriod] = useState("Day");
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [nextNotificationId, setNextNotificationId] = useState(1);
 
-  // Track the last-saved snapshot so Cancel can revert
   const savedSnapshot = useRef<UserSettings | null>(null);
 
-  // Banner state
   const [bannerVisible, setBannerVisible] = useState(false);
   const [bannerMessage, setBannerMessage] = useState("");
-  const [bannerVariant, setBannerVariant] = useState<"success" | "error" | "info">("success");
+  const [bannerVariant, setBannerVariant] = useState<
+    "success" | "error" | "info"
+  >("success");
 
-  const showBanner = (message: string, variant: "success" | "error" | "info" = "success") => {
+  const showBanner = (
+    message: string,
+    variant: "success" | "error" | "info" = "success",
+  ) => {
     setBannerMessage(message);
     setBannerVariant(variant);
     setBannerVisible(true);
@@ -246,6 +250,7 @@ export default function ProfileSettingsScreen() {
       goal_period: goalPeriod,
       notifications: notificationItemsToPayload(notifications),
     };
+
     try {
       await BackendService.saveSettings(settings);
       savedSnapshot.current = settings;
@@ -292,7 +297,11 @@ export default function ProfileSettingsScreen() {
               isDayPickerOpen: !notification.isDayPickerOpen,
               isTimePickerOpen: false,
             }
-          : { ...notification, isDayPickerOpen: false },
+          : {
+              ...notification,
+              isDayPickerOpen: false,
+              isTimePickerOpen: false,
+            },
       ),
     );
   };
@@ -329,7 +338,11 @@ export default function ProfileSettingsScreen() {
               isTimePickerOpen: !notification.isTimePickerOpen,
               isDayPickerOpen: false,
             }
-          : { ...notification, isTimePickerOpen: false },
+          : {
+              ...notification,
+              isTimePickerOpen: false,
+              isDayPickerOpen: false,
+            },
       ),
     );
   };
@@ -410,7 +423,7 @@ export default function ProfileSettingsScreen() {
       >
         <SectionTitle>PROFILE</SectionTitle>
 
-        <View className="mb-2">
+        <View className="mb-3">
           <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
             Name
           </Text>
@@ -423,7 +436,7 @@ export default function ProfileSettingsScreen() {
           />
         </View>
 
-        <View className="mb-2">
+        <View className="mb-3">
           <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
             Height
           </Text>
@@ -442,7 +455,7 @@ export default function ProfileSettingsScreen() {
           </View>
         </View>
 
-        <View className="mb-2">
+        <View className="mb-3">
           <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
             Shoe Size
           </Text>
@@ -461,7 +474,7 @@ export default function ProfileSettingsScreen() {
           </View>
         </View>
 
-        <View className="mb-8">
+        <View className="mb-3">
           <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
             Ankle
           </Text>
@@ -474,6 +487,21 @@ export default function ProfileSettingsScreen() {
           </View>
         </View>
 
+        <View className="mb-8">
+          <Text className="mb-1 text-[16px] font-semibold text-[#11181C] dark:text-[#ECEDEE]">
+            Physiotherapist Email
+          </Text>
+          <TextInput
+            value={ptEmail}
+            onChangeText={setPtEmail}
+            placeholder="example@email.com"
+            placeholderTextColor="#7A7A7A"
+            autoCapitalize="none"
+            keyboardType="email-address"
+            className="h-9 rounded-md border border-[#565656] bg-transparent px-3 text-[16px] text-[#11181C] dark:text-[#ECEDEE]"
+          />
+        </View>
+
         <SectionTitle>GOAL SETTING</SectionTitle>
 
         <View className="mb-8 flex-row items-center justify-center gap-2">
@@ -484,13 +512,8 @@ export default function ProfileSettingsScreen() {
             widthClassName="w-[98px]"
           />
           <Text className="text-[16px] text-[#11181C] dark:text-[#ECEDEE]">
-            times per
+            times per day
           </Text>
-          <ToggleOption
-            options={["Day", "Week"]}
-            selected={goalPeriod}
-            onSelect={setGoalPeriod}
-          />
         </View>
 
         <View className="mb-3 flex-row items-center justify-center">
