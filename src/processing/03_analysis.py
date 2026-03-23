@@ -2,16 +2,18 @@ import pickle
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from scipy.fft import fft
 from scipy.interpolate import interp1d
+from scipy.signal import find_peaks as _find_peaks
 
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 
-MODEL_PATH         = Path(__file__).parent.parent / "model" / "mlp_model_v4.pkl"
-SCALER_PATH        = Path(__file__).parent.parent / "model" / "scaler_v4.pkl"
-LABEL_ENCODER_PATH = Path(__file__).parent.parent / "model" / "label_encoder_v4.pkl"
+MODEL_PATH         = Path(__file__).parent.parent / "model" / "mlp_model_v5.pkl"
+SCALER_PATH        = Path(__file__).parent.parent / "model" / "scaler_v5.pkl"
+LABEL_ENCODER_PATH = Path(__file__).parent.parent / "model" / "label_encoder_v5.pkl"
 
 STATISTICAL_FEATURE_COLS = [
     "acc_x_norm", "acc_y_norm", "acc_z_norm",
@@ -51,12 +53,13 @@ MP_WINDOW_SIZE = 20
 
 def _extract_rep_statistical_features(row: pd.Series) -> np.ndarray:
     """
-    Extract statistical features from a single rep row
+    Extract statistical + frequency-domain + temporal features
     """
     features = []
 
     for col in STATISTICAL_FEATURE_COLS:
         signal = row[col]
+
         features.append(np.mean(signal))
         features.append(np.std(signal))
         features.append(np.min(signal))
@@ -70,6 +73,22 @@ def _extract_rep_statistical_features(row: pd.Series) -> np.ndarray:
         else:
             features.append(0.0)
             features.append(0.0)
+
+        if len(signal) > 4:
+            fft_vals = np.abs(fft(signal))[:len(signal) // 2]
+            freqs    = np.linspace(0, 50, len(fft_vals))
+            features.append(freqs[np.argmax(fft_vals)])                          
+            features.append(np.sum(fft_vals ** 2))                               
+            features.append(np.sum(fft_vals[:3]) / (np.sum(fft_vals) + 1e-8))
+        else:
+            features += [0.0, 0.0, 0.0]
+
+        zero_crossings = np.sum(np.diff(np.sign(signal - np.mean(signal))) != 0)
+        features.append(float(zero_crossings))
+
+        peaks, _ = _find_peaks(signal)
+        features.append(float(len(peaks)))
+        features.append(float(np.mean(np.diff(peaks))) if len(peaks) > 1 else 0.0)
 
     return np.array(features)
 
@@ -533,44 +552,31 @@ def calculate_consistency(blocks: list[dict]) -> dict[str, float | None]:
 
 def calculate_ankle_angles(blocks: list[dict]) -> dict | None:
     """
-    Calculate max dorsiflexion ankle angle per rep and session mean for Heel Walk.
+    Calculate peak dorsiflexion angle per rep and session mean for Heel Walk
     """
-    heel_walk_foot  = []
-    heel_walk_shank = []
+    heel_walk_foot = []
 
     for block in blocks:
         if block["exercise"] == HEEL_WALK_EXERCISE:
             heel_walk_foot.append(block["foot_data"])
-            heel_walk_shank.append(block["shank_data"])
 
     if not heel_walk_foot:
         return None
 
-    foot_df  = pd.concat(heel_walk_foot,  ignore_index=True)
-    shank_df = pd.concat(heel_walk_shank, ignore_index=True)
+    foot_df = pd.concat(heel_walk_foot, ignore_index=True)
 
     rep_max_angles = {}
 
     for _, foot_row in foot_df.iterrows():
         rep = int(foot_row["rep"])
-
-        shank_rows = shank_df[shank_df["rep"] == rep]
-        if shank_rows.empty:
-            continue
-        shank_row = shank_rows.iloc[0]
-
-        foot_pitch         = foot_row["pitch"]
-        shank_pitch_interp = np.interp(foot_row["time"], shank_row["time"], shank_row["pitch"])
-        ankle_angle        = foot_pitch - shank_pitch_interp
-
-        rep_min_angles[rep] = round(float(np.min(ankle_angle)) + 90.0, 3)
+        rep_max_angles[rep] = round(float(np.max(foot_row["pitch"])), 3)
 
     if not rep_max_angles:
         return None
 
     return {
-        "rep_min_angle_deg":  rep_min_angles,
-        "mean_min_angle_deg": round(float(np.mean(list(rep_min_angles.values()))), 3),
+        "rep_max_dorsiflexion_deg":  rep_max_angles,
+        "mean_max_dorsiflexion_deg": round(float(np.mean(list(rep_max_angles.values()))), 3),
     }
 
 
