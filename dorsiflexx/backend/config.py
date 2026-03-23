@@ -10,4 +10,4 @@ MODEL_CONFIG_PATH = os.path.join(_BASE_DIR, "assets", "models", "model_config.js
 MODEL_PATH = os.path.join(_BASE_DIR, "assets", "models", "exercise_classifier.tflite")
 DATABASE_PATH = os.path.join(_BASE_DIR, "dorsiflexx.db")
 
-TOTAL_FEATURES = 64
+TOTAL_FEATURES = 112

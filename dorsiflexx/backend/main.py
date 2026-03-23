@@ -104,8 +104,9 @@ async def session_stop():
     session_id = _session_id
     start_ts = _start_ts
 
+    end_ts = time.time()
     readings = await ble.stop_streaming()
-    duration_s = round(time.time() - start_ts, 2)
+    duration_s = round(end_ts - start_ts, 2)
 
     # Convert readings to per-device JSON and save immediately
     imu1_json = sensor_readings_to_imu_json(readings, "imu1")
@@ -126,6 +127,7 @@ async def session_stop():
         try:
             log.info("Running preprocessing pipeline...")
             pipeline_result = preprocess_session(readings)
+            # pipeline_result = preprocess_session(readings, debug_viz=True, debug_viz_path="debug_run.png") # change
             log.info("Preprocessing done: X shape=%s, %d reps", pipeline_result["X"].shape, len(set(pipeline_result["rep_indices"])))
 
             log.info("Running analysis...")
@@ -148,7 +150,7 @@ async def session_stop():
                 ex = {
                     "exercise_type": exercise_type,
                     "rep_count": rep_count,
-                    "rom": ankle.get("mean_min_angle_deg", 0) if ankle and exercise_type == "Heel Walk" else 0,
+                    "rom": ankle.get("mean_max_dorsiflexion_deg", 0) if ankle and exercise_type == "Heel Walk" else 0,
                     "tempo_consistency": durations.get(exercise_type, {}).get("mean_duration_s", 0),
                     "movement_consistency": consistency.get(exercise_type, 0) or 0,
                 }

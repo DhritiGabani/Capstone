@@ -30,7 +30,7 @@ class ExerciseClassifier:
 
     def classify(self, features: list[float]) -> dict:
         """
-        Run inference on a single feature vector (64 floats).
+        Run inference on a single feature vector (112 floats).
 
         Returns:
             {"predicted_class": str, "confidence": float}
