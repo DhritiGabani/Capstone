@@ -10,46 +10,72 @@ CLEAN_META_PATH = os.path.join(PROJECT_DIR, "results/clean_metadata_mika.csv")
 
 def find_rep_boundaries(pitch_signal):
     """
-    Find rep boundaries based on pitch peaks
+    Detect rep boundaries between troughs
     """
     peaks, _ = find_peaks(pitch_signal, distance=30, prominence=15)
-    
+
+    if len(peaks) == 0:
+        return []
+
     boundaries = []
     for i in range(len(peaks) - 1):
-        start_idx = peaks[i]
-        end_idx = peaks[i + 1]
-        boundaries.append((start_idx, end_idx))
-    
-    return boundaries, peaks
+        valley_region = pitch_signal[peaks[i]:peaks[i + 1]]
+        local_min_offset = np.argmin(valley_region)
+        trough_idx = peaks[i] + local_min_offset
+        boundaries.append(trough_idx)
+
+    first_peak = peaks[0]
+    search_start = max(0, first_peak - (first_peak // 2))
+    pre_trough = search_start + np.argmin(pitch_signal[search_start:first_peak])
+
+    post_trough = peaks[-1] + np.argmin(pitch_signal[peaks[-1]:])
+
+    all_troughs = [pre_trough] + boundaries + [post_trough]
+
+    rep_boundaries = []
+    for i in range(len(all_troughs) - 1):
+        rep_boundaries.append((all_troughs[i], all_troughs[i + 1]))
+
+    return rep_boundaries
 
 def remove_bad_reps_and_renumber(segmented_df):
     """
     Remove bad reps and renumber remaining reps sequentially
     """
     bad_reps = [
+	    (3, "Ankle Rotation", "10_fast_CW", [1]),
         (3, "Calf Raises", "10_fast", [1]),
-        (3, "Heel Walk", "toe_high", [11]),
-        (3, "Heel Walk", "toe_low", [2, 5]),
-        (4, "Ankle Rotation", "10_fast_CW", [10]),
-        (4, "Calf Raises", "10_fast", [10]),
-        (4, "Calf Raises", "10_slow", [10]),
-        (5, "Ankle Rotation", "10_fast_CCW", [1, 6, 7, 13]),
-        (5, "Ankle Rotation", "10_fast_CW", [3, 6]),
-        (5, "Ankle Rotation", "10_slow_CCW", [1, 2, 3, 4]),
-        (5, "Heel Walk", "toe_high", [1, 2, 3, 4]),
+        (4, "Ankle Rotation", "10_fast_CW", [11]),
+	    (4, "Ankle Rotation", "10_slow_CCW", [1, 11]),
+        (4, "Calf Raises", "10_fast", [11]),
+        (4, "Calf Raises", "10_slow", [11]),
+        (5, "Ankle Rotation", "10_fast_CCW", [1, 7, 8, 13, 14]),
+        (5, "Ankle Rotation", "10_slow_CW", [1, 3, 4, 15]),
+        (5, "Heel Walk", "toe_high", [1, 2, 3, 4, 8, 9, 10]),
         (6, "Ankle Rotation", "10_fast_CCW", [1, 2, 3, 4]),
-        (6, "Calf Raises", "10_fast", [10, 11]),
-        (7, "Heel Walk", "toe_low", [5]),
+	    (6, "Ankle Rotation", "10_slow_CW", [1, 12]),
+        (6, "Calf Raises", "10_fast", [10, 11, 12]),
+	    (6, "Heel Walk", "toe_high", [1, 2, 3]),
+        (7, "Heel Walk", "toe_high", [1]),
+	    (7, "Heel Walk", "toe_low", [5, 6]),
         (8, "Ankle Rotation", "10_fast_CCW", [1, 2, 3]),
-        (9, "Calf Raises", "10_fast", [5, 9, 11, 12, 14, 15]),
-        (12, "Heel Walk", "toe_low", [17]),
+        (8, "Heel Walk", "toe_high", [1, 3]),
+        (9, "Ankle Rotation", "10_fast_CW", [1]),
+        (9, "Calf Raises", "10_fast", [6, 7, 9, 10, 11, 12, 13, 14, 15, 16]),
+        (10, "Heel Walk", "toe_high", [1, 2]),
+        (11, "Ankle Rotation", "10_fast_CW", [1, 2, 3]),
+        (11, "Ankle Rotation", "10_slow_CCW", [1, 2, 3, 4, 5, 6]),
+        (11, "Calf Raises", "10_10_fast", [1, 3, 4, 10, 11]),
+        (12, "Heel Walk", "toe_low", [17, 18]),
         (13, "Ankle Rotation", "10_fast_CW", [8]),
-        (13, "Calf Raises", "10_slow", [10, 11]),
-        (14, "Calf Raises", "10_fast", [6]),
-        (14, "Heel Walk", "toe_low", [1, 2, 6, 7, 8, 9, 10, 11]),
-        (15, "Ankle Rotation", "10_slow_CCW", [1]),
-        (15, "Heel Walk", "toe_high", [1, 2, 3, 4, 5, 8, 9, 11, 12, 13, 14]),
-        (15, "Heel Walk", "toe_low", [4, 5, 7, 9])
+        (13, "Calf Raises", "10_slow", [11, 12]),
+	    (14, "Ankle Rotation", "10_fast_CCW", [2]),
+        (14, "Calf Raises", "10_fast", [6, 7]),
+        (14, "Heel Walk", "toe_high", [1, 2, 6, 7, 8, 9, 10, 11, 12]),
+        (15, "Ankle Rotation", "10_slow_CCW", [1, 2]),
+	    (15, "Ankle Rotation", "10_slow_CW", [1]),
+        (15, "Heel Walk", "toe_high", [1, 2, 3, 4, 5, 8, 9, 11, 12, 13, 14, 15]),
+        (15, "Heel Walk", "toe_low", [5, 6, 7, 8, 9, 10, 11])
     ]
     
     cleaned_df = segmented_df.copy()
@@ -137,7 +163,7 @@ def segment_data(signals_df, meta_df):
         shank_file = shank_file[0]
         shank_data = signals_df[signals_df['file_path'] == shank_file].copy()
         
-        boundaries, peaks = find_rep_boundaries(foot_data['pitch'].values)
+        boundaries = find_rep_boundaries(foot_data['pitch'].values)
         
         if len(boundaries) == 0:
             continue
