@@ -155,7 +155,7 @@ def extract_features(signals_df: pd.DataFrame) -> pd.DataFrame:
 
 def _find_rep_boundaries(pitch_signal: np.ndarray) -> list[tuple[int, int]]:
     """
-    Detect rep boundaries from pitch peaks.
+    Detect rep boundaries between troughs.
     """
     peaks, _ = find_peaks(
         pitch_signal,
@@ -163,11 +163,29 @@ def _find_rep_boundaries(pitch_signal: np.ndarray) -> list[tuple[int, int]]:
         prominence=PEAK_MIN_PROMINENCE,
     )
 
+    if len(peaks) == 0:
+        return []
+
     boundaries = []
     for i in range(len(peaks) - 1):
-        boundaries.append((peaks[i], peaks[i + 1]))
+        valley_region = pitch_signal[peaks[i]:peaks[i + 1]]
+        local_min_offset = np.argmin(valley_region)
+        trough_idx = peaks[i] + local_min_offset
+        boundaries.append(trough_idx)
 
-    return boundaries
+    first_peak = peaks[0]
+    search_start = max(0, first_peak - (first_peak // 2))
+    pre_trough = search_start + np.argmin(pitch_signal[search_start:first_peak])
+
+    post_trough = peaks[-1] + np.argmin(pitch_signal[peaks[-1]:])
+
+    all_troughs = [pre_trough] + boundaries + [post_trough]
+
+    rep_boundaries = []
+    for i in range(len(all_troughs) - 1):
+        rep_boundaries.append((all_troughs[i], all_troughs[i + 1]))
+
+    return rep_boundaries
 
 
 def _normalize_rep(rep_df: pd.DataFrame) -> pd.DataFrame:

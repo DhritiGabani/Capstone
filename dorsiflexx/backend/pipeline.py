@@ -10,11 +10,15 @@ Pipeline stages:
   3. Butterworth lowpass filtering
   4. Roll and pitch computation
   5. Rep segmentation with per-rep normalization
-  6. Statistical feature extraction (8 signals x 8 stats = 64 features)
+  6. Statistical feature extraction (8 signals x 14 features = 112 features)
 """
+# import matplotlib
+# matplotlib.use("Agg")
+# import matplotlib.pyplot as plt
 
 import numpy as np
 import pandas as pd
+from scipy.fft import fft
 from scipy.signal import butter, filtfilt, find_peaks
 
 from sensor import SensorReading
@@ -23,7 +27,7 @@ from sensor import SensorReading
 # Constants (matching src/processing/02_preprocessing.py)
 # ---------------------------------------------------------------------------
 
-SAMPLE_RATE_HZ = 100
+SAMPLE_RATE_HZ = 160
 SAMPLE_PERIOD_S = 1.0 / SAMPLE_RATE_HZ
 
 COLUMN_MAPPING = {
@@ -84,6 +88,7 @@ def sensor_readings_to_imu_json(
     for i, r in enumerate(device_readings):
         samples.append({
             "sample_idx": i,
+            "timestamp_us": r.timestamp_us,
             "ax_g": r.ax,
             "ay_g": r.ay,
             "az_g": r.az,
@@ -132,7 +137,13 @@ def wrangle(imu1_json: dict, imu2_json: dict) -> pd.DataFrame:
     foot_df = foot_df.iloc[:min_rows].reset_index(drop=True)
     shank_df = shank_df.iloc[:min_rows].reset_index(drop=True)
 
-    time_values = np.arange(min_rows) * SAMPLE_PERIOD_S
+    imu1_samples = imu1_json["samples"]
+    first_ts = imu1_samples[0]["timestamp_us"]
+    last_ts  = imu1_samples[min_rows - 1]["timestamp_us"]
+    duration_s = (last_ts - first_ts) / 1_000_000
+    actual_period = duration_s / (min_rows - 1)
+    time_values = np.arange(min_rows) * actual_period
+
     foot_df["time"] = time_values
     shank_df["time"] = time_values
 
@@ -201,18 +212,36 @@ def extract_features(signals_df: pd.DataFrame) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 
 def _find_rep_boundaries(pitch_signal: np.ndarray) -> list[tuple[int, int]]:
-    """Detect rep boundaries from pitch peaks."""
+    """Detect rep boundaries from trough to trough."""
     peaks, _ = find_peaks(
         pitch_signal,
         distance=PEAK_MIN_DISTANCE,
         prominence=PEAK_MIN_PROMINENCE,
     )
 
+    if len(peaks) == 0:
+        return []
+
     boundaries = []
     for i in range(len(peaks) - 1):
-        boundaries.append((peaks[i], peaks[i + 1]))
+        valley_region = pitch_signal[peaks[i]:peaks[i + 1]]
+        local_min_offset = np.argmin(valley_region)
+        trough_idx = peaks[i] + local_min_offset
+        boundaries.append(trough_idx)
 
-    return boundaries
+    first_peak = peaks[0]
+    search_start = max(0, first_peak - (first_peak // 2))
+    pre_trough = search_start + np.argmin(pitch_signal[search_start:first_peak])
+
+    post_trough = peaks[-1] + np.argmin(pitch_signal[peaks[-1]:])
+
+    all_troughs = [pre_trough] + boundaries + [post_trough]
+
+    rep_boundaries = []
+    for i in range(len(all_troughs) - 1):
+        rep_boundaries.append((all_troughs[i], all_troughs[i + 1]))
+
+    return rep_boundaries
 
 
 def _normalize_rep(rep_df: pd.DataFrame) -> pd.DataFrame:
@@ -295,11 +324,12 @@ def segment(featured_df: pd.DataFrame) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 
 def _extract_rep_statistical_features(row: pd.Series) -> np.ndarray:
-    """Extract 64 statistical features from a single segmented rep row."""
+    """Extract 112 statistical + frequency-domain + temporal features from a single segmented rep row."""
     features = []
 
     for col in STATISTICAL_FEATURE_COLS:
         signal = row[col]
+
         features.append(np.mean(signal))
         features.append(np.std(signal))
         features.append(np.min(signal))
@@ -314,6 +344,22 @@ def _extract_rep_statistical_features(row: pd.Series) -> np.ndarray:
             features.append(0.0)
             features.append(0.0)
 
+        if len(signal) > 4:
+            fft_vals = np.abs(fft(signal))[:len(signal) // 2]
+            freqs    = np.linspace(0, 50, len(fft_vals))
+            features.append(freqs[np.argmax(fft_vals)])
+            features.append(np.sum(fft_vals ** 2))
+            features.append(np.sum(fft_vals[:3]) / (np.sum(fft_vals) + 1e-8))
+        else:
+            features += [0.0, 0.0, 0.0]
+
+        zero_crossings = np.sum(np.diff(np.sign(signal - np.mean(signal))) != 0)
+        features.append(float(zero_crossings))
+
+        peaks, _ = find_peaks(signal)
+        features.append(float(len(peaks)))
+        features.append(float(np.mean(np.diff(peaks))) if len(peaks) > 1 else 0.0)
+
     return np.array(features)
 
 
@@ -324,7 +370,7 @@ def extract_statistical_features(
     Extract statistical features from all reps for both foot and shank sensors.
 
     Returns:
-        (X, rep_indices, sensor_locations) where X is (n_samples, 64)
+        (X, rep_indices, sensor_locations) where X is (n_samples, 112)
     """
     X_list = []
     rep_list = []
@@ -337,6 +383,80 @@ def extract_statistical_features(
 
     return np.array(X_list), np.array(rep_list), np.array(location_list)
 
+# ---------------------------------------------------------------------------
+# Stage 6 — Change 2 Visualization
+# ---------------------------------------------------------------------------
+
+# def visualize_segmentation(
+#     segmented_df: pd.DataFrame,
+#     featured_df: pd.DataFrame,
+#     sensor_location: str = "foot",
+#     output_path: str = "segmentation_debug.png",
+# ) -> None:
+#     """
+#     Debug visualization: plots pitch and roll for the chosen sensor with
+#     rep start (red dashed) and rep end (blue dotted) boundaries overlaid.
+#     Saves to output_path instead of blocking the terminal.
+#     """
+#     orig = featured_df[featured_df["sensor_location"] == sensor_location].reset_index(drop=True)
+#     reps = segmented_df[segmented_df["sensor_location"] == sensor_location]
+
+#     if orig.empty or reps.empty:
+#         print(f"[visualize_segmentation] No data for sensor_location='{sensor_location}'")
+#         return
+
+#     fig, axes = plt.subplots(2, 1, figsize=(15, 10))
+
+#     # --- Pitch ---
+#     axes[0].plot(orig["time"], orig["pitch"], "b-", linewidth=1, label="Pitch")
+#     axes[0].set_ylabel("Pitch (degrees)")
+#     axes[0].set_title(f"Segmentation Debug | sensor: {sensor_location}")
+#     axes[0].grid(True, alpha=0.3)
+
+#     for i, (_, row) in enumerate(reps.iterrows()):
+#         t_start, t_end = row["time"][0], row["time"][-1]
+#         axes[0].axvline(t_start, color="red",  linestyle="--", alpha=0.7, linewidth=1.5,
+#                         label="Rep Start" if i == 0 else "")
+#         axes[0].axvline(t_end,   color="blue", linestyle=":",  alpha=0.7, linewidth=1.5,
+#                         label="Rep End"   if i == 0 else "")
+#         mid = (t_start + t_end) / 2
+#         axes[0].text(mid, axes[0].get_ylim()[1] * 0.90, f"Rep {row['rep']}",
+#                      ha="center", va="top", fontsize=9,
+#                      bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.5))
+#     axes[0].legend()
+
+#     # --- Roll ---
+#     axes[1].plot(orig["time"], orig["roll"], "g-", linewidth=1, label="Roll")
+#     axes[1].set_ylabel("Roll (degrees)")
+#     axes[1].set_xlabel("Time (s)")
+#     axes[1].grid(True, alpha=0.3)
+
+#     for i, (_, row) in enumerate(reps.iterrows()):
+#         t_start, t_end = row["time"][0], row["time"][-1]
+#         axes[1].axvline(t_start, color="red",  linestyle="--", alpha=0.7, linewidth=1.5,
+#                         label="Rep Start" if i == 0 else "")
+#         axes[1].axvline(t_end,   color="blue", linestyle=":",  alpha=0.7, linewidth=1.5,
+#                         label="Rep End"   if i == 0 else "")
+#     axes[1].legend()
+
+#     plt.tight_layout()
+#     plt.savefig(output_path, dpi=150)
+#     plt.close(fig)
+#     print(f"[visualize_segmentation] Saved → {output_path}")
+
+#     # Print rep continuity summary
+#     rep_list = list(reps.iterrows())
+#     print(f"\nRep count: {len(rep_list)}")
+#     for i in range(len(rep_list) - 1):
+#         t_end_cur   = rep_list[i][1]["time"][-1]
+#         t_start_nxt = rep_list[i + 1][1]["time"][0]
+#         gap = t_start_nxt - t_end_cur
+#         r_cur = rep_list[i][1]["rep"]
+#         r_nxt = rep_list[i + 1][1]["rep"]
+#         if gap > 0.02:
+#             print(f"  GAP between Rep {r_cur} → Rep {r_nxt}: {gap:.2f}s")
+#         else:
+#             print(f"  Rep {r_cur} → Rep {r_nxt}: continuous")
 
 # ---------------------------------------------------------------------------
 # Public entry point
@@ -344,6 +464,8 @@ def extract_statistical_features(
 
 def preprocess_session(
     readings: list[SensorReading],
+    # debug_viz: bool = False,          
+    # debug_viz_path: str = "segmentation_debug.png",
 ) -> dict:
     """
     Execute the full preprocessing pipeline on a buffer of SensorReadings.
@@ -374,6 +496,11 @@ def preprocess_session(
     # Stage 4: Rep segmentation with normalization
     segmented_df = segment(featured_df)
 
+    # if debug_viz:
+    #     visualize_segmentation(segmented_df, featured_df,
+    #                            sensor_location="foot",
+    #                            output_path=debug_viz_path)
+    
     # Stage 5: Statistical feature extraction
     X, rep_indices, sensor_locations = extract_statistical_features(segmented_df)
 

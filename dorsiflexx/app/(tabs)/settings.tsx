@@ -2,6 +2,7 @@ import NotificationBanner from "@/components/NotificationBanner";
 import PillButton from "@/components/PillButton";
 import type { UserSettings } from "@/src/services/api/BackendService";
 import BackendService from "@/src/services/api/BackendService";
+import { scheduleGoalNotifications } from "@/src/services/NotificationService";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
@@ -254,6 +255,7 @@ export default function ProfileSettingsScreen() {
     try {
       await BackendService.saveSettings(settings);
       savedSnapshot.current = settings;
+      await scheduleGoalNotifications(settings.notifications);
       showBanner("Settings saved!");
     } catch {
       showBanner("Failed to save settings", "error");

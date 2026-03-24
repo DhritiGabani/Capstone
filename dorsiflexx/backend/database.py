@@ -172,8 +172,7 @@ def get_session_dates() -> list[str]:
         "SELECT DISTINCT date_str FROM ("
         "  SELECT substr(start_time, 1, 10) AS date_str "
         "  FROM sessions "
-        "  WHERE analysis_json IS NOT NULL "
-        "  AND analysis_json LIKE '%rep_counts%' "
+        "  WHERE end_time IS NOT NULL "
         "  UNION "
         "  SELECT substr(measured_at, 1, 10) AS date_str "
         "  FROM ktw_measurements"
@@ -255,8 +254,8 @@ def save_settings(settings: dict) -> None:
 def get_sessions_by_date(date_str: str) -> list[dict]:
     """Return sessions with parsed analysis for a given date (YYYY-MM-DD).
 
-    Only includes sessions that completed with real analysis data
-    (i.e. have rep_counts, not just an error or empty dict).
+    Includes all completed sessions (end_time IS NOT NULL), even if analysis
+    failed or produced no reps.
     """
     conn = _get_connection()
     conn.row_factory = sqlite3.Row
@@ -264,8 +263,7 @@ def get_sessions_by_date(date_str: str) -> list[dict]:
         "SELECT session_id, start_time, end_time, duration_s, analysis_json "
         "FROM sessions "
         "WHERE substr(start_time, 1, 10) = ? "
-        "AND analysis_json IS NOT NULL "
-        "AND analysis_json LIKE '%rep_counts%' "
+        "AND end_time IS NOT NULL "
         "ORDER BY start_time",
         (date_str,),
     ).fetchall()
