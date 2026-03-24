@@ -15,7 +15,6 @@ const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export default function HomeScreen() {
   const [userName, setUserName] = useState("Jane");
   const [goalFrequency, setGoalFrequency] = useState(2);
-  const [goalPeriod, setGoalPeriod] = useState("Day");
   const [sessionDates, setSessionDates] = useState<string[]>([]);
   const [mostRecentSessionDate, setMostRecentSessionDate] = useState<string | null>(null);
 
@@ -33,7 +32,6 @@ export default function HomeScreen() {
         .then((s) => {
           setUserName(s.name);
           setGoalFrequency(s.goal_frequency);
-          setGoalPeriod(s.goal_period);
         })
         .catch(() => {});
 
@@ -74,10 +72,7 @@ export default function HomeScreen() {
     return { label, completedCount, isToday: i === todayDow };
   });
 
-  const goalText =
-    goalPeriod === "Day"
-      ? `${goalFrequency}x per day`
-      : `${goalFrequency}x per week`;
+  const goalText = `${goalFrequency}x per day`;
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-[#151718]">

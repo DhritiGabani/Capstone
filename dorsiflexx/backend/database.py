@@ -220,7 +220,7 @@ DEFAULT_SETTINGS = {
     "shoe_size": 7,
     "ankle": "Right",
     "goal_frequency": 2,
-    "goal_period": "Day",
+    "pt_email": "",
     "notifications": [
         {"id": 1, "days": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], "time_hour": 8, "time_minute": 15},
         {"id": 2, "days": ["Mon", "Tue", "Wed", "Thu", "Fri"], "time_hour": 18, "time_minute": 30},
