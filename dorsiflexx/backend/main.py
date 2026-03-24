@@ -374,7 +374,7 @@ class SettingsBody(BaseModel):
     shoe_size: int = 7
     ankle: str = "Right"
     goal_frequency: int = 2
-    goal_period: str = "Day"
+    pt_email: str = ""
     notifications: list = []
 
 
