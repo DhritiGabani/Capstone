@@ -27,7 +27,7 @@ from sensor import SensorReading
 # Constants (matching src/processing/02_preprocessing.py)
 # ---------------------------------------------------------------------------
 
-SAMPLE_RATE_HZ = 100
+SAMPLE_RATE_HZ = 160
 SAMPLE_PERIOD_S = 1.0 / SAMPLE_RATE_HZ
 
 COLUMN_MAPPING = {
@@ -88,6 +88,7 @@ def sensor_readings_to_imu_json(
     for i, r in enumerate(device_readings):
         samples.append({
             "sample_idx": i,
+            "timestamp_us": r.timestamp_us,
             "ax_g": r.ax,
             "ay_g": r.ay,
             "az_g": r.az,
@@ -136,7 +137,13 @@ def wrangle(imu1_json: dict, imu2_json: dict) -> pd.DataFrame:
     foot_df = foot_df.iloc[:min_rows].reset_index(drop=True)
     shank_df = shank_df.iloc[:min_rows].reset_index(drop=True)
 
-    time_values = np.arange(min_rows) * SAMPLE_PERIOD_S
+    imu1_samples = imu1_json["samples"]
+    first_ts = imu1_samples[0]["timestamp_us"]
+    last_ts  = imu1_samples[min_rows - 1]["timestamp_us"]
+    duration_s = (last_ts - first_ts) / 1_000_000
+    actual_period = duration_s / (min_rows - 1)
+    time_values = np.arange(min_rows) * actual_period
+
     foot_df["time"] = time_values
     shank_df["time"] = time_values
 
@@ -379,78 +386,78 @@ def extract_statistical_features(
 # ---------------------------------------------------------------------------
 # Stage 6 — Change 2 Visualization
 # ---------------------------------------------------------------------------
-'''
-def visualize_segmentation(
-    segmented_df: pd.DataFrame,
-    featured_df: pd.DataFrame,
-    sensor_location: str = "foot",
-    output_path: str = "segmentation_debug.png",
-) -> None:
-    """
-    Debug visualization: plots pitch and roll for the chosen sensor with
-    rep start (red dashed) and rep end (blue dotted) boundaries overlaid.
-    Saves to output_path instead of blocking the terminal.
-    """
-    orig = featured_df[featured_df["sensor_location"] == sensor_location].reset_index(drop=True)
-    reps = segmented_df[segmented_df["sensor_location"] == sensor_location]
 
-    if orig.empty or reps.empty:
-        print(f"[visualize_segmentation] No data for sensor_location='{sensor_location}'")
-        return
+# def visualize_segmentation(
+#     segmented_df: pd.DataFrame,
+#     featured_df: pd.DataFrame,
+#     sensor_location: str = "foot",
+#     output_path: str = "segmentation_debug.png",
+# ) -> None:
+#     """
+#     Debug visualization: plots pitch and roll for the chosen sensor with
+#     rep start (red dashed) and rep end (blue dotted) boundaries overlaid.
+#     Saves to output_path instead of blocking the terminal.
+#     """
+#     orig = featured_df[featured_df["sensor_location"] == sensor_location].reset_index(drop=True)
+#     reps = segmented_df[segmented_df["sensor_location"] == sensor_location]
 
-    fig, axes = plt.subplots(2, 1, figsize=(15, 10))
+#     if orig.empty or reps.empty:
+#         print(f"[visualize_segmentation] No data for sensor_location='{sensor_location}'")
+#         return
 
-    # --- Pitch ---
-    axes[0].plot(orig["time"], orig["pitch"], "b-", linewidth=1, label="Pitch")
-    axes[0].set_ylabel("Pitch (degrees)")
-    axes[0].set_title(f"Segmentation Debug | sensor: {sensor_location}")
-    axes[0].grid(True, alpha=0.3)
+#     fig, axes = plt.subplots(2, 1, figsize=(15, 10))
 
-    for i, (_, row) in enumerate(reps.iterrows()):
-        t_start, t_end = row["time"][0], row["time"][-1]
-        axes[0].axvline(t_start, color="red",  linestyle="--", alpha=0.7, linewidth=1.5,
-                        label="Rep Start" if i == 0 else "")
-        axes[0].axvline(t_end,   color="blue", linestyle=":",  alpha=0.7, linewidth=1.5,
-                        label="Rep End"   if i == 0 else "")
-        mid = (t_start + t_end) / 2
-        axes[0].text(mid, axes[0].get_ylim()[1] * 0.90, f"Rep {row['rep']}",
-                     ha="center", va="top", fontsize=9,
-                     bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.5))
-    axes[0].legend()
+#     # --- Pitch ---
+#     axes[0].plot(orig["time"], orig["pitch"], "b-", linewidth=1, label="Pitch")
+#     axes[0].set_ylabel("Pitch (degrees)")
+#     axes[0].set_title(f"Segmentation Debug | sensor: {sensor_location}")
+#     axes[0].grid(True, alpha=0.3)
 
-    # --- Roll ---
-    axes[1].plot(orig["time"], orig["roll"], "g-", linewidth=1, label="Roll")
-    axes[1].set_ylabel("Roll (degrees)")
-    axes[1].set_xlabel("Time (s)")
-    axes[1].grid(True, alpha=0.3)
+#     for i, (_, row) in enumerate(reps.iterrows()):
+#         t_start, t_end = row["time"][0], row["time"][-1]
+#         axes[0].axvline(t_start, color="red",  linestyle="--", alpha=0.7, linewidth=1.5,
+#                         label="Rep Start" if i == 0 else "")
+#         axes[0].axvline(t_end,   color="blue", linestyle=":",  alpha=0.7, linewidth=1.5,
+#                         label="Rep End"   if i == 0 else "")
+#         mid = (t_start + t_end) / 2
+#         axes[0].text(mid, axes[0].get_ylim()[1] * 0.90, f"Rep {row['rep']}",
+#                      ha="center", va="top", fontsize=9,
+#                      bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.5))
+#     axes[0].legend()
 
-    for i, (_, row) in enumerate(reps.iterrows()):
-        t_start, t_end = row["time"][0], row["time"][-1]
-        axes[1].axvline(t_start, color="red",  linestyle="--", alpha=0.7, linewidth=1.5,
-                        label="Rep Start" if i == 0 else "")
-        axes[1].axvline(t_end,   color="blue", linestyle=":",  alpha=0.7, linewidth=1.5,
-                        label="Rep End"   if i == 0 else "")
-    axes[1].legend()
+#     # --- Roll ---
+#     axes[1].plot(orig["time"], orig["roll"], "g-", linewidth=1, label="Roll")
+#     axes[1].set_ylabel("Roll (degrees)")
+#     axes[1].set_xlabel("Time (s)")
+#     axes[1].grid(True, alpha=0.3)
 
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=150)
-    plt.close(fig)
-    print(f"[visualize_segmentation] Saved → {output_path}")
+#     for i, (_, row) in enumerate(reps.iterrows()):
+#         t_start, t_end = row["time"][0], row["time"][-1]
+#         axes[1].axvline(t_start, color="red",  linestyle="--", alpha=0.7, linewidth=1.5,
+#                         label="Rep Start" if i == 0 else "")
+#         axes[1].axvline(t_end,   color="blue", linestyle=":",  alpha=0.7, linewidth=1.5,
+#                         label="Rep End"   if i == 0 else "")
+#     axes[1].legend()
 
-    # Print rep continuity summary
-    rep_list = list(reps.iterrows())
-    print(f"\nRep count: {len(rep_list)}")
-    for i in range(len(rep_list) - 1):
-        t_end_cur   = rep_list[i][1]["time"][-1]
-        t_start_nxt = rep_list[i + 1][1]["time"][0]
-        gap = t_start_nxt - t_end_cur
-        r_cur = rep_list[i][1]["rep"]
-        r_nxt = rep_list[i + 1][1]["rep"]
-        if gap > 0.02:
-            print(f"  GAP between Rep {r_cur} → Rep {r_nxt}: {gap:.2f}s")
-        else:
-            print(f"  Rep {r_cur} → Rep {r_nxt}: continuous")
-'''
+#     plt.tight_layout()
+#     plt.savefig(output_path, dpi=150)
+#     plt.close(fig)
+#     print(f"[visualize_segmentation] Saved → {output_path}")
+
+#     # Print rep continuity summary
+#     rep_list = list(reps.iterrows())
+#     print(f"\nRep count: {len(rep_list)}")
+#     for i in range(len(rep_list) - 1):
+#         t_end_cur   = rep_list[i][1]["time"][-1]
+#         t_start_nxt = rep_list[i + 1][1]["time"][0]
+#         gap = t_start_nxt - t_end_cur
+#         r_cur = rep_list[i][1]["rep"]
+#         r_nxt = rep_list[i + 1][1]["rep"]
+#         if gap > 0.02:
+#             print(f"  GAP between Rep {r_cur} → Rep {r_nxt}: {gap:.2f}s")
+#         else:
+#             print(f"  Rep {r_cur} → Rep {r_nxt}: continuous")
+
 # ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
@@ -493,6 +500,7 @@ def preprocess_session(
     #     visualize_segmentation(segmented_df, featured_df,
     #                            sensor_location="foot",
     #                            output_path=debug_viz_path)
+    
     # Stage 5: Statistical feature extraction
     X, rep_indices, sensor_locations = extract_statistical_features(segmented_df)
 
