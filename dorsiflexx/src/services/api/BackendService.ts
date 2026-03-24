@@ -94,7 +94,7 @@ export interface UserSettings {
   shoe_size: number;
   ankle: string;
   goal_frequency: number;
-  goal_period: string;
+  pt_email: string;
   notifications: NotificationSchedule[];
 }
 

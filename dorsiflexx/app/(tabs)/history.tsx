@@ -7,7 +7,9 @@ import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import * as FileSystem from "expo-file-system/legacy";
 import * as MailComposer from "expo-mail-composer";
+import * as Sharing from "expo-sharing";
 import * as Print from "expo-print";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
@@ -61,7 +63,6 @@ type PdfRow = {
   value: string;
 };
 
-const HARD_CODED_RECIPIENT = "xiesophia7@gmail.com";
 
 function toLocalDateString(date: Date) {
   const year = date.getFullYear();
@@ -589,6 +590,7 @@ export default function HistoryCalendarScreen() {
   const [startDate, setStartDate] = useState<Date>(getTwoWeeksAgo(today));
   const [endDate, setEndDate] = useState<Date>(today);
   const [isExporting, setIsExporting] = useState(false);
+  const [ptEmail, setPtEmail] = useState("");
 
   useFocusEffect(
     useCallback(() => {
@@ -600,6 +602,9 @@ export default function HistoryCalendarScreen() {
           console.error("Failed to fetch session dates:", err);
           setCompletedExerciseDates([]);
         });
+      BackendService.getSettings()
+        .then((s) => setPtEmail(s.pt_email ?? ""))
+        .catch(() => {});
     }, []),
   );
 
@@ -768,43 +773,43 @@ export default function HistoryCalendarScreen() {
 
       const html = buildExerciseHistoryPdfHtml(allDateSections);
 
-      const { uri } = await Print.printToFileAsync({
+      const { uri: tmpUri } = await Print.printToFileAsync({
         html,
         base64: false,
       });
 
-      console.log("PDF created:", uri);
-
-      const mailAvailable = await MailComposer.isAvailableAsync();
-      console.log("Mail available:", mailAvailable);
-
-      if (!mailAvailable) {
-        Alert.alert(
-          "Email unavailable",
-          "Mail is not configured on this device.",
-        );
-        return;
-      }
-
       const startLabel = formatSubjectDate(startDate);
       const endLabel = formatSubjectDate(endDate);
-
       const subject =
         startLabel === endLabel
           ? `Exercise Summary – ${startLabel}`
           : `Exercise Summary – ${startLabel} to ${endLabel}`;
 
+      // Rename the file so mail clients use the subject as the default filename
+      const safeFilename = subject.replace(/[^a-zA-Z0-9 –]/g, "").trim() + ".pdf";
+      const uri = FileSystem.cacheDirectory + safeFilename;
+      await FileSystem.copyAsync({ from: tmpUri, to: uri });
+
+      console.log("PDF created:", uri);
+
       setShowShareModal(false);
       await sleep(800);
 
-      const result = await MailComposer.composeAsync({
-        recipients: [HARD_CODED_RECIPIENT],
-        subject,
-        body: "Hi,\n\nPlease find attached my exercise history summary.\n\nThank you.",
-        attachments: [uri],
-      });
-
-      console.log("Mail composer result:", result);
+      const mailAvailable = await MailComposer.isAvailableAsync();
+      if (mailAvailable) {
+        await MailComposer.composeAsync({
+          recipients: ptEmail ? [ptEmail] : [],
+          subject,
+          body: "Hi,\n\nPlease find attached my exercise history summary.\n\nThank you.",
+          attachments: [uri],
+        });
+      } else {
+        await Sharing.shareAsync(uri, {
+          mimeType: "application/pdf",
+          dialogTitle: subject,
+          UTI: "com.adobe.pdf",
+        });
+      }
     } catch (err) {
       console.error("Failed to export/email PDF:", err);
       Alert.alert(

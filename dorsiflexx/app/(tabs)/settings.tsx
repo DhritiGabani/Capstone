@@ -192,7 +192,6 @@ export default function ProfileSettingsScreen() {
   const [ankle, setAnkle] = useState("Right");
   const [ptEmail, setPtEmail] = useState("xiesophia7@gmail.com");
   const [goalFrequency, setGoalFrequency] = useState(2);
-  const [goalPeriod, setGoalPeriod] = useState("Day");
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [nextNotificationId, setNextNotificationId] = useState(1);
 
@@ -221,7 +220,7 @@ export default function ProfileSettingsScreen() {
     setShoeSize(s.shoe_size);
     setAnkle(s.ankle);
     setGoalFrequency(s.goal_frequency);
-    setGoalPeriod(s.goal_period);
+    setPtEmail(s.pt_email ?? "");
     const items = settingsToNotificationItems(s.notifications);
     setNotifications(items);
     const maxId = items.reduce((m, n) => Math.max(m, n.id), 0);
@@ -248,7 +247,7 @@ export default function ProfileSettingsScreen() {
       shoe_size: shoeSize,
       ankle,
       goal_frequency: goalFrequency,
-      goal_period: goalPeriod,
+      pt_email: ptEmail,
       notifications: notificationItemsToPayload(notifications),
     };
 
